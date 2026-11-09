@@ -78,7 +78,86 @@ Some Confluence pages may require authorized access.
 
 ## Local Setup
 
-The application is under initial development. Executable installation instructions will be added with the FastAPI backend in QA-24.
+### Prerequisites
+
+- Python 3.14
+- Docker Desktop (with Docker Compose)
+- Git
+
+The commands below are written for Windows Git Bash.
+
+### 1. Configure environment variables
+
+From the repository root, copy `.env.example` to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Choose a local PostgreSQL password. In `.env`, use the **same password** in `POSTGRES_PASSWORD` (used by Docker Compose) and in `DATABASE_URL` (used by the backend).
+
+Example configuration (replace `change_me` with your local secret):
+
+```dotenv
+POSTGRES_PASSWORD=change_me
+DATABASE_URL=postgresql+psycopg://qualitymind:change_me@127.0.0.1:5432/qualitymind
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Never commit your actual `.env`. If your database volume already exists, changing `POSTGRES_PASSWORD` alone does **not** reset the existing PostgreSQL user's password.
+
+### 2. Start PostgreSQL
+
+From the repository root:
+
+```bash
+docker compose up -d db
+docker compose ps
+```
+
+### 3. Install backend dependencies
+
+```bash
+cd backend
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt
+```
+
+### 4. Apply migrations and start the API
+
+From `backend`:
+
+```bash
+.venv/Scripts/python.exe -m alembic upgrade head
+.venv/Scripts/python.exe -m uvicorn app.main:app --reload
+```
+
+- Swagger API documentation: http://127.0.0.1:8000/docs
+- Health endpoint: http://127.0.0.1:8000/health
+
+### 5. Create an isolated test database and run tests
+
+The integration tests require a separate PostgreSQL database named `qualitymind_test`. Create it once from the repository root:
+
+```bash
+docker compose exec db psql -U qualitymind -d qualitymind -c "CREATE DATABASE qualitymind_test;"
+```
+
+If the database already exists, skip that creation command. In `backend`, apply migrations to the **test** database and run the suite:
+
+```bash
+POSTGRES_DB=qualitymind_test .venv/Scripts/python.exe -m alembic upgrade head
+POSTGRES_DB=qualitymind_test .venv/Scripts/python.exe -m pytest tests/ -v
+```
+
+The `POSTGRES_DB` override changes only the database name for the backend connection. Keep it set to `qualitymind_test` for both migration and test commands. **Never run integration tests against development or production data.**
+
+### Database configuration
+
+- `DATABASE_URL` is the preferred SQLAlchemy connection setting. Use `postgresql+psycopg://` to select the installed psycopg 3 driver.
+- `POSTGRES_PASSWORD` configures the Docker PostgreSQL container and must match the password embedded in `DATABASE_URL`.
+- `POSTGRES_DB=qualitymind_test` selects the isolated test database without changing connection credentials.
+- `CORS_ORIGINS` contains comma-separated frontend origins allowed to access the API from a browser.
 
 ## Security
 
