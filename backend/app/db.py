@@ -22,7 +22,7 @@ database_url = URL.create(
     password=password,
     host="127.0.0.1",
     port=5432,
-    database="qualitymind",
+    database=os.getenv("POSTGRES_DB", "qualitymind"),
 )
 
 engine = create_engine(database_url, pool_pre_ping=True)
