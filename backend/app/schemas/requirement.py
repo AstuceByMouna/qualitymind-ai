@@ -1,6 +1,7 @@
 
 from pydantic import BaseModel, Field, field_validator
-
+from datetime import datetime
+from uuid import UUID
 
 class RequirementCreate(BaseModel):
     title: str = Field(min_length=1, max_length=255)
@@ -13,3 +14,8 @@ class RequirementCreate(BaseModel):
         if not value:
             raise ValueError("This field cannot be empty")
         return value
+class RequirementRead(RequirementCreate):
+    id: UUID
+    created_at: datetime
+
+    model_config = {"from_attributes": True}

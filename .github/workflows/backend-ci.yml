@@ -24,12 +24,13 @@ jobs:
 
     env:
       POSTGRES_PASSWORD: ci_only_password
+      POSTGRES_DB: qualitymind_test
 
     services:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_DB: qualitymind
+          POSTGRES_DB: qualitymind_test
           POSTGRES_USER: qualitymind
           POSTGRES_PASSWORD: ci_only_password
         ports:
