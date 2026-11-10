@@ -1,6 +1,6 @@
 # QualityMind AI — Stratégie de tests (MVP)
 
-**Version :** 1.0 — baseline proposée  
+**Version :** 1.1 — baseline et état réel QA-68 (9 novembre 2026)  
 **Ticket :** [QA-22](https://gharbiconsulting.atlassian.net/browse/QA-22)  
 **Confluence :** [Stratégie QA](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/425986) · [Processus SDLC](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458753)  
 **Référentiel des exigences :** [Catalogue MVP](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145)
@@ -31,7 +31,7 @@ La matrice et les seuils numériques seront définis avant l'implémentation du 
 | Sécurité | Gestion des secrets, authentification, RBAC, accès par objet, entrées non fiables | Revues et contrôles automatisés disponibles | Preuves sans divulgation de secrets |
 | Non fonctionnels | Latence, observabilité, récupération et capacité selon NFR et profils de charge approuvés | À choisir par incrément | Mesures datées, environnement et seuils documentés |
 
-**Sprint 1 (QA-24) :** vérifier `GET /health` → HTTP 200 avec corps exact `{"status":"ok"}`, lancement local, exécution Pytest, erreurs de configuration de base. Ne pas prétendre tester PostgreSQL ou OpenAI avant leur intégration.
+**Sprint 1 (QA-24), historique :** vérifier `GET /health` → HTTP 200 avec corps exact `{"status":"ok"}`, lancement local, exécution Pytest, erreurs de configuration de base. Ne pas prétendre tester PostgreSQL ou OpenAI avant leur intégration.
 
 ## 4. Traçabilité
 
@@ -53,7 +53,7 @@ Ces niveaux sont une proposition et devront être validés lors de l'élaboratio
 
 **Definition of Ready :** ticket Jira identifié, critères vérifiables, responsabilités, risques/dépendances et stratégie de validation identifiés.
 
-**Validation avant PR :** diff inspecté, absence de secrets, tests pertinents réussis, impact de la documentation examiné. Après activation CI, les contrôles requis doivent être verts ; ne jamais marquer un contrôle inexistant comme exécuté.
+**Validation avant PR :** diff inspecté, absence de secrets, tests pertinents réussis, impact de la documentation examiné. Backend CI est désormais obligatoire sur toutes les PR vers `main` (QA-66). Ne jamais marquer un contrôle inexistant ou ignoré comme exécuté.
 
 **Gate PR :** ticket lié, revue documentée, absence de défaut bloquant connu, résultats/preuves associés, approbation du propriétaire.
 
@@ -78,9 +78,22 @@ Couverture des exigences critiques, taux de réussite des tests, défauts bloqua
 ## 9. Décisions ouvertes
 
 - Seuils numériques de couverture par risque.
-- Choix de lint/formatage et pipeline CI initial ; protection effective de `main`.
+- Choix du lint/formatage et seuils de couverture ; **CI Backend et protection de `main` désormais actifs (QA-66)**.
 - Jeu de référence et métriques d'évaluation IA.
 - Environnements de tests, jeux de données et tolérances de performance.
 - Conservation des logs, traces et données sensibles.
 
 Cette stratégie est une **baseline de conception**, non une preuve d'exécution des contrôles envisagés.
+
+## 10. État des contrôles vérifiés — QA-68, 9 novembre 2026
+
+| Contrôle | État / preuve |
+| --- | --- |
+| Routes Requirements `/api/v1`, pagination, HTTP 404/422 | Livrées dans QA-60 et QA-63 |
+| Test API, pagination, cas négatifs, persistance PostgreSQL | 35 tests locaux réussis lors de QA-64 ; Backend CI GitHub vert |
+| CORS / configuration DB portable | QA-61 / QA-62 terminés |
+| Backend CI, PR obligatoire et check requis | QA-66, [Ruleset GitHub](https://github.com/AstuceByMouna/qualitymind-ai/rules/26914184) |
+| Postman Cloud via Postman CLI | QA-67, succès déclaré par le propriétaire ; workflow activé par `POSTMAN_CI_ENABLED`, **non requis** pour fusionner |
+| Frontend, Playwright UI/E2E, couverture chiffrée, évaluations IA | Futur ; contrôle non applicable ou non exécuté |
+
+La collection Postman utilise `{{base_url}}` ; la CI fournit `http://127.0.0.1:8000` et des credentials par `GitHub Secrets`, jamais dans le code. Les changements des contrats API doivent entraîner une analyse d'impact sur Pytest et Postman. Distinguer validation des API de QualityMind AI et tests futurs sur le SUT RealWorld.
