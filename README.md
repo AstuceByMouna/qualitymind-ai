@@ -211,3 +211,33 @@ License selection pending.
 ---
 
 QualityMind AI — Quality Engineering by Design.
+## Frontend Requirements Workbench — QA-53 (in development)
+
+The initial Next.js 16 / React / TypeScript frontend is implemented on `feature/QA-53-frontend-requirements` and is **not released to `main` until PR and checks pass**.
+
+- `frontend/src/app/page.tsx`: application shell, title, Suspense boundary.
+- `frontend/src/components/layout/app-sidebar.tsx`: reusable navigation with planned modules clearly marked.
+- `frontend/src/components/requirements/requirements-content.tsx`: server-side API loading, error state, and progress indicators.
+- `frontend/src/components/requirements/requirements-registry.tsx`: client-side page search and paginated registry.
+- `frontend/src/lib/requirements.ts`: typed backend API client. `API_BASE_URL` defaults to `http://127.0.0.1:8000` and is consumed server-side only.
+
+The Requirements list reads `GET /api/v1/requirements?limit=5&offset=...`. Search currently filters **only the five loaded rows per page**, not the entire database. A global search requires a future backend search endpoint.
+
+### Run frontend locally
+
+With PostgreSQL and FastAPI running as described above:
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Open http://localhost:3000. For the development QA gate:
+
+```bash
+npm run lint
+npm run build
+```
+
+Test nonempty list and page 2, page-local search and no-match result, empty database, and backend unreachable. UI automation and detail page are follow-up work in QA-55 and QA-54. **Frontend lint/build are not yet mandatory GitHub Actions checks**; record local results and do not claim CI evidence not collected.
