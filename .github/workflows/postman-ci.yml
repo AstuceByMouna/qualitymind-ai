@@ -1,0 +1,98 @@
+name: Postman API CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  postman-tests:
+    name: Postman / Requirements API
+    # Opt-in only until Postman collection and credentials are validated.
+    # Set repository variable POSTMAN_CI_ENABLED=true after configuration.
+    if: ${{ vars.POSTMAN_CI_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      POSTGRES_PASSWORD: ci_only_password
+      POSTGRES_DB: qualitymind_test
+      POSTMAN_COLLECTION_ID: 14273198-16be7483-92c9-443d-b79c-b202e056a82e
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: qualitymind_test
+          POSTGRES_USER: qualitymind
+          POSTGRES_PASSWORD: ci_only_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U qualitymind -d qualitymind_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: python -m pip install -r requirements.txt
+
+      - name: Apply test database migrations
+        working-directory: backend
+        run: python -m alembic upgrade head
+
+      - name: Start FastAPI for Postman
+        working-directory: backend
+        run: |
+          python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/qualitymind-api.log 2>&1 &
+          echo $! > /tmp/qualitymind-api.pid
+
+      - name: Wait for API readiness
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8000/health > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/qualitymind-api.log
+          exit 1
+
+      - name: Check Postman credential
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        run: |
+          if [ -z "$POSTMAN_API_KEY" ]; then
+            echo "::error::POSTMAN_API_KEY repository secret is missing."
+            exit 1
+          fi
+
+      - name: Run cloud Postman collection
+        uses: postmanlabs/postman-cli-action@v1
+        with:
+          api-key: ${{ secrets.POSTMAN_API_KEY }}
+          command: 'collection run 14273198-16be7483-92c9-443d-b79c-b202e056a82e --env-var baseUrl=http://127.0.0.1:8000'
+
+      - name: Show API logs on failure
+        if: failure()
+        run: |
+          if [ -f /tmp/qualitymind-api.log ]; then
+            cat /tmp/qualitymind-api.log
+          fi
