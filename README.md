@@ -58,6 +58,20 @@ Every change follows the project SDLC:
 6. Merge into `main`.
 7. Update Jira and Confluence.
 
+## Branch protection and CI Quality Gates (QA-66)
+
+The default branch `main` is protected by the active GitHub repository ruleset
+[Protect main — Quality Gates](https://github.com/AstuceByMouna/qualitymind-ai/rules/26914184).
+
+- All changes to `main` must go through a pull request.
+- The required GitHub Actions job is **FastAPI / Pytest / PostgreSQL** (workflow: `.github/workflows/backend-ci.yml`).
+- The required check runs for every PR targeting `main`, including documentation-only PRs, so it is not left permanently pending because of path filters.
+- Review approval count is currently **0** because the project has one maintainer; all review conversations must be resolved before merging.
+- Force pushes and deletion of `main` are blocked.
+- There are no bypass actors configured.
+
+Before merging a PR: verify its diff, check the GitHub Actions run, ensure the required check succeeds, and resolve review conversations. A failing or missing required check should prevent merging via the normal GitHub workflow. Verify that the Ruleset is effectively enforced with a documentation-only PR and a controlled negative test before considering QA-66 fully validated.
+
 ## Project Documentation
 
 - [Requirements Catalogue](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145)
