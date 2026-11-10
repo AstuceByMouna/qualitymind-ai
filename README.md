@@ -184,7 +184,7 @@ The workflow starts PostgreSQL 17 with an isolated `qualitymind_test` database, 
 **One-time configuration (repository administrators):**
 
 1. In GitHub **Settings → Secrets and variables → Actions → Secrets**, create the repository secret `POSTMAN_API_KEY` containing a Postman API key authorized to read the collection. Never commit or paste this key into code, chat, logs, or the README.
-2. In Postman, configure the collection requests to use the variable `{{baseUrl}}` for the API host, and include assertions for expected response codes and data. The CI overrides `baseUrl` with `http://127.0.0.1:8000`. Review the collection for fixed URLs, external dependencies, and destructive requests before enabling it.
+2. In Postman, configure the collection requests to use the variable `{{base_url}}` for the API host, and include assertions for expected response codes and data. The CI overrides `base_url` with `http://127.0.0.1:8000`. Review the collection for fixed URLs, external dependencies, and destructive requests before enabling it.
 3. After the collection is verified, in GitHub **Settings → Secrets and variables → Actions → Variables**, create repository variable `POSTMAN_CI_ENABLED` with value `true`.
 4. Open a PR or run the **Postman API CI** workflow manually from the Actions tab, then verify the job result. If the flag is not `true`, the job is skipped by design.
 
