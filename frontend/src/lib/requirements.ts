@@ -33,3 +33,27 @@ export async function getRequirements(
 
   return (await response.json()) as RequirementListResponse;
 }
+
+export class RequirementNotFoundError extends Error {
+  constructor() {
+    super("Requirement not found");
+    this.name = "RequirementNotFoundError";
+  }
+}
+
+export async function getRequirement(id: string): Promise<Requirement> {
+  const response = await fetch(
+    `${API_URL}/api/v1/requirements/${encodeURIComponent(id)}`,
+    { cache: "no-store" },
+  );
+
+  if (response.status === 404) {
+    throw new RequirementNotFoundError();
+  }
+
+  if (!response.ok) {
+    throw new Error(`Requirements API error: HTTP ${response.status}`);
+  }
+
+  return (await response.json()) as Requirement;
+}
