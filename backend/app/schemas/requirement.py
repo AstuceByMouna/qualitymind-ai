@@ -1,20 +1,40 @@
+
 """Public HTTP request and response schemas."""
+
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+)
 
 
 class RequirementCreate(BaseModel):
-    title: str = Field(min_length=1, max_length=255)
-    description: str = Field(min_length=1)
+    title: str = Field(
+        min_length=1,
+        max_length=255,
+    )
+    description: str = Field(
+        min_length=1,
+        max_length=10000,
+    )
 
-    @field_validator("title", "description")
+    @field_validator("title", "description", mode="before")
     @classmethod
-    def must_not_be_blank(cls, value: str) -> str:
+    def normalize_and_validate(cls, value: str) -> str:
+        if not isinstance(value, str):
+            raise ValueError("This field must be a string")
+
         value = value.strip()
+
         if not value:
             raise ValueError("This field cannot be empty")
+
+        if "\x00" in value:
+            raise ValueError("NUL characters are not allowed")
+
         return value
 
 
