@@ -1,6 +1,6 @@
 # ADR-001 — Architecture MVP : monolithe modulaire
 
-- **Statut :** retenu, validation finale QA-26 en attente
+- **Statut :** retenu et appliqué au MVP Requirements (complément QA-68 du 9 novembre 2026)
 - **Date :** 2026-11-06
 - **Responsable :** propriétaire QualityMind AI
 - **Jira :** [QA-26](https://gharbiconsulting.atlassian.net/browse/QA-26)
@@ -81,3 +81,7 @@ Ces références sont enregistrées ici comme décisions associées ; elles pour
 Sprint 1 : FastAPI minimal, `GET /health`, Pytest, mise en place du dépôt et contrôles de qualité. Étapes suivantes : exigences/persistance, provider IA mocké puis réel, worker isolé, observabilité/CI. Extraire des services uniquement si des contraintes mesurées le justifient.
 
 **Statut de validation :** architecture documentée dans Jira et Confluence ; la revue de la Pull Request documentaire et l'approbation finale du propriétaire conditionnent la clôture de QA-26. Ce document décrit une cible ; il ne prétend pas que les composants sont déjà implémentés.
+
+## Note d'implémentation — QA-68 (9 novembre 2026)
+
+Le choix d'architecture ADR-001 est conservé. Le module Requirements est implémenté sous `backend/app/modules/requirements/` avec domaines, service applicatif et repository ; l'adaptateur HTTP est sous `backend/app/api/v1/`. PostgreSQL/SQLAlchemy/Alembic, Pydantic, CORS et API versionnée sont effectifs. L'interface Next.js et les autres domaines restent à implémenter. Backend CI avec protection de `main` est active ; Postman Cloud CI est opt-in et non bloquante. Cette note actualise l'état observé sans réécrire les décisions initiales ni prétendre que les composants cibles sont disponibles.
