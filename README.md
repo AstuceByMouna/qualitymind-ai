@@ -173,6 +173,23 @@ The `POSTGRES_DB` override changes only the database name for the backend connec
 - `POSTGRES_DB=qualitymind_test` selects the isolated test database without changing connection credentials.
 - `CORS_ORIGINS` contains comma-separated frontend origins allowed to access the API from a browser.
 
+## Postman cloud collection CI (QA-67)
+
+The Postman collection is hosted in the Postman Cloud and runs in the separate GitHub Actions workflow [Postman API CI](.github/workflows/postman-ci.yml). It does **not** require repetitive JSON exports.
+
+Collection ID: `14273198-16be7483-92c9-443d-b79c-b202e056a82e`.
+
+The workflow starts PostgreSQL 17 with an isolated `qualitymind_test` database, applies Alembic migrations, starts FastAPI, waits for `/health`, and runs the cloud collection using the official Postman CLI GitHub Action.
+
+**One-time configuration (repository administrators):**
+
+1. In GitHub **Settings → Secrets and variables → Actions → Secrets**, create the repository secret `POSTMAN_API_KEY` containing a Postman API key authorized to read the collection. Never commit or paste this key into code, chat, logs, or the README.
+2. In Postman, configure the collection requests to use the variable `{{baseUrl}}` for the API host, and include assertions for expected response codes and data. The CI overrides `baseUrl` with `http://127.0.0.1:8000`. Review the collection for fixed URLs, external dependencies, and destructive requests before enabling it.
+3. After the collection is verified, in GitHub **Settings → Secrets and variables → Actions → Variables**, create repository variable `POSTMAN_CI_ENABLED` with value `true`.
+4. Open a PR or run the **Postman API CI** workflow manually from the Actions tab, then verify the job result. If the flag is not `true`, the job is skipped by design.
+
+The Postman CI check is **not yet required** by the `main` Ruleset; only the backend Pytest check is required. Make it mandatory in a separate approved change after the first successful collection run and secret configuration.
+
 ## Security
 
 Never commit real passwords, tokens, API keys, or local `.env` files.
