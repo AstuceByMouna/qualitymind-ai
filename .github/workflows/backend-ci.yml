@@ -1,10 +1,11 @@
 name: Backend CI
 
+# Run for every PR targeting main so this check can be made required.
+# Path filters would leave documentation-only PRs pending indefinitely.
 on:
   pull_request:
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-ci.yml"
+    branches:
+      - main
 
   push:
     branches:
