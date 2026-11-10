@@ -19,7 +19,9 @@ export default async function Home() {
     requirements = await getRequirements();
   } catch {
     apiError = true;
-  }  return (
+  }
+
+  return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <div className="flex min-h-screen">
         <aside className="hidden w-64 shrink-0 bg-slate-950 p-6 text-white md:block">
@@ -90,7 +92,7 @@ export default async function Home() {
 
             <section className="grid gap-4 sm:grid-cols-3" aria-label="Workspace status">
               {[
-                ["Requirements API", "Integration pending"],
+                ["Requirements API", apiError ? "Connection error" : "Connected"],
                 ["AI Test Design", "Planned"],
                 ["Quality Gates", "Planned"],
               ].map(([title, status]) => (
@@ -109,11 +111,11 @@ export default async function Home() {
                 <div>
                   <h3 className="font-semibold">Requirements Registry</h3>
                   <p className="mt-1 text-xs text-slate-500">
-                    API integration is the next development step.
+                    Requirements retrieved from FastAPI and PostgreSQL.
                   </p>
                 </div>
                 <span className="rounded-md bg-slate-100 px-3 py-2 text-xs text-slate-600">
-                  Preview
+                  {apiError ? "Unavailable" : `${requirements?.total ?? 0} total`}
                 </span>
               </div>
 
@@ -126,12 +128,40 @@ export default async function Home() {
                       <th scope="col" className="px-5 py-4">Created</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td colSpan={3} className="px-5 py-16 text-center text-slate-500">
-                        No requirements loaded. FastAPI integration is coming next.
-                      </td>
-                    </tr>
+                  <tbody className="divide-y divide-slate-100">
+                    {apiError ? (
+                      <tr>
+                        <td colSpan={3} role="alert" className="px-5 py-12 text-center text-red-600">
+                          Unable to connect to the Requirements API. Check that FastAPI and PostgreSQL are running.
+                        </td>
+                      </tr>
+                    ) : requirements?.items.length === 0 ? (
+                      <tr>
+                        <td colSpan={3} className="px-5 py-12 text-center text-slate-500">
+                          No requirements found.
+                        </td>
+                      </tr>
+                    ) : (
+                      requirements?.items.map((requirement) => (
+                        <tr key={requirement.id} className="hover:bg-slate-50">
+                          <td className="px-5 py-4 font-medium text-slate-900">
+                            {requirement.title}
+                            <p className="mt-1 font-mono text-xs text-slate-400">
+                              {requirement.id.slice(0, 8)}
+                            </p>
+                          </td>
+                          <td className="max-w-md px-5 py-4 text-slate-600">
+                            <p className="line-clamp-2">{requirement.description}</p>
+                          </td>
+                          <td className="px-5 py-4 text-slate-500">
+                            {new Intl.DateTimeFormat("en-CA", {
+                              dateStyle: "medium",
+                              timeZone: "UTC",
+                            }).format(new Date(requirement.created_at))}
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
