@@ -1,6 +1,6 @@
 # QualityMind AI — Definition of Ready et Definition of Done
 
-**Version :** 1.0 — proposition soumise à validation  
+**Version :** 1.1 — état d'adoption mis à jour le 9 novembre 2026  
 **Jira :** [QA-22](https://gharbiconsulting.atlassian.net/browse/QA-22)  
 **Confluence :** [Gouvernance SDLC](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458753) · [Stratégie QA](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/425986)
 
@@ -48,9 +48,13 @@ Les décisions automatisées sont déterministes. L'IA ne peut pas contourner un
 | IA | Schémas, jeu de référence, gestion d'erreurs, revue humaine | Évaluations et décisions |
 | UI | Parcours critiques Playwright et contrôles d'accès | Rapport E2E et traces |
 
-## Limites actuelles du projet
+## Contrôles vérifiés et limites au 9 novembre 2026
 
-La configuration des protections de branches, les workflows GitHub Actions, les seuils de couverture et le reporting automatisé ne sont **pas encore démontrés**. Leur mise en place fera l'objet de tâches de développement distinctes. Une revue assistée par IA sur un projet individuel ne constitue pas une revue indépendante.
+- **Actif :** GitHub Actions Backend CI (Python 3.14, PostgreSQL 17, Alembic, Pytest), sur chaque Pull Request vers `main`; le statut `FastAPI / Pytest / PostgreSQL` est obligatoire par [Ruleset 26914184](https://github.com/AstuceByMouna/qualitymind-ai/rules/26914184). La vérification négative volontaire (PR #16, non fusionnée) a échoué et le blocage a été contrôlé.
+- **Actif, non bloquant :** Postman API CI, intégré à Postman Cloud, activé par `POSTMAN_CI_ENABLED=true`; secret `POSTMAN_API_KEY` et variable de collection `base_url`. Succès confirmé par le propriétaire, sans publication des journaux dans le présent document.
+- **Preuves :** QA-60 à QA-64 (corrections API/DB/validation/tests), QA-66 (protection), QA-67 (Postman), QA-68 (documentation). En QA-64, 35 tests Pytest ont réussi localement.
+- **Pas encore implémenté :** couverture mesurée avec seuil obligatoire, lint/security scans bloquants, frontend/Playwright E2E, production/CD. Ne jamais déclarer ces contrôles `PASS`.
+- **Indépendance :** une revue humaine tierce n'est pas établie ; les vérifications du propriétaire et les retours d'IA restent distincts d'un audit indépendant.
 
 ## Utilisation pour QA-22
 
