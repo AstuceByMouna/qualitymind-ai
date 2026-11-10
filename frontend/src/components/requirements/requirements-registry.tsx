@@ -79,7 +79,12 @@ export function RequirementsRegistry({ data, apiError, page, pageSize }: Props) 
             ) : rows.map((requirement) => (
               <tr key={requirement.id} className="hover:bg-slate-50">
                 <td className="px-5 py-4 font-medium text-slate-900">
-                  {requirement.title}
+                  <Link
+                    href={`/requirements/${requirement.id}`}
+                    className="text-slate-900 underline-offset-4 hover:text-sky-700 hover:underline focus-visible:outline-2 focus-visible:outline-sky-600"
+                  >
+                    {requirement.title}
+                  </Link>
                   <p className="mt-1 font-mono text-xs text-slate-500">{requirement.id.slice(0, 8)}</p>
                 </td>
                 <td className="max-w-md px-5 py-4 text-slate-600">
