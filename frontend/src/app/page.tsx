@@ -2,6 +2,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { getRequirements } from "@/lib/requirements";
+import { RequirementsRegistry } from "@/components/requirements/requirements-registry";
+
+const PAGE_SIZE = 5;
 const navigation = [
   { label: "Overview", icon: "◫", available: false },
   { label: "Requirements", icon: "≡", available: true },
@@ -12,7 +15,9 @@ const navigation = [
   { label: "Quality Governance", icon: "▤", available: false },
 ];
 
-export default function Home() {
+type PageProps = { searchParams: Promise<{ page?: string | string[] }> };
+
+export default function Home({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <div className="flex min-h-screen">
@@ -83,7 +88,7 @@ export default function Home() {
             </div>
 
             <Suspense fallback={<RequirementsLoading />}>
-              <RequirementsContent />
+              <RequirementsContent searchParams={searchParams} />
             </Suspense>
           </div>
         </main>
@@ -92,12 +97,19 @@ export default function Home() {
   );
 }
 
-async function RequirementsContent() {
+async function RequirementsContent({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const rawPage = typeof params.page === "string" ? params.page : "1";
+  const parsedPage = Number(rawPage);
+  const page = Number.isSafeInteger(parsedPage) && parsedPage > 0
+    ? Math.min(parsedPage, 100000)
+    : 1;
+
   let requirements = null;
   let apiError = false;
 
   try {
-    requirements = await getRequirements();
+    requirements = await getRequirements(PAGE_SIZE, (page - 1) * PAGE_SIZE);
   } catch {
     apiError = true;
   }
@@ -105,81 +117,24 @@ async function RequirementsContent() {
   return (
     <div className="space-y-6">
       <section className="grid gap-4 sm:grid-cols-3" aria-label="Workspace status">
-                    {[
-                      ["Requirements API", apiError ? "Connection error" : "Connected"],
-                      ["AI Test Design", "Planned"],
-                      ["Quality Gates", "Planned"],
-                    ].map(([title, status]) => (
-                      <div
-                        key={title}
-                        className="rounded-xl border border-slate-200 bg-white p-5"
-                      >
-                        <p className="text-sm text-slate-500">{title}</p>
-                        <p className="mt-3 text-lg font-semibold">{status}</p>
-                      </div>
-                    ))}
-                  </section>
-      
-                  <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-5">
-                      <div>
-                        <h3 className="font-semibold">Requirements Registry</h3>
-                        <p className="mt-1 text-xs text-slate-500">
-                          Requirements retrieved from FastAPI and PostgreSQL.
-                        </p>
-                      </div>
-                      <span className="rounded-md bg-slate-100 px-3 py-2 text-xs text-slate-600">
-                        {apiError ? "Unavailable" : `${requirements?.total ?? 0} total`}
-                      </span>
-                    </div>
-      
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
-                          <tr>
-                            <th scope="col" className="px-5 py-4">Requirement</th>
-                            <th scope="col" className="px-5 py-4">Description</th>
-                            <th scope="col" className="px-5 py-4">Created</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {apiError ? (
-                            <tr>
-                              <td colSpan={3} role="alert" className="px-5 py-12 text-center text-red-600">
-                                Unable to connect to the Requirements API. Check that FastAPI and PostgreSQL are running.
-                              </td>
-                            </tr>
-                          ) : requirements?.items.length === 0 ? (
-                            <tr>
-                              <td colSpan={3} className="px-5 py-12 text-center text-slate-500">
-                                No requirements found.
-                              </td>
-                            </tr>
-                          ) : (
-                            requirements?.items.map((requirement) => (
-                              <tr key={requirement.id} className="hover:bg-slate-50">
-                                <td className="px-5 py-4 font-medium text-slate-900">
-                                  {requirement.title}
-                                  <p className="mt-1 font-mono text-xs text-slate-400">
-                                    {requirement.id.slice(0, 8)}
-                                  </p>
-                                </td>
-                                <td className="max-w-md px-5 py-4 text-slate-600">
-                                  <p className="line-clamp-2">{requirement.description}</p>
-                                </td>
-                                <td className="px-5 py-4 text-slate-500">
-                                  {new Intl.DateTimeFormat("en-CA", {
-                                    dateStyle: "medium",
-                                    timeZone: "UTC",
-                                  }).format(new Date(requirement.created_at))}
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </section>
+        {[
+          ["Requirements API", apiError ? "Connection error" : "Connected"],
+          ["AI Test Design", "Planned"],
+          ["Quality Gates", "Planned"],
+        ].map(([title, status]) => (
+          <div key={title} className="rounded-xl border border-slate-200 bg-white p-5">
+            <p className="text-sm text-slate-500">{title}</p>
+            <p className="mt-3 text-lg font-semibold">{status}</p>
+          </div>
+        ))}
+      </section>
+      <RequirementsRegistry
+        key={page}
+        data={requirements}
+        apiError={apiError}
+        page={page}
+        pageSize={PAGE_SIZE}
+      />
     </div>
   );
 }
