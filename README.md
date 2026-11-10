@@ -81,14 +81,22 @@ Before merging a PR: verify its diff, check the GitHub Actions run, ensure the r
 
 Some Confluence pages may require authorized access.
 
-## Development Status
+## Development Status — 9 November 2026 (QA-68)
 
-**Sprint 1 — Technical Foundations**
+**Completed:** Sprint 0 repository/governance foundations; Sprint 1 FastAPI Requirements MVP with SQLAlchemy/PostgreSQL and Alembic; Sprint 2 backend stabilization (QA-60–64).
 
-- Repository structure initialized.
-- Development workflow documented.
-- FastAPI backend implementation pending.
-- Automated testing and CI/CD pending.
+**Implemented and verified:**
+- `GET /health`; versioned `POST/GET /api/v1/requirements` endpoints, including detail and paginated list (`items`, `total`, `limit`, `offset`).
+- Pydantic validation: normalized title up to 255 characters, description up to 10,000, controlled HTTP 422 for invalid input; explicit HTTP 404 for absent requirements.
+- PostgreSQL 17 via Docker Compose, portable `DATABASE_URL` configuration, isolated `qualitymind_test`, and Alembic migrations.
+- Explicit CORS origins for the future Next.js frontend.
+- 35 Pytest checks passed on the developer machine during QA-64, and Backend CI passes on GitHub Actions.
+- `main` protected by [GitHub Ruleset](https://github.com/AstuceByMouna/qualitymind-ai/rules/26914184): PR required, review threads resolved, required `FastAPI / Pytest / PostgreSQL` check; negative CI test verified with [PR #16](https://github.com/AstuceByMouna/qualitymind-ai/pull/16) (closed without merge).
+- Postman Cloud collection execution through [Postman API CI](.github/workflows/postman-ci.yml) via secret `POSTMAN_API_KEY`, collection variable `base_url`, and opt-in repository variable `POSTMAN_CI_ENABLED=true`. Successful run reported by project owner; this job is **not** a mandatory Ruleset check.
+
+**Not yet implemented:** Next.js/React frontend, Playwright UI tests, OpenAI integrations and other AI modules, distributed workers, production deployment, and observability targets. These remain planned, not delivered.
+
+**Traceability:** [QA-60](https://gharbiconsulting.atlassian.net/browse/QA-60) · [QA-61](https://gharbiconsulting.atlassian.net/browse/QA-61) · [QA-62](https://gharbiconsulting.atlassian.net/browse/QA-62) · [QA-63](https://gharbiconsulting.atlassian.net/browse/QA-63) · [QA-64](https://gharbiconsulting.atlassian.net/browse/QA-64) · [QA-66](https://gharbiconsulting.atlassian.net/browse/QA-66) · [QA-67](https://gharbiconsulting.atlassian.net/browse/QA-67) · [QA-68](https://gharbiconsulting.atlassian.net/browse/QA-68).
 
 ## Local Setup
 
