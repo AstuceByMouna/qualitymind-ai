@@ -52,3 +52,12 @@ def test_valid_requirement_is_accepted():
 
     assert requirement.title == "Authentication"
     assert requirement.description == "User can log in"
+
+def test_title_normalization_at_maximum_length():
+    """Normalization must happen before length validation."""
+    requirement = RequirementCreate(
+        title="  " + "A" * 255 + "  ",
+        description="Valid description",
+    )
+
+    assert len(requirement.title) == 255
