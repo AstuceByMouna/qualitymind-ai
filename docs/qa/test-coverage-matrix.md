@@ -82,7 +82,7 @@ Les chemins suivants sont relatifs à `backend/`.
 | TC-005 | `tests/unit/test_requirement_validation.py` | `test_description_rejects_excessive_length` | Longueur description |
 | TC-005 | `tests/unit/test_requirement_validation.py` | `test_title_length_checked_after_trimming` | Normalisation |
 | TC-005 | `tests/unit/test_requirement_validation.py` | `test_valid_requirement_is_accepted` | Données valides |
-| TC-005 | `tests/unit/test_requirement_validation.py` | `test_api_accepts_normalized_title_schema` | Titre normalisé |
+| TC-005 | `tests/unit/test_requirement_validation.py` | `test_title_normalization_at_maximum_length` | Titre normalisé |
 | TC-005 | `tests/api/test_requirements.py` | `test_create_requirement_with_empty_title` | Titre vide |
 | TC-005 | `tests/api/test_requirements.py` | `test_get_requirement_invalid_uuid` | UUID invalide |
 | TC-005 | `tests/api/test_requirements.py` | `test_pagination_invalid_parameters` | Pagination invalide |
