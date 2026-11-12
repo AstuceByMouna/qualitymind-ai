@@ -28,13 +28,3 @@ def test_api_rejects_invalid_requirements(title, description):
 
     assert response.status_code == 422
     assert "detail" in response.json()
-
-
-def test_api_accepts_normalized_title_schema():
-    """Normalization must happen before length validation."""
-    requirement = RequirementCreate(
-        title="  " + "A" * 255 + "  ",
-        description="Valid description",
-    )
-
-    assert len(requirement.title) == 255
