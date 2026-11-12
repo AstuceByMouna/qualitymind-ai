@@ -3,6 +3,8 @@
 **Référence :** QA-55 (audit et stratégie) — US QA-69 (industrialisation des tests API/UI)
 **Périmètre fonctionnel :** QA-53 (liste des exigences), QA-54 (détail des exigences), QA-49 (création et validation)
 **Version :** 0.3 — revue documentaire corrigée, avant PR
+
+**Organisation QA-73 :** `backend/tests/unit/`, `backend/tests/api/`, `backend/tests/integration/`. Voir `backend/tests/README.md`. Les preuves baseline historiques correspondent au code avant reclassement ; la nouvelle PR doit faire revalider les 35 tests.
 **État :** à valider et à versionner dans `docs/qa/test-coverage-matrix.md`
 
 ## 1. Objectif
@@ -66,30 +68,30 @@ Les chemins suivants sont relatifs à `backend/`.
 
 | TC | Fichier | Fonction Pytest | Preuve |
 |---|---|---|---|
-| TC-001 | `tests/test_requirements.py` | `test_list_page_shape_and_total` | Contrat mocké |
-| TC-001 | `tests/test_requirements_api_coverage.py` | `test_list_defaults_and_empty_page` | Structure et liste |
-| TC-001 | `tests/test_requirements_api_coverage.py` | `test_list_returns_empty_dataset` | Liste vide |
-| TC-002 | `tests/test_requirements_api_coverage.py` | `test_list_order_and_pagination_with_isolated_test_records` | Pagination PostgreSQL |
-| TC-003 | `tests/test_requirements_integration.py` | `test_create_and_retrieve_requirement` | Création et lecture |
-| TC-003 | `tests/test_requirements_integration.py` | `test_database_connection` | Connexion PostgreSQL |
-| TC-004 | `tests/test_requirements.py` | `test_get_requirement_not_found` | 404 avec mock |
-| TC-004 | `tests/test_requirements_api_coverage.py` | `test_get_unknown_requirement_returns_404` | 404 avec base de test |
-| TC-005 | `tests/test_requirement_validation.py` | `test_api_rejects_invalid_requirements` | 4 variantes HTTP 422 |
-| TC-005 | `tests/test_requirement_validation.py` | `test_title_rejects_null_character` | Caractère NUL |
-| TC-005 | `tests/test_requirement_validation.py` | `test_title_rejects_more_than_255_characters` | Longueur du titre |
-| TC-005 | `tests/test_requirement_validation.py` | `test_description_rejects_excessive_length` | Longueur description |
-| TC-005 | `tests/test_requirement_validation.py` | `test_title_length_checked_after_trimming` | Normalisation |
-| TC-005 | `tests/test_requirement_validation.py` | `test_valid_requirement_is_accepted` | Données valides |
-| TC-005 | `tests/test_requirement_validation.py` | `test_api_accepts_normalized_title_schema` | Titre normalisé |
-| TC-005 | `tests/test_requirements.py` | `test_create_requirement_with_empty_title` | Titre vide |
-| TC-005 | `tests/test_requirements.py` | `test_get_requirement_invalid_uuid` | UUID invalide |
-| TC-005 | `tests/test_requirements.py` | `test_pagination_invalid_parameters` | Pagination invalide |
-| TC-005 | `tests/test_requirements_api_coverage.py` | `test_get_invalid_uuid_returns_422` | 3 variantes |
-| TC-005 | `tests/test_requirements_api_coverage.py` | `test_list_invalid_pagination_returns_422` | 6 variantes |
-| TC-012 | `tests/test_health.py` | `test_health_returns_200` | Santé FastAPI |
-| TC-013 | `tests/test_cors.py` | `test_cors_allows_frontend_origin` | Origine autorisée |
-| TC-013 | `tests/test_cors.py` | `test_cors_rejects_unknown_origin` | Origine refusée |
-| TC-014 | `tests/test_requirements.py` | `test_openapi_contract` | Contrat OpenAPI |
+| TC-001 | `tests/api/test_requirements.py` | `test_list_page_shape_and_total` | Contrat mocké |
+| TC-001 | `tests/integration/test_requirements_api_coverage.py` | `test_list_defaults_and_empty_page` | Structure et liste |
+| TC-001 | `tests/integration/test_requirements_api_coverage.py` | `test_list_returns_empty_dataset` | Liste vide |
+| TC-002 | `tests/integration/test_requirements_api_coverage.py` | `test_list_order_and_pagination_with_isolated_test_records` | Pagination PostgreSQL |
+| TC-003 | `tests/integration/test_requirements_integration.py` | `test_create_and_retrieve_requirement` | Création et lecture |
+| TC-003 | `tests/integration/test_requirements_integration.py` | `test_database_connection` | Connexion PostgreSQL |
+| TC-004 | `tests/api/test_requirements.py` | `test_get_requirement_not_found` | 404 avec mock |
+| TC-004 | `tests/integration/test_requirements_api_coverage.py` | `test_get_unknown_requirement_returns_404` | 404 avec base de test |
+| TC-005 | `tests/api/test_requirement_validation_api.py` | `test_api_rejects_invalid_requirements` | 4 variantes HTTP 422 |
+| TC-005 | `tests/unit/test_requirement_validation.py` | `test_title_rejects_null_character` | Caractère NUL |
+| TC-005 | `tests/unit/test_requirement_validation.py` | `test_title_rejects_more_than_255_characters` | Longueur du titre |
+| TC-005 | `tests/unit/test_requirement_validation.py` | `test_description_rejects_excessive_length` | Longueur description |
+| TC-005 | `tests/unit/test_requirement_validation.py` | `test_title_length_checked_after_trimming` | Normalisation |
+| TC-005 | `tests/unit/test_requirement_validation.py` | `test_valid_requirement_is_accepted` | Données valides |
+| TC-005 | `tests/unit/test_requirement_validation.py` | `test_title_normalization_at_maximum_length` | Titre normalisé |
+| TC-005 | `tests/api/test_requirements.py` | `test_create_requirement_with_empty_title` | Titre vide |
+| TC-005 | `tests/api/test_requirements.py` | `test_get_requirement_invalid_uuid` | UUID invalide |
+| TC-005 | `tests/api/test_requirements.py` | `test_pagination_invalid_parameters` | Pagination invalide |
+| TC-005 | `tests/integration/test_requirements_api_coverage.py` | `test_get_invalid_uuid_returns_422` | 3 variantes |
+| TC-005 | `tests/integration/test_requirements_api_coverage.py` | `test_list_invalid_pagination_returns_422` | 6 variantes |
+| TC-012 | `tests/api/test_health.py` | `test_health_returns_200` | Santé FastAPI |
+| TC-013 | `tests/api/test_cors.py` | `test_cors_allows_frontend_origin` | Origine autorisée |
+| TC-013 | `tests/api/test_cors.py` | `test_cors_rejects_unknown_origin` | Origine refusée |
+| TC-014 | `tests/api/test_requirements.py` | `test_openapi_contract` | Contrat OpenAPI |
 
 Les tests paramétrés produisent plusieurs cas exécutables à partir d'une même fonction.
 
