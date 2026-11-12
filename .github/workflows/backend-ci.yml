@@ -1,7 +1,6 @@
 name: Backend CI
 
-# Run for every PR targeting main so this check can be made required.
-# Path filters would leave documentation-only PRs pending indefinitely.
+# Always run on PRs targeting main so required checks report a result.
 on:
   pull_request:
     branches:
@@ -18,7 +17,64 @@ permissions:
   contents: read
 
 jobs:
-  backend-tests:
+  unit-tests:
+    name: Python / Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: python -m pytest tests/unit -v
+
+  api-tests:
+    name: FastAPI / API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      # Needed when app.db is imported; these API tests do not connect to a DB.
+      POSTGRES_PASSWORD: ci_only_password
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run API contract tests
+        run: python -m pytest tests/api -v
+
+  integration-tests:
+    # Keep this name stable until required branch-protection checks are reviewed.
     name: FastAPI / Pytest / PostgreSQL
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -37,7 +93,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U qualitymind -d qualitymind"
+          --health-cmd "pg_isready -U qualitymind -d qualitymind_test"
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
@@ -60,14 +116,14 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
-      - name: Validate database connection and migration
+      - name: Validate isolated test DB and migrations
         run: |
-          python -c "from app.db import engine; from sqlalchemy import text; c = engine.connect(); assert c.execute(text('SELECT 1')).scalar() == 1; c.close()"
+          python -c "from app.db import engine; from sqlalchemy import text; assert engine.url.database == 'qualitymind_test'; c = engine.connect(); assert c.execute(text('SELECT 1')).scalar() == 1; c.close()"
           python -m alembic upgrade head
           python -m alembic current
           python -m alembic downgrade base
           python -m alembic upgrade head
           python -m alembic current
 
-      - name: Run API tests
-        run: python -m pytest -v
+      - name: Run PostgreSQL integration tests
+        run: python -m pytest tests/integration -v
