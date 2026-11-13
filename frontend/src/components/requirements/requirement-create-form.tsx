@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useRef, useState, type FormEvent } from "react";
+import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
 
 type FieldName = "title" | "description";
 type FieldErrors = Partial<Record<FieldName, string>>;
@@ -21,6 +21,19 @@ export function RequirementCreateForm() {
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submissionLock = useRef(false);
+
+  // Next.js Cache Components keeps page state after client-side navigation.
+  // A create form must start empty after Cancel, Back, or a successful save.
+  useLayoutEffect(() => {
+    return () => {
+      setTitle("");
+      setDescription("");
+      setFieldErrors({});
+      setFormError("");
+      setIsSubmitting(false);
+      submissionLock.current = false;
+    };
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
