@@ -63,8 +63,8 @@ test("QA-82 - friendly failure message retains input", async ({ page }) => {
   await page.getByTestId("requirement-description").fill("Keep these details in the form.");
   await page.getByTestId("requirement-create-submit").click();
 
-  await expect(page.getByRole("alert")).toContainText("We couldn't confirm that your requirement was saved.");
-  await expect(page.getByRole("alert")).not.toContainText(/FastAPI|PostgreSQL|API unavailable|server/i);
+  await expect(page.getByTestId("requirement-create-error")).toContainText("We couldn't confirm that your requirement was saved.");
+  await expect(page.getByTestId("requirement-create-error")).not.toContainText(/FastAPI|PostgreSQL|API unavailable|server/i);
   await expect(page.getByTestId("requirement-title")).toHaveValue("Unsaved after interruption");
   await expect(page.getByTestId("requirement-description")).toHaveValue("Keep these details in the form.");
   await expect(page.getByTestId("requirement-create-submit")).toBeEnabled();
