@@ -70,25 +70,25 @@ export function RequirementCreateForm() {
       try {
         data = (await response.json()) as ApiResult;
       } catch {
-        setFormError("The server returned an unexpected response. Check the registry before retrying.");
+        setFormError("We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again.");
         return;
       }
 
       if (!response.ok) {
         setFieldErrors(data.fieldErrors ?? {});
-        setFormError(data.error ?? "Unable to save the requirement. Please try again.");
+        setFormError(data.error ?? "We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again.");
         return;
       }
 
       if (!data.id) {
-        setFormError("The server did not return an identifier. Check the registry before retrying.");
+        setFormError("We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again.");
         return;
       }
 
       router.push(`/requirements/${encodeURIComponent(data.id)}`);
       navigated = true;
     } catch {
-      setFormError("Could not confirm the save. Check the registry before retrying to avoid duplicate requirements.");
+      setFormError("We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again.");
     } finally {
       if (!navigated) {
         submissionLock.current = false;

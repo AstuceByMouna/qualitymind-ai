@@ -46,3 +46,27 @@ test("QA-82 - Back navigation discards an unsaved draft", async ({ page }) => {
   await expect(page.getByTestId("requirement-title")).toBeEmpty();
   await expect(page.getByTestId("requirement-description")).toBeEmpty();
 });
+
+test("QA-82 - friendly failure message retains input", async ({ page }) => {
+  await page.route("**/api/requirements", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({
+        error: "We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again.",
+      }),
+    });
+  });
+
+  await page.goto("/requirements/new");
+  await page.getByTestId("requirement-title").fill("Unsaved after interruption");
+  await page.getByTestId("requirement-description").fill("Keep these details in the form.");
+  await page.getByTestId("requirement-create-submit").click();
+
+  await expect(page.getByRole("alert")).toContainText("We couldn't confirm that your requirement was saved.");
+  await expect(page.getByRole("alert")).not.toContainText(/FastAPI|PostgreSQL|API unavailable|server/i);
+  await expect(page.getByTestId("requirement-title")).toHaveValue("Unsaved after interruption");
+  await expect(page.getByTestId("requirement-description")).toHaveValue("Keep these details in the form.");
+  await expect(page.getByTestId("requirement-create-submit")).toBeEnabled();
+  await expect(page).toHaveURL(/\/requirements\/new$/);
+});

@@ -51,8 +51,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: response.status === 422
-            ? "The API rejected the requirement. Review the entered values."
-            : "Unable to save the requirement. Please try again.",
+            ? "Please check the title and description."
+            : "We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again.",
         },
         { status: response.status === 422 ? 422 : 502 },
       );
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     if (created === null || typeof created !== "object" || !("id" in created) ||
         typeof created.id !== "string" || !UUID_PATTERN.test(created.id)) {
       return NextResponse.json(
-        { error: "The API returned an unexpected result. Check the registry before retrying." },
+        { error: "We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again." },
         { status: 502 },
       );
     }
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ id: created.id }, { status: 201 });
   } catch {
     return NextResponse.json(
-      { error: "Requirements API unavailable. Verify FastAPI and PostgreSQL, then try again." },
+      { error: "We couldn't confirm that your requirement was saved. Your information is still here. Check the requirements list before trying again." },
       { status: 503 },
     );
   }
