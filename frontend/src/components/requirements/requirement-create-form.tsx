@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 
 type FieldName = "title" | "description";
 type FieldErrors = Partial<Record<FieldName, string>>;
@@ -20,10 +20,11 @@ export function RequirementCreateForm() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submissionLock = useRef(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isSubmitting) return;
+    if (submissionLock.current) return;
 
     const cleanTitle = title.trim();
     const cleanDescription = description.trim();
@@ -43,14 +44,22 @@ export function RequirementCreateForm() {
       return;
     }
 
+    submissionLock.current = true;
     setIsSubmitting(true);
+    let navigated = false;
     try {
       const response = await fetch("/api/requirements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: cleanTitle, description: cleanDescription }),
       });
-      const data = (await response.json()) as ApiResult;
+      let data: ApiResult;
+      try {
+        data = (await response.json()) as ApiResult;
+      } catch {
+        setFormError("The server returned an unexpected response. Check the registry before retrying.");
+        return;
+      }
 
       if (!response.ok) {
         setFieldErrors(data.fieldErrors ?? {});
@@ -64,11 +73,14 @@ export function RequirementCreateForm() {
       }
 
       router.push(`/requirements/${encodeURIComponent(data.id)}`);
-      router.refresh();
+      navigated = true;
     } catch {
-      setFormError("Unable to contact the server. Please check your connection and try again.");
+      setFormError("Could not confirm the save. Check the registry before retrying to avoid duplicate requirements.");
     } finally {
-      setIsSubmitting(false);
+      if (!navigated) {
+        submissionLock.current = false;
+        setIsSubmitting(false);
+      }
     }
   }
 
