@@ -100,6 +100,13 @@ test("QA82-TC02 @critical - required fields show linked errors and focus Title",
   const title = create.titleInput;
   const description = create.descriptionInput;
 
+  // Interact with the client component before testing an empty submission.
+  // An immediate click after a direct navigation may precede React hydration.
+  // This exercises a user clearing the required title before submitting.
+  await title.fill("Temporary title");
+  await title.clear();
+  await expect(title).toBeEmpty();
+
   await create.submit();
 
   await expect(title).toBeFocused();
