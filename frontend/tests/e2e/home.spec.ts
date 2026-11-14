@@ -70,3 +70,38 @@ test("QA-82 - friendly failure message retains input", async ({ page }) => {
   await expect(page.getByTestId("requirement-create-submit")).toBeEnabled();
   await expect(page).toHaveURL(/\/requirements\/new$/);
 });
+
+test("QA82-TC01 - successful creation redirects to requirement details", async ({ page }) => {
+  // Simulate the API response without creating data in PostgreSQL.
+  // The real backend/persistence path was verified separately in manual TC01.
+  const createdId = "7144d014-d7da-493e-b6b4-e64c1a0b7ec0";
+  const payloads: unknown[] = [];
+
+  await page.route("**/api/requirements", async (route) => {
+    if (route.request().method() !== "POST") {
+      await route.continue();
+      return;
+    }
+
+    payloads.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({ id: createdId }),
+    });
+  });
+
+  await page.goto("/");
+  await page.getByTestId("requirement-create-link").click();
+  await expect(page).toHaveURL(/\/requirements\/new$/);
+
+  await page.getByTestId("requirement-title").fill("  New requirement  ");
+  await page.getByTestId("requirement-description").fill("  User-visible acceptance criterion.  ");
+  await page.getByTestId("requirement-create-submit").click();
+
+  await expect(page).toHaveURL(`http://127.0.0.1:3000/requirements/${createdId}`);
+  expect(payloads).toEqual([{
+    title: "New requirement",
+    description: "User-visible acceptance criterion.",
+  }]);
+});
