@@ -10,7 +10,7 @@ test("QA82-TC03 @regression - Cancel discards an unsaved draft", async ({ page }
   await create.titleInput.fill("Unsaved draft");
   await create.descriptionInput.fill("This content should be discarded.");
   await create.cancel();
-  await expect(page).toHaveURL("http://127.0.0.1:3000/");
+  await expect(page).toHaveURL((url) => url.pathname === "/");
 
   await workbench.openCreateRequirement();
   await expect(create.titleInput).toBeEmpty();
@@ -86,7 +86,7 @@ test("QA82-TC01 @critical @mock-api - successful creation redirects to requireme
   await create.descriptionInput.fill("  User-visible acceptance criterion.  ");
   await create.submit();
 
-  await expect(page).toHaveURL(`http://127.0.0.1:3000/requirements/${createdId}`);
+  await expect(page).toHaveURL((url) => url.pathname === `/requirements/${createdId}`);
   expect(payloads).toEqual([{
     title: "New requirement",
     description: "User-visible acceptance criterion.",
@@ -99,6 +99,13 @@ test("QA82-TC02 @critical - required fields show linked errors and focus Title",
   await create.goto();
   const title = create.titleInput;
   const description = create.descriptionInput;
+
+  // Interact with the client component before testing an empty submission.
+  // An immediate click after a direct navigation may precede React hydration.
+  // This exercises a user clearing the required title before submitting.
+  await title.fill("Temporary title");
+  await title.clear();
+  await expect(title).toBeEmpty();
 
   await create.submit();
 
@@ -173,6 +180,6 @@ test("QA82-TC05 @critical @mock-api - concurrent submit is blocked while saving"
     finishRequest();
   }
 
-  await expect(page).toHaveURL(`http://127.0.0.1:3000/requirements/${createdId}`);
+  await expect(page).toHaveURL((url) => url.pathname === `/requirements/${createdId}`);
   expect(postCount).toBe(1);
 });

@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".next-qa/**", // Generated assets for the isolated QA Next.js server.
     "out/**",
     "build/**",
     "next-env.d.ts",
