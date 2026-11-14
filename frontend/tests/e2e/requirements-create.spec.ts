@@ -33,7 +33,6 @@ test("QA82-TC04 @regression - Back navigation discards an unsaved draft", async 
 
 test("QA82-TC06 @critical @mock-api - friendly failure message retains input", async ({ page }) => {
   const create = new RequirementCreatePage(page);
-  const workbench = new RequirementsWorkbenchPage(page);
   await page.route("**/api/requirements", async (route) => {
     await route.fulfill({
       status: 503,
@@ -97,7 +96,6 @@ test("QA82-TC01 @critical @mock-api - successful creation redirects to requireme
 
 test("QA82-TC02 @critical - required fields show linked errors and focus Title", async ({ page }) => {
   const create = new RequirementCreatePage(page);
-  const workbench = new RequirementsWorkbenchPage(page);
   await create.goto();
   const title = create.titleInput;
   const description = create.descriptionInput;
@@ -117,7 +115,6 @@ test("QA82-TC02 @critical - required fields show linked errors and focus Title",
 
 test("QA82-TC08 @critical - focus moves to Description when Title is valid", async ({ page }) => {
   const create = new RequirementCreatePage(page);
-  const workbench = new RequirementsWorkbenchPage(page);
   await create.goto();
   const title = create.titleInput;
   const description = create.descriptionInput;
@@ -134,7 +131,6 @@ test("QA82-TC08 @critical - focus moves to Description when Title is valid", asy
 
 test("QA82-TC05 @critical @mock-api - concurrent submit is blocked while saving", async ({ page }) => {
   const create = new RequirementCreatePage(page);
-  const workbench = new RequirementsWorkbenchPage(page);
   const createdId = "182b9c07-a6e9-45a9-b24b-ae01151ce762";
   let postCount = 0;
   let finishRequest: () => void = () => {};
