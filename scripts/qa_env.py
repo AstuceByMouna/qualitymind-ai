@@ -32,7 +32,7 @@ QA_NAME = "qualitymind_qa"
 QA_API_URL = "http://127.0.0.1:8001"
 
 
-def get_environment() -> tuple[dict[str, str], str]:
+def get_environment() -> dict[str, str]:
     if not QA_ENV.is_file():
         raise RuntimeError("Missing .env.qa. Copy .env.qa.example to .env.qa and set QA_POSTGRES_PASSWORD.")
 
@@ -59,7 +59,7 @@ def get_environment() -> tuple[dict[str, str], str]:
     env["CORS_ORIGINS"] = "http://localhost:3001,http://127.0.0.1:3001"
     env["API_BASE_URL"] = QA_API_URL
     env["QM_NEXT_DIST_DIR"] = ".next-qa"
-    return env, password
+    return env
 
 
 def check_database(env: dict[str, str]) -> None:
@@ -106,6 +106,16 @@ def check_api() -> None:
     print("PASS: isolated QA API responds on 127.0.0.1:8001.")
 
 
+def check_frontend() -> None:
+    try:
+        with urlopen("http://127.0.0.1:3001/", timeout=8) as response:
+            if response.status != 200:
+                raise RuntimeError(f"QA frontend returned HTTP {response.status}")
+    except (URLError, TimeoutError) as exc:
+        raise RuntimeError("QA frontend is not running at http://127.0.0.1:3001/") from exc
+    print("PASS: isolated QA frontend responds on 127.0.0.1:3001.")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Isolated QualityMind AI QA environment")
     parser.add_argument(
@@ -113,7 +123,7 @@ def main() -> None:
         choices=["db-up", "db-down", "migrate", "api", "frontend", "check"],
     )
     args = parser.parse_args()
-    env, password = get_environment()
+    env = get_environment()
 
     if args.action == "db-up":
         compose(["up", "-d", "--wait", "db"])
@@ -146,6 +156,7 @@ def main() -> None:
     elif args.action == "check":
         check_database(env)
         check_api()
+        check_frontend()
 
 
 if __name__ == "__main__":
