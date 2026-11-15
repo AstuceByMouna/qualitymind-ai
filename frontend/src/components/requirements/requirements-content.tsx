@@ -1,4 +1,5 @@
 import { getRequirements } from "@/lib/requirements";
+import { redirect } from "next/navigation";
 import { RequirementsRegistry } from "@/components/requirements/requirements-registry";
 
 const PAGE_SIZE = 5;
@@ -20,6 +21,18 @@ export async function RequirementsContent({ searchParams }: PageProps) {
     requirements = await getRequirements(PAGE_SIZE, (page - 1) * PAGE_SIZE, query);
   } catch {
     apiError = true;
+  }
+
+  // Normalize out-of-range URLs after the server has counted filtered rows.
+  // The canonical URL always displays a real page, never "Page 100 of 2".
+  if (requirements && page > 1) {
+    const lastPage = Math.max(1, Math.ceil(requirements.total / PAGE_SIZE));
+    if (page > lastPage) {
+      const url = new URLSearchParams();
+      if (query) url.set("q", query);
+      if (lastPage > 1) url.set("page", String(lastPage));
+      redirect(url.size ? `/?${url.toString()}` : "/");
+    }
   }
 
   return (
