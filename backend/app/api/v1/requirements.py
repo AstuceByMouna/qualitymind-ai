@@ -28,9 +28,10 @@ def create_requirement(data: RequirementCreate, db: Session = Depends(get_db)):
 def list_requirements(
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
+    q: str = Query(default="", max_length=200, description="Case-insensitive text/UUID filter"),
     db: Session = Depends(get_db),
 ):
-    items, total = _service(db).list_page(limit=limit, offset=offset)
+    items, total = _service(db).list_page(limit=limit, offset=offset, query=q.strip())
     return RequirementListResponse(items=items, total=total, limit=limit, offset=offset)
 
 
