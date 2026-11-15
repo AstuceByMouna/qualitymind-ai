@@ -32,5 +32,7 @@ class RequirementService:
             raise RequirementNotFoundError("Requirement not found")
         return requirement
 
-    def list_page(self, *, limit: int, offset: int) -> tuple[list[RequirementEntity], int]:
-        return self._repository.list_page(limit=limit, offset=offset)
+    def list_page(
+        self, *, limit: int, offset: int, query: str | None = None
+    ) -> tuple[list[RequirementEntity], int]:
+        return self._repository.list_page(limit=limit, offset=offset, query=query)
