@@ -78,12 +78,12 @@ export function RequirementsRegistry({ data, apiError, page, pageSize, query }: 
         </p>
       </form>
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
+        <table className="w-full min-w-[760px] table-fixed text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase text-slate-500">
             <tr>
-              <th scope="col" className="px-5 py-4">Requirement</th>
-              <th scope="col" className="px-5 py-4">Description</th>
-              <th scope="col" className="px-5 py-4">Created</th>
+              <th scope="col" className="w-[45%] px-5 py-4">Requirement</th>
+              <th scope="col" className="w-[35%] px-5 py-4">Description</th>
+              <th scope="col" className="w-[20%] px-5 py-4">Created</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -101,17 +101,20 @@ export function RequirementsRegistry({ data, apiError, page, pageSize, query }: 
               </tr>
             ) : rows.map((requirement) => (
               <tr key={requirement.id} className="hover:bg-slate-50">
-                <td className="px-5 py-4 font-medium text-slate-900">
+                <td className="min-w-0 px-5 py-4 font-medium text-slate-900">
                   <Link
                     href={`/requirements/${requirement.id}`}
-                    className="text-slate-900 underline-offset-4 hover:text-sky-700 hover:underline focus-visible:outline-2 focus-visible:outline-sky-600"
+                    className="block min-w-0 text-slate-900 underline-offset-4 hover:text-sky-700 hover:underline focus-visible:outline-2 focus-visible:outline-sky-600"
+                    title={requirement.title}
                   >
-                    {requirement.title}
+                    <span data-testid="requirement-registry-title" className="line-clamp-2 break-words [overflow-wrap:anywhere]">
+                      {requirement.title}
+                    </span>
                   </Link>
                   <p className="mt-1 font-mono text-xs text-slate-500">{requirement.id.slice(0, 8)}</p>
                 </td>
                 <td className="max-w-md px-5 py-4 text-slate-600">
-                  <p className="line-clamp-2">{requirement.description}</p>
+                  <p className="line-clamp-2 break-words [overflow-wrap:anywhere]">{requirement.description}</p>
                 </td>
                 <td className="whitespace-nowrap px-5 py-4 text-slate-500">
                   {new Intl.DateTimeFormat("en-CA", {
