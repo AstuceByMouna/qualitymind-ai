@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { RequirementEditForm } from "@/components/requirements/requirement-edit-form";
 import { getRequirement, RequirementNotFoundError } from "@/lib/requirements";
 
@@ -24,5 +25,13 @@ export async function RequirementEditDetails({ params }: {
       </section>
     );
   }
-  return <RequirementEditForm key={requirement.id} requirement={requirement} />;
+  return (
+    <>
+      <Link href={`/requirements/${encodeURIComponent(requirement.id)}`}
+        className="inline-flex text-sm font-medium text-sky-700 hover:underline">
+        ← Back to Requirement Details
+      </Link>
+      <RequirementEditForm key={requirement.id} requirement={requirement} />
+    </>
+  );
 }
