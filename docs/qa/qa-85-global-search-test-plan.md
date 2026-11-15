@@ -26,7 +26,11 @@ Sprint 4. Parent Requirement: Requirements Intelligence.
 - QA-85 workflow seeds these records in isolated `qualitymind_qa` only and confirms precisely nine rows cleaned.
 
 ## Acceptance status
-QA85-TC01...TC06: **NOT RUN** until relevant GitHub Actions jobs report success.
+QA85-TC01–TC06: **PASS** via dedicated [QA-85 E2E CI](https://github.com/AstuceByMouna/qualitymind-ai/actions/runs/43690615924) on commit `c5b9b267`: 6/6 Playwright PASS in 4.9 seconds without retries or skips. Nine dedicated requirements were deleted and confirmed absent. The separate existing QA-84 E2E workflow ran 14/14 previously established tests successfully; its six QA-85 tests were deliberately skipped because it uses a separate fixture.
+
+Backend CI: [run 43690615858](https://github.com/AstuceByMouna/qualitymind-ai/actions/runs/43690615858) **PASS** (22 unit, 37 API, 17 PostgreSQL integration). Frontend CI: [run 43690615902](https://github.com/AstuceByMouna/qualitymind-ai/actions/runs/43690615902) **PASS** (lint/build). Postman CI: [run 43690615834](https://github.com/AstuceByMouna/qualitymind-ai/actions/runs/43690615834) **PASS**. QA-84 E2E: [run 43690615842](https://github.com/AstuceByMouna/qualitymind-ai/actions/runs/43690615842) **PASS**.
+
+Awaiting independent PR review and explicit merge decision; do not mark Jira Done before review.
 
 ## Quality Gates
 - Backend CI Pytest unit/API/integration.
