@@ -32,7 +32,7 @@
 - Backend CI : `pytest tests/unit`, `pytest tests/api`, `pytest tests/integration` avec PostgreSQL isolé `qualitymind_test` dans GitHub Actions.
 - Frontend CI : ESLint, Next.js production build.
 - Postman API CI : régression du contrat existant.
-- Tests E2E QA : démarrer `qualitymind_qa`, API sur `8001`, frontend sur `3001`; sélectionner une exigence **dédiée aux tests et non utilisée par une personne**, puis définir `QA84_FIXTURE_UUID=<uuid>` avant `npm run test:e2e:qa`.
+- **GitHub Actions E2E QA :** \`.github/workflows/qa84-e2e-ci.yml\` provisionne Docker PostgreSQL \`qualitymind_qa\`, applique Alembic, crée une exigence dédiée avec \`scripts/qa84_ci_fixture.py\`, lance FastAPI 8001 et Next.js 3001, exécute Playwright QA et supprime la fixture (avec vérification de son absence). Les résultats de cette CI doivent être constatés avant validation.\n- Tests E2E QA locaux : démarrer `qualitymind_qa`, API sur `8001`, frontend sur `3001`; sélectionner une exigence **dédiée aux tests et non utilisée par une personne**, puis définir `QA84_FIXTURE_UUID=<uuid>` avant `npm run test:e2e:qa`.
 - Le scénario `QA84-TC01` modifie l'exigence dédiée, puis restaure les deux champs via PATCH dans un bloc `finally`. Ne pas lancer ce scénario sur une donnée de production ou partagée.
 - La base DEV `qualitymind` ne doit **jamais** recevoir de mutations E2E.
 
@@ -40,7 +40,7 @@
 
 - [ ] CI Backend : PASS avec nouveau test d'intégration.
 - [ ] CI Frontend lint/build : PASS.
-- [ ] CI Postman : PASS.
+- [ ] CI Postman : PASS.\n- [ ] GitHub Actions E2E QA : tous les tests PASS, aucun SKIP inattendu, fixture nettoyée ; traces disponibles.
 - [ ] QA84-TC01 à TC05 : essais Playwright sur le poste QA, preuves et verdicts.
 - [ ] Confirmer à nouveau l'isolation DEV/QA et la restauration de la fixture.
 - [ ] Vérifier l'absence de secrets et les autorisations applicatives (MVP sans authentification native ; sécurité entreprise à développer).
