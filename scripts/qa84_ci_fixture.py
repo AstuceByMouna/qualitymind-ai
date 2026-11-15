@@ -42,7 +42,7 @@ def main() -> None:
             if not github_env:
                 raise RuntimeError("GITHUB_ENV is missing")
             with open(github_env, "a", encoding="utf-8") as output:
-                output.write(f"QA84_FIXTURE_UUID={requirement_id}\\n")
+                output.write(f"QA84_FIXTURE_UUID={requirement_id}" + chr(10))
             print("PASS: seeded a dedicated QA-84 requirement in qualitymind_qa")
         else:
             raw_id = os.getenv("QA84_FIXTURE_UUID")
