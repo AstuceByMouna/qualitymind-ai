@@ -171,7 +171,7 @@ test("QA84-TC06 @critical @mock-api @qa-only - concurrent edit submissions are b
   expect(patchCount).toBe(1);
 });
 
-test("QA91-TC01 @real-api @qa-only - rapid consecutive edits refresh details correctly", async ({
+test("QA91-TC01 @real-api @qa-only - three rapid consecutive edits persist correctly", async ({
   page, request,
 }, testInfo) => {
   const id = process.env.QA84_FIXTURE_UUID;
@@ -194,6 +194,7 @@ test("QA91-TC01 @real-api @qa-only - rapid consecutive edits refresh details cor
 
   const first = `QA91-first-${Date.now()}`;
   const second = `QA91-second-${Date.now()}`;
+  const third = `QA91-third-${Date.now()}`;
   const edit = new RequirementEditPage(page);
   try {
     await page.goto("/");
@@ -212,12 +213,20 @@ test("QA91-TC01 @real-api @qa-only - rapid consecutive edits refresh details cor
     await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
     await expect(page.getByRole("heading", { name: second, exact: true })).toBeVisible();
 
+    // Regression reported by UAT: the THIRD immediate save got stuck "Saving...".
+    await page.getByTestId("requirement-edit-link").click();
+    await expect(edit.title).toHaveValue(second);
+    await edit.title.fill(third);
+    await edit.submit.click();
+    await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+    await expect(page.getByRole("heading", { name: third, exact: true })).toBeVisible();
+
     const response = await request.get(api);
     expect(response.ok()).toBeTruthy();
     const persisted = await response.json() as typeof original;
     expect(persisted.id).toBe(original.id);
     expect(persisted.created_at).toBe(original.created_at);
-    expect(persisted.title).toBe(second);
+    expect(persisted.title).toBe(third);
     expect(persisted.description).toBe(original.description);
     expect(capturedErrors).toEqual([]);
     await page.goto("/");
