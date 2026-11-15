@@ -31,7 +31,12 @@ def list_requirements(
     q: str = Query(default="", max_length=200, description="Case-insensitive text/UUID filter"),
     db: Session = Depends(get_db),
 ):
-    items, total = _service(db).list_page(limit=limit, offset=offset, query=q.strip())
+    service = _service(db)
+    if q.strip():
+        items, total = service.list_page(limit=limit, offset=offset, query=q.strip())
+    else:
+        # Preserve existing integrations/mocks using the original unfiltered signature.
+        items, total = service.list_page(limit=limit, offset=offset)
     return RequirementListResponse(items=items, total=total, limit=limit, offset=offset)
 
 
