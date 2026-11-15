@@ -24,6 +24,7 @@
 | QA84-TC03 | Validation champ vide, focus, 422 backend et aucune écriture | Pytest API + Playwright QA | Pytest CI ; **Playwright QA NOT RUN** |
 | QA84-TC04 | UUID inexistant 404 ; UUID invalide 422 | Pytest API + Playwright QA | Pytest CI ; **Playwright QA NOT RUN** |
 | QA84-TC05 | API indisponible : saisie conservée, retry possible, aucune double soumission | Playwright QA avec réponse simulée | **NOT RUN** |
+| QA84-TC06 | Soumissions simultanées : une seule requête PATCH est émise | Playwright QA avec réponse simulée et temporisée | **NOT RUN** (à exécuter dans la CI) |
 
 **Note :** les tests Playwright @qa-only sont délibérément **SKIP** sans environnement TEST/QA sur `127.0.0.1:3001` et, selon le test, `QA84_FIXTURE_UUID`. Les tests simulés ne prouvent pas de persistance réelle.
 
