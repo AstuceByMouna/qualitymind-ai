@@ -10,7 +10,7 @@ from app.modules.requirements.application.service import (
     RequirementService,
 )
 from app.modules.requirements.infrastructure.repository import SqlAlchemyRequirementRepository
-from app.schemas.requirement import RequirementCreate, RequirementListResponse, RequirementRead
+from app.schemas.requirement import RequirementCreate, RequirementListResponse, RequirementRead, RequirementUpdate
 
 router = APIRouter(prefix="/api/v1/requirements", tags=["requirements"])
 
@@ -42,5 +42,23 @@ def list_requirements(
 def get_requirement(requirement_id: UUID, db: Session = Depends(get_db)):
     try:
         return _service(db).get(requirement_id)
+    except RequirementNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.patch(
+    "/{requirement_id}",
+    response_model=RequirementRead,
+    responses={404: {"description": "Requirement not found"}},
+)
+def update_requirement(
+    requirement_id: UUID,
+    data: RequirementUpdate,
+    db: Session = Depends(get_db),
+):
+    try:
+        return _service(db).update(
+            requirement_id, title=data.title, description=data.description
+        )
     except RequirementNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
