@@ -43,6 +43,9 @@ test("QA85-TC04 @real-api @qa-only - filtered counts, pages and URL are stable",
   await expect(page.getByText("9 total")).toBeVisible();
   await expect(page.getByText(/Page 1 of 2/)).toBeVisible();
   const next = page.getByRole("link", { name: "Next" });
+  // A Next.js navigation updates the address bar before the streamed
+  // RequirementsRegistry replacement finishes. Wait for the NEW page links.
+  await expect(next).toHaveAttribute("href", new RegExp(`q=${prefix}`));
   await next.click();
   await expect(page).toHaveURL((url) =>
     url.searchParams.get("q") === prefix && url.searchParams.get("page") === "2");
