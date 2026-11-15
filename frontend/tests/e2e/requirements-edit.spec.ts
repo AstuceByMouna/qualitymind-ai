@@ -238,3 +238,20 @@ test("QA91-TC01 @real-api @qa-only - three rapid consecutive edits persist corre
     expect(restore.ok(), "QA fixture restoration must succeed").toBeTruthy();
   }
 });
+
+
+test("QA91-TC02 @qa-only - edit Back link returns to the same requirement", async ({
+  page,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Requires isolated QA frontend and fixture.");
+
+  const edit = new RequirementEditPage(page);
+  await edit.goto(id!);
+  const back = page.getByRole("link", { name: "Back to Requirement Details" });
+  await expect(back).toHaveAttribute("href", `/requirements/${id}`);
+  await back.click();
+  await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+  await expect(page.getByTestId("requirement-edit-link")).toBeVisible();
+});
