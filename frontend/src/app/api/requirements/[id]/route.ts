@@ -37,7 +37,7 @@ export async function PATCH(request: Request, { params }: Context) {
     const value = fields[field];
     const trimmed = typeof value === "string" ? value.trim() : "";
     const max = field === "title" ? 255 : 10000;
-    if (!trimmed || trimmed.length > max || trimmed.includes("\\0")) {
+    if (!trimmed || trimmed.length > max || trimmed.includes(String.fromCharCode(0))) {
       errors[field] = field === "title"
         ? "Title must contain 1–255 characters and no NUL characters."
         : "Description must contain 1–10,000 characters and no NUL characters.";
