@@ -107,14 +107,14 @@ export function RequirementsRegistry({ data, apiError, page, pageSize, query }: 
                     className="block min-w-0 text-slate-900 underline-offset-4 hover:text-sky-700 hover:underline focus-visible:outline-2 focus-visible:outline-sky-600"
                     title={requirement.title}
                   >
-                    <span data-testid="requirement-registry-title" className="line-clamp-2 break-words [overflow-wrap:anywhere]">
+                    <span data-testid="requirement-registry-title" className="line-clamp-2 [overflow-wrap:anywhere]">
                       {requirement.title}
                     </span>
                   </Link>
                   <p className="mt-1 font-mono text-xs text-slate-500">{requirement.id.slice(0, 8)}</p>
                 </td>
                 <td className="max-w-md px-5 py-4 text-slate-600">
-                  <p className="line-clamp-2 break-words [overflow-wrap:anywhere]">{requirement.description}</p>
+                  <p className="line-clamp-2 [overflow-wrap:anywhere]">{requirement.description}</p>
                 </td>
                 <td className="whitespace-nowrap px-5 py-4 text-slate-500">
                   {new Intl.DateTimeFormat("en-CA", {
