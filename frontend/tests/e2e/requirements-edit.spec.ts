@@ -160,6 +160,7 @@ test("QA84-TC06 @critical @mock-api @qa-only - concurrent edit submissions are b
   try {
     await edit.submit.click();
     await expect(edit.submit).toBeDisabled();
+    await expect(page.getByText("Cancel", { exact: true })).toHaveAttribute("aria-disabled", "true");
     await expect.poll(() => patchCount).toBe(1);
     await edit.form.dispatchEvent("submit", { bubbles: true, cancelable: true });
     expect(patchCount).toBe(1);
