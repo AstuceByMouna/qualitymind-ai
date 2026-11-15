@@ -8,6 +8,8 @@ from pydantic import (
     BaseModel,
     Field,
     field_validator,
+    model_validator,
+    ConfigDict,
 )
 
 
@@ -52,3 +54,24 @@ class RequirementListResponse(BaseModel):
     total: int = Field(ge=0)
     limit: int = Field(ge=1, le=200)
     offset: int = Field(ge=0)
+
+
+class RequirementUpdate(BaseModel):
+    """PATCH payload: one or both fields, never an empty or null update."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str | None = Field(default=None, min_length=1, max_length=255)
+    description: str | None = Field(default=None, min_length=1, max_length=10000)
+
+    @field_validator("title", "description", mode="before")
+    @classmethod
+    def normalize_updated_fields(cls, value: object) -> str:
+        # Reuse the create contract: strings only, strip, reject empty and NUL.
+        return RequirementCreate.normalize_and_validate(value)
+
+    @model_validator(mode="after")
+    def reject_empty_patch(self):
+        if self.title is None and self.description is None:
+            raise ValueError("PATCH requires title and/or description")
+        return self
