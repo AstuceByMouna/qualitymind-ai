@@ -144,10 +144,17 @@ export function RequirementEditForm({ requirement }: { requirement: Requirement 
           {errors.description && <p id="edit-description-error" className="mt-1 text-sm text-red-700">{errors.description}</p>}
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
-          <Link href={detailUrl} onClick={resetDraft}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-sky-600">
-            Cancel
-          </Link>
+          {saving ? (
+            <span aria-disabled="true"
+              className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-400">
+              Cancel
+            </span>
+          ) : (
+            <Link href={detailUrl} onClick={resetDraft}
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-sky-600">
+              Cancel
+            </Link>
+          )}
           <button type="submit" data-testid="requirement-edit-submit" disabled={saving}
             className="rounded-md bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:bg-slate-400">
             {saving ? "Saving…" : "Save changes"}
