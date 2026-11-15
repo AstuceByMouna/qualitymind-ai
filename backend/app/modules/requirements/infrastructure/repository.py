@@ -1,7 +1,7 @@
 """SQLAlchemy implementation of the Requirements persistence port."""
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.models.requirement import Requirement
@@ -48,11 +48,31 @@ class SqlAlchemyRequirementRepository:
         self._db.refresh(model)
         return _to_domain(model)
 
-    def list_page(self, *, limit: int, offset: int) -> tuple[list[RequirementEntity], int]:
-        count_stmt = select(func.count()).select_from(Requirement)
+    def list_page(
+        self, *, limit: int, offset: int, query: str | None = None
+    ) -> tuple[list[RequirementEntity], int]:
+        # Match the previous local UI behavior: title, description and UUID.
+        # Escape LIKE metacharacters so %, _ and backslash are literal,
+        # not SQL wildcards. SQLAlchemy binds the resulting pattern safely.
+        filters = []
+        if query and query.strip():
+            escaped = (
+                query.strip().replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_")
+            )
+            pattern = f"%{escaped}%"
+            filters.append(or_(
+                Requirement.title.ilike(pattern, escape="\\"),
+                Requirement.description.ilike(pattern, escape="\\"),
+                cast(Requirement.id, String).ilike(pattern, escape="\\"),
+            ))
+
+        count_stmt = select(func.count()).select_from(Requirement).where(*filters)
         total = self._db.scalar(count_stmt)
         page_stmt = (
             select(Requirement)
+            .where(*filters)
             .order_by(Requirement.created_at.desc(), Requirement.id.desc())
             .limit(limit)
             .offset(offset)
