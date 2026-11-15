@@ -72,7 +72,7 @@ def test_patch_missing_requirement_returns_404_without_commit(database):
     {}, {"title": None}, {"description": None},
     {"title": "   "}, {"description": "  "},
     {"title": "X" * 256}, {"description": "X" * 10001},
-    {"title": "nul\\u0000value"}, {"description": "bad\\u0000value"},
+    {"title": f"nul{chr(0)}value"}, {"description": f"bad{chr(0)}value"},
     {"title": 42}, {"description": []}, {"unknown": "field"},
 ])
 def test_patch_invalid_payload_never_writes(database, payload):
