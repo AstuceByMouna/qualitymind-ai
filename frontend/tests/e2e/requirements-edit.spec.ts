@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { RequirementEditPage } from "../pages/requirement-edit.page";
 
+// QA-84 tests share a dedicated fixture; avoid concurrent edits/restoration.
+test.describe.configure({ mode: "serial" });
+
 // This spec is intentionally QA-only: it must never edit the developer DB.
 // A dedicated existing QA requirement UUID is provided to the test runner.
 // The test restores the original values even if an assertion fails.
