@@ -126,3 +126,46 @@ test("QA84-TC05 @mock-api @qa-only - error preserves values and enables retry", 
   await expect(edit.submit).toBeEnabled();
   await expect(page).toHaveURL((url) => url.pathname.endsWith(`/${id}/edit`));
 });
+
+
+test("QA84-TC06 @critical @mock-api @qa-only - concurrent edit submissions are blocked", async ({
+  page,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Requires QA fixture and isolated QA frontend.");
+
+  let patchCount = 0;
+  let releasePatch: () => void = () => {};
+  const gate = new Promise<void>((resolve) => {
+    releasePatch = resolve;
+  });
+  await page.route("**/api/requirements/**", async (route) => {
+    if (route.request().method() !== "PATCH") {
+      await route.continue();
+      return;
+    }
+    patchCount++;
+    await gate;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ id }),
+    });
+  });
+
+  const edit = new RequirementEditPage(page);
+  await edit.goto(id!);
+  await edit.title.fill("Concurrent update test, no DB write");
+  try {
+    await edit.submit.click();
+    await expect(edit.submit).toBeDisabled();
+    await expect.poll(() => patchCount).toBe(1);
+    await edit.form.dispatchEvent("submit", { bubbles: true, cancelable: true });
+    expect(patchCount).toBe(1);
+  } finally {
+    releasePatch();
+  }
+  await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+  expect(patchCount).toBe(1);
+});
