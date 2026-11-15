@@ -2,11 +2,12 @@ import { getRequirements } from "@/lib/requirements";
 import { RequirementsRegistry } from "@/components/requirements/requirements-registry";
 
 const PAGE_SIZE = 5;
-type PageProps = { searchParams: Promise<{ page?: string | string[] }> };
+type PageProps = { searchParams: Promise<{ page?: string | string[]; q?: string | string[] }> };
 
 export async function RequirementsContent({ searchParams }: PageProps) {
   const params = await searchParams;
   const rawPage = typeof params.page === "string" ? params.page : "1";
+  const query = typeof params.q === "string" ? params.q.trim().slice(0, 200) : "";
   const parsedPage = Number(rawPage);
   const page = Number.isSafeInteger(parsedPage) && parsedPage > 0
     ? Math.min(parsedPage, 100000)
@@ -16,7 +17,7 @@ export async function RequirementsContent({ searchParams }: PageProps) {
   let apiError = false;
 
   try {
-    requirements = await getRequirements(PAGE_SIZE, (page - 1) * PAGE_SIZE);
+    requirements = await getRequirements(PAGE_SIZE, (page - 1) * PAGE_SIZE, query);
   } catch {
     apiError = true;
   }
@@ -36,7 +37,8 @@ export async function RequirementsContent({ searchParams }: PageProps) {
         ))}
       </section>
       <RequirementsRegistry
-        key={page}
+        key={`${page}:${query}`}
+        query={query}
         data={requirements}
         apiError={apiError}
         page={page}
