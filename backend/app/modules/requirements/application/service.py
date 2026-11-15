@@ -22,5 +22,15 @@ class RequirementService:
             raise RequirementNotFoundError("Requirement not found")
         return requirement
 
+    def update(
+        self, requirement_id: UUID, *, title: str | None, description: str | None
+    ) -> RequirementEntity:
+        requirement = self._repository.update(
+            requirement_id, title=title, description=description
+        )
+        if requirement is None:
+            raise RequirementNotFoundError("Requirement not found")
+        return requirement
+
     def list_page(self, *, limit: int, offset: int) -> tuple[list[RequirementEntity], int]:
         return self._repository.list_page(limit=limit, offset=offset)
