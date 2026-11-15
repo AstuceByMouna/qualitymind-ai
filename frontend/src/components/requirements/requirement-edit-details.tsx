@@ -10,9 +10,9 @@ export async function RequirementEditDetails({ params }: {
   const { id } = await params;
   if (!UUID_PATTERN.test(id)) notFound();
 
+  let requirement;
   try {
-    const requirement = await getRequirement(id);
-    return <RequirementEditForm key={requirement.id} requirement={requirement} />;
+    requirement = await getRequirement(id);
   } catch (error) {
     if (error instanceof RequirementNotFoundError) notFound();
     return (
@@ -24,4 +24,5 @@ export async function RequirementEditDetails({ params }: {
       </section>
     );
   }
+  return <RequirementEditForm key={requirement.id} requirement={requirement} />;
 }
