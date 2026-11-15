@@ -1,12 +1,14 @@
 import { getRequirements } from "@/lib/requirements";
+import { redirect } from "next/navigation";
 import { RequirementsRegistry } from "@/components/requirements/requirements-registry";
 
 const PAGE_SIZE = 5;
-type PageProps = { searchParams: Promise<{ page?: string | string[] }> };
+type PageProps = { searchParams: Promise<{ page?: string | string[]; q?: string | string[] }> };
 
 export async function RequirementsContent({ searchParams }: PageProps) {
   const params = await searchParams;
   const rawPage = typeof params.page === "string" ? params.page : "1";
+  const query = typeof params.q === "string" ? params.q.trim().slice(0, 200) : "";
   const parsedPage = Number(rawPage);
   const page = Number.isSafeInteger(parsedPage) && parsedPage > 0
     ? Math.min(parsedPage, 100000)
@@ -16,9 +18,21 @@ export async function RequirementsContent({ searchParams }: PageProps) {
   let apiError = false;
 
   try {
-    requirements = await getRequirements(PAGE_SIZE, (page - 1) * PAGE_SIZE);
+    requirements = await getRequirements(PAGE_SIZE, (page - 1) * PAGE_SIZE, query);
   } catch {
     apiError = true;
+  }
+
+  // Normalize out-of-range URLs after the server has counted filtered rows.
+  // The canonical URL always displays a real page, never "Page 100 of 2".
+  if (requirements && page > 1) {
+    const lastPage = Math.max(1, Math.ceil(requirements.total / PAGE_SIZE));
+    if (page > lastPage) {
+      const url = new URLSearchParams();
+      if (query) url.set("q", query);
+      if (lastPage > 1) url.set("page", String(lastPage));
+      redirect(url.size ? `/?${url.toString()}` : "/");
+    }
   }
 
   return (
@@ -36,7 +50,8 @@ export async function RequirementsContent({ searchParams }: PageProps) {
         ))}
       </section>
       <RequirementsRegistry
-        key={page}
+        key={`${page}:${query}`}
+        query={query}
         data={requirements}
         apiError={apiError}
         page={page}

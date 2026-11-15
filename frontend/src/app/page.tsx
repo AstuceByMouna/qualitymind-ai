@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { RequirementsContent, RequirementsLoading } from "@/components/requirements/requirements-content";
 
-type PageProps = { searchParams: Promise<{ page?: string | string[] }> };
+type PageProps = { searchParams: Promise<{ page?: string | string[]; q?: string | string[] }> };
 
 export default function Home({ searchParams }: PageProps) {
   return (
