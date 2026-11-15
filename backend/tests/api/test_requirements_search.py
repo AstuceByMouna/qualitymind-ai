@@ -23,7 +23,8 @@ def test_search_is_applied_to_count_and_rows_before_pagination():
         count_sql = str(db.scalar.call_args.args[0]).upper()
         rows_sql = str(db.scalars.call_args.args[0]).upper()
         assert "WHERE" in count_sql and "WHERE" in rows_sql
-        assert "ILIKE" in count_sql and "ILIKE" in rows_sql
+        assert "LIKE" in count_sql and "LIKE" in rows_sql
+        assert "LOWER(" in count_sql and "LOWER(" in rows_sql
         assert "LIMIT" in rows_sql and "OFFSET" in rows_sql
         assert "Login" not in rows_sql  # bound, never string interpolated SQL
     finally:
