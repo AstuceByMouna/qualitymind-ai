@@ -22,7 +22,7 @@ def test_partial_update_normalizes_fields(payload, expected):
     {}, {"title": None}, {"description": None},
     {"title": "  "}, {"description": "  "},
     {"title": "A" * 256}, {"description": "D" * 10001},
-    {"title": "bad\\u0000text"}, {"description": "bad\\u0000text"},
+    {"title": f"bad{chr(0)}text"}, {"description": f"bad{chr(0)}text"},
     {"title": 7}, {"description": []}, {"title": "valid", "id": "forbidden"},
 ])
 def test_partial_update_rejects_invalid_payload(payload):
