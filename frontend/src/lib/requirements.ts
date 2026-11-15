@@ -19,9 +19,15 @@ const API_URL =
 export async function getRequirements(
   limit = 50,
   offset = 0,
+  query = "",
 ): Promise<RequirementListResponse> {
+  const params = new URLSearchParams({
+    limit: String(limit),
+    offset: String(offset),
+  });
+  if (query) params.set("q", query);
   const response = await fetch(
-    `${API_URL}/api/v1/requirements?limit=${limit}&offset=${offset}`,
+    `${API_URL}/api/v1/requirements?${params.toString()}`,
     { cache: "no-store" },
   );
 
