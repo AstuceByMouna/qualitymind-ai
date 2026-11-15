@@ -44,3 +44,82 @@ test("QA84-TC01 @real-api @qa-only - edit persists, then restore fixture", async
     expect(restore.ok(), "QA fixture restoration must succeed").toBeTruthy();
   }
 });
+
+
+test("QA84-TC02 @qa-only - Cancel does not write and edit reloads original", async ({
+  page, request,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Requires QA fixture and isolated QA frontend.");
+  const api = `http://127.0.0.1:8001/api/v1/requirements/${id}`;
+  const original = await (await request.get(api)).json() as { title: string; description: string };
+  const edit = new RequirementEditPage(page);
+  await edit.goto(id!);
+  await edit.title.fill("Discard this changed title");
+  await edit.description.fill("Discard this changed description");
+  await edit.cancel.click();
+  await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+  const after = await (await request.get(api)).json() as typeof original;
+  expect(after.title).toBe(original.title);
+  expect(after.description).toBe(original.description);
+  await edit.goto(id!);
+  await expect(edit.title).toHaveValue(original.title);
+  await expect(edit.description).toHaveValue(original.description);
+});
+
+test("QA84-TC03 @qa-only - invalid input focuses field and prevents PATCH", async ({
+  page,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Requires QA fixture and isolated QA frontend.");
+  const edit = new RequirementEditPage(page);
+  let patches = 0;
+  page.on("request", (request) => {
+    if (request.method() === "PATCH") patches++;
+  });
+  await edit.goto(id!);
+  await edit.title.fill("");
+  await edit.submit.click();
+  await expect(edit.title).toBeFocused();
+  await expect(edit.title).toHaveAttribute("aria-invalid", "true");
+  await expect(page.locator("#edit-title-error")).toBeVisible();
+  expect(patches).toBe(0);
+});
+
+test("QA84-TC04 @qa-only - non-existing requirement shows 404", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Only the isolated QA frontend is allowed.");
+  await page.goto("/requirements/00000000-0000-4000-8000-000000000000/edit");
+  await expect(page.getByRole("heading", { name: "This requirement is unavailable" })).toBeVisible();
+});
+
+test("QA84-TC05 @mock-api @qa-only - error preserves values and enables retry", async ({
+  page,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Requires QA fixture and isolated QA frontend.");
+  const edit = new RequirementEditPage(page);
+  await page.route("**/api/requirements/**", async (route) => {
+    if (route.request().method() !== "PATCH") {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ error: "We couldn't confirm that your changes were saved." }),
+    });
+  });
+  await edit.goto(id!);
+  await edit.title.fill("Not saved after network error");
+  await edit.submit.click();
+  await expect(edit.error).toContainText("couldn't confirm");
+  await expect(edit.title).toHaveValue("Not saved after network error");
+  await expect(edit.submit).toBeEnabled();
+  await expect(page).toHaveURL((url) => url.pathname.endsWith(`/${id}/edit`));
+});
