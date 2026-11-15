@@ -32,6 +32,22 @@ class SqlAlchemyRequirementRepository:
         model = self._db.get(Requirement, requirement_id)
         return _to_domain(model) if model is not None else None
 
+    def update(
+        self, requirement_id: UUID, *, title: str | None, description: str | None
+    ) -> RequirementEntity | None:
+        model = self._db.get(Requirement, requirement_id)
+        if model is None:
+            return None
+
+        if title is not None:
+            model.title = title
+        if description is not None:
+            model.description = description
+
+        self._db.commit()
+        self._db.refresh(model)
+        return _to_domain(model)
+
     def list_page(self, *, limit: int, offset: int) -> tuple[list[RequirementEntity], int]:
         count_stmt = select(func.count()).select_from(Requirement)
         total = self._db.scalar(count_stmt)
