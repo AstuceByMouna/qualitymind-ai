@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import type { Requirement } from "@/lib/requirements";
 
@@ -16,7 +15,6 @@ type ApiResult = {
 const UNKNOWN_SAVE = "We couldn't confirm that your changes were saved. Your information is still here. Check the requirement details before trying again.";
 
 export function RequirementEditForm({ requirement }: { requirement: Requirement }) {
-  const router = useRouter();
   const [title, setTitle] = useState(requirement.title);
   const [description, setDescription] = useState(requirement.description);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -85,9 +83,11 @@ export function RequirementEditForm({ requirement }: { requirement: Requirement 
         setFormError(UNKNOWN_SAVE);
         return;
       }
+      // A soft navigation followed immediately by router.refresh() can race
+      // against the transition, leaving the old edit form in "Saving...".
+      // A single document navigation guarantees fresh server data for the next edit.
+      window.location.replace(detailUrl);
       navigated = true;
-      router.replace(detailUrl);
-      router.refresh();
     } catch {
       setFormError(UNKNOWN_SAVE);
     } finally {
