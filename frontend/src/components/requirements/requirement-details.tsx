@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getRequirement, getAcceptanceCriteria, RequirementNotFoundError } from "@/lib/requirements";
 import { ArchiveRequirement } from "@/components/requirements/archive-requirement";
+import { RequirementAnalysis } from "@/components/requirements/requirement-analysis";
 import { RequirementLifecycle } from "@/components/requirements/requirement-lifecycle";
 import { AcceptanceCriteriaEditor } from "@/components/requirements/acceptance-criteria-editor";
 
@@ -77,6 +78,7 @@ export async function RequirementDetails({ params }: Props) {
         {detail.priority && <p>Priority: {detail.priority}</p>}
       </section>}
       <ArchiveRequirement requirementId={detail.id} archived={Boolean(detail.archived_at)} />
+      <RequirementAnalysis requirementId={detail.id} />
       {!detail.archived_at && <RequirementLifecycle requirementId={detail.id} initialStatus={detail.status} />}
       <section aria-labelledby="requirement-description-title">
         <h3 id="requirement-description-title" className="text-sm font-semibold text-slate-700">
