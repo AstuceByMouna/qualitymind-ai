@@ -1,6 +1,7 @@
 """Parse bounded CSV/XLSX and classify rows; never writes user requirements."""
 import csv
 import io
+from zipfile import BadZipFile
 from openpyxl import load_workbook
 from pathlib import Path
 
@@ -29,9 +30,11 @@ def parse(content: bytes, filename: str, mapping: dict[str,str] | None = None) -
             wb=load_workbook(io.BytesIO(content),read_only=True,data_only=True)
             if len(wb.worksheets)!=1:
                 raise InvalidImport("XLSX must contain exactly one worksheet")
-            rows=list(wb.active.iter_rows(max_row=MAX_ROWS+2,values_only=True))
+            if wb.active.max_column > 100:
+                raise InvalidImport("XLSX contains too many columns")
+            rows=list(wb.active.iter_rows(max_row=MAX_ROWS+2,max_col=100,values_only=True))
             wb.close()
-        except (ValueError, OSError, KeyError, TypeError, IndexError) as exc:
+        except (ValueError, OSError, KeyError, TypeError, IndexError, BadZipFile) as exc:
             raise InvalidImport("Invalid XLSX spreadsheet") from exc
     if len(rows)<2 or len(rows)>MAX_ROWS+1:
         raise InvalidImport("File must contain 1 to 500 data rows")
