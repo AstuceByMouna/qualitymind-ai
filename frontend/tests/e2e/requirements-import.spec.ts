@@ -16,10 +16,14 @@ test("QA-87 CSV preview and confirm", async ({page}) => {
   await page.getByTestId("requirement-import-confirm").click();
   await expect(page).toHaveURL(/\/requirements\/[0-9a-f-]{36}$/);
   await expect(page.getByRole("heading",{name:"Imported from UI"})).toBeVisible();
-  const result=await page.request.get((process.env.API_BASE_URL??"http://127.0.0.1:8001")+"/api/v1/requirements?"+
-    new URLSearchParams({q:externalId}));
+  const requirementId=page.url().split("/").pop();
+  expect(requirementId).toMatch(/^[0-9a-f-]{36}$/);
+  const result=await page.request.get((process.env.API_BASE_URL??"http://127.0.0.1:8001")+
+    "/api/v1/requirements/"+requirementId);
   expect(result.ok()).toBeTruthy();
-  expect((await result.json()).total).toBe(1);
+  const persisted=await result.json();
+  expect(persisted.title).toBe("Imported from UI");
+  expect(persisted.external_id).toBe(externalId);
 });
 
 test("QA-98 file picker supports long names and resets preview when replaced", async ({page}) => {
