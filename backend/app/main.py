@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.requirements import router as requirements_router
+from app.api.v1.acceptance_criteria import router as acceptance_criteria_router
 from app.core.config import get_cors_origins
 
 app = FastAPI(
@@ -18,11 +19,12 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=get_cors_origins(),
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PATCH"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
     allow_headers=["Content-Type"],
 )
 
 app.include_router(requirements_router)
+app.include_router(acceptance_criteria_router)
 
 
 @app.get("/health")

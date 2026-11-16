@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getRequirement, RequirementNotFoundError } from "@/lib/requirements";
+import { getRequirement, getAcceptanceCriteria, RequirementNotFoundError } from "@/lib/requirements";
+import { AcceptanceCriteriaEditor } from "@/components/requirements/acceptance-criteria-editor";
 
 type Props = { params: Promise<{ id: string }> };
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -28,6 +29,13 @@ export async function RequirementDetails({ params }: Props) {
         </p>
       </section>
     );
+  }
+
+  let criteria;
+  try {
+    criteria = await getAcceptanceCriteria(detail.id);
+  } catch {
+    criteria = null;
   }
 
   return (
@@ -68,6 +76,13 @@ export async function RequirementDetails({ params }: Props) {
           {detail.description}
         </p>
       </section>
+      {criteria ? (
+        <AcceptanceCriteriaEditor requirementId={detail.id} initialItems={criteria} />
+      ) : (
+        <section role="alert" className="border-t border-red-200 pt-4 text-sm text-red-800">
+          Acceptance criteria are unavailable. Check the API and refresh this page.
+        </section>
+      )}
     </article>
   );
 }
