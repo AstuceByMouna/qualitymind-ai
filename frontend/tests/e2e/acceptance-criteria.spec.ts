@@ -37,7 +37,9 @@ test("QA94-TC01 @real-api @qa-only - add, edit, cancel and delete isolated crite
     const first = page.getByTestId("acceptance-criterion-row").filter({ hasText: titleA });
     await first.getByRole("button", { name: /Edit criterion/ }).click();
     await page.getByTestId("acceptance-criterion-edit-input").fill("Draft to cancel");
-    await first.getByRole("button", { name: "Cancel" }).click();
+    // Editing replaces the rendered text with a textarea: the hasText-based
+    // row locator intentionally no longer matches until Cancel restores it.
+    await page.getByRole("button", { name: "Cancel", exact: true }).click();
     await expect(first).toContainText(titleA);
 
     await first.getByRole("button", { name: /Edit criterion/ }).click();
