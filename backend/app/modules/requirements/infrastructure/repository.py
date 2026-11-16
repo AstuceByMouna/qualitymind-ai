@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import String, cast, func, or_, select
 from sqlalchemy.orm import Session
 
-from app.models.requirement import Requirement
+from app.models.requirement import Requirement, RequirementStatusHistory
 from app.modules.requirements.domain.entities import RequirementEntity
 
 
@@ -14,6 +14,7 @@ def _to_domain(model: Requirement) -> RequirementEntity:
         title=model.title,
         description=model.description,
         created_at=model.created_at,
+        status=model.status,
     )
 
 
@@ -47,6 +48,33 @@ class SqlAlchemyRequirementRepository:
         self._db.commit()
         self._db.refresh(model)
         return _to_domain(model)
+
+    def transition(self, requirement_id: UUID, *, target_status: str, allowed_from: frozenset[str]) -> RequirementEntity | None:
+        model = self._db.scalar(
+            select(Requirement).where(Requirement.id == requirement_id).with_for_update()
+        )
+        if model is None:
+            return None
+        if model.status not in allowed_from:
+            from app.modules.requirements.application.lifecycle import TransitionConflictError
+            raise TransitionConflictError(f"Cannot transition from {model.status} to {target_status}")
+        original = model.status
+        model.status = target_status
+        self._db.add(RequirementStatusHistory(
+            requirement_id=requirement_id, from_status=original, to_status=target_status, source="api"
+        ))
+        self._db.commit()
+        self._db.refresh(model)
+        return _to_domain(model)
+
+    def history(self, requirement_id: UUID) -> list[RequirementStatusHistory] | None:
+        if self._db.get(Requirement, requirement_id) is None:
+            return None
+        return list(self._db.scalars(
+            select(RequirementStatusHistory)
+            .where(RequirementStatusHistory.requirement_id == requirement_id)
+            .order_by(RequirementStatusHistory.changed_at, RequirementStatusHistory.id)
+        ).all())
 
     def list_page(
         self, *, limit: int, offset: int, query: str | None = None

@@ -1,0 +1,357 @@
+{
+  "info": {
+    "name": "QualityMind AI — Requirements API Contract",
+    "_postman_id": "6b9b3d9e-95fa-4dd1-b1c5-431500000095",
+    "description": "Versioned CI collection for requirement CRUD and lifecycle; QA-95 FR-007. Uses local PostgreSQL qualitymind_test in GitHub Actions.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "requirement_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "GET — Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Health API returns HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Health API returns status ok\", () => pm.expect(pm.response.json().status).to.eql(\"ok\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST — Create Requirement",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"QA-95 Postman CI\",\"description\":\"Contract test requirement\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"POST returns HTTP 201\", () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "pm.test(\"Requirement response is valid\", () => {",
+              "  pm.expect(body).to.include.all.keys(\"id\",\"title\",\"description\",\"created_at\",\"status\");",
+              "  pm.expect(body.title).to.eql(\"QA-95 Postman CI\");",
+              "  pm.expect(body.status).to.eql(\"Draft\");",
+              "});",
+              "pm.test(\"Requirement has a valid UUID\", () => pm.expect(body.id).to.match(/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i));",
+              "if(pm.response.code===201 && body.id) pm.collectionVariables.set(\"requirement_id\",body.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET — List Requirements",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"GET requirements returns HTTP 200\", () => pm.response.to.have.status(200));",
+              "const list = pm.response.json();",
+              "pm.test(\"Response respects paginated API contract\", () => {",
+              "  pm.expect(list).to.include.all.keys(\"items\",\"total\",\"limit\",\"offset\");",
+              "  pm.expect(list.items).to.be.an(\"array\");",
+              "});",
+              "pm.test(\"Created requirement exists in the list\", () => {",
+              "  pm.expect(list.items.some(r => r.id === pm.collectionVariables.get(\"requirement_id\") && r.status === \"Draft\")).to.equal(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET — Requirement Details",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements/{{requirement_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements",
+            "{{requirement_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"GET requirement returns HTTP 200\", () => pm.response.to.have.status(200));",
+              "const detail = pm.response.json();",
+              "pm.test(\"Requirement ID matches requested ID\", () => pm.expect(detail.id).to.eql(pm.collectionVariables.get(\"requirement_id\")));",
+              "pm.test(\"Requirement contains required fields\", () => {",
+              "  pm.expect(detail).to.include.all.keys(\"id\",\"title\",\"description\",\"created_at\",\"status\");",
+              "  pm.expect(detail.status).to.eql(\"Draft\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST — Transition In Review",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements/{{requirement_id}}/transitions",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements",
+            "{{requirement_id}}",
+            "transitions"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"In Review\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Transition returns HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Transition persists requested status\", () => pm.expect(pm.response.json().status).to.eql(\"In Review\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST — Transition Ready",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements/{{requirement_id}}/transitions",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements",
+            "{{requirement_id}}",
+            "transitions"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"Ready\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Ready transition returns HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Ready status is visible\", () => pm.expect(pm.response.json().status).to.eql(\"Ready\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET — Transition History",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements/{{requirement_id}}/transitions",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements",
+            "{{requirement_id}}",
+            "transitions"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"History returns HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"History records atomic changes\", () => {",
+              "  const history = pm.response.json();",
+              "  pm.expect(history).to.be.an(\"array\").with.lengthOf(2);",
+              "  pm.expect(history.map(x => x.to_status)).to.eql([\"In Review\",\"Ready\"]);",
+              "  history.forEach(x => pm.expect(x).to.include.all.keys(\"from_status\",\"to_status\",\"changed_at\",\"source\"));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST — Forbidden Transition",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements/{{requirement_id}}/transitions",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements",
+            "{{requirement_id}}",
+            "transitions"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\":\"Ready\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Repeated status is rejected with HTTP 409\", () => pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET — Requirement Not Found",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/requirements/00000000-0000-4000-8000-000000000000",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "requirements",
+            "00000000-0000-4000-8000-000000000000"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Unknown requirement returns HTTP 404\", () => pm.response.to.have.status(404));",
+              "pm.test(\"Error message is correct\", () => pm.expect(pm.response.json().detail).to.eql(\"Requirement not found\"));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

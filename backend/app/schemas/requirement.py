@@ -45,6 +45,7 @@ class RequirementRead(BaseModel):
     title: str
     description: str
     created_at: datetime
+    status: str
 
     model_config = {"from_attributes": True}
 
@@ -75,3 +76,25 @@ class RequirementUpdate(BaseModel):
         if self.title is None and self.description is None:
             raise ValueError("PATCH requires title and/or description")
         return self
+
+class RequirementTransition(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    status: str = Field(min_length=1, max_length=20)
+
+    @field_validator("status")
+    @classmethod
+    def ensure_supported_status(cls, value: str) -> str:
+        if value not in ("Draft", "In Review", "Ready"):
+            raise ValueError("Unsupported lifecycle status")
+        return value
+
+
+class RequirementStatusEvent(BaseModel):
+    id: UUID
+    requirement_id: UUID
+    from_status: str
+    to_status: str
+    changed_at: datetime
+    source: str
+
+    model_config = ConfigDict(from_attributes=True)

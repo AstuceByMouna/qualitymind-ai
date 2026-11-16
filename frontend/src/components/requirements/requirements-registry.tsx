@@ -84,18 +84,19 @@ export function RequirementsRegistry({ data, apiError, page, pageSize, query }: 
               <th scope="col" className="w-[45%] px-5 py-4">Requirement</th>
               <th scope="col" className="w-[35%] px-5 py-4">Description</th>
               <th scope="col" className="w-[20%] px-5 py-4">Created</th>
+              <th scope="col" className="w-[15%] px-5 py-4">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {apiError ? (
               <tr>
-                <td colSpan={3} role="alert" className="px-5 py-12 text-center text-red-600">
+                <td colSpan={4} role="alert" className="px-5 py-12 text-center text-red-600">
                   Unable to connect to the Requirements API. Check FastAPI and PostgreSQL.
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-5 py-12 text-center text-slate-500">
+                <td colSpan={4} className="px-5 py-12 text-center text-slate-500">
                   {query ? "No matching requirements found." : "No requirements found."}
                 </td>
               </tr>
@@ -122,6 +123,7 @@ export function RequirementsRegistry({ data, apiError, page, pageSize, query }: 
                     timeZone: "UTC",
                   }).format(new Date(requirement.created_at))}
                 </td>
+                <td data-testid="requirement-status" className="px-5 py-4 text-slate-700">{requirement.status}</td>
               </tr>
             ))}
           </tbody>

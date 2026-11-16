@@ -10,3 +10,4 @@ class RequirementEntity:
     title: str
     description: str
     created_at: datetime
+    status: str = "Draft"

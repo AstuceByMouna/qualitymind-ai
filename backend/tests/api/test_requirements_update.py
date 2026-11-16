@@ -21,6 +21,7 @@ def database():
     db.get.return_value = Requirement(
         id=ID, title="Original title", description="Original description",
         created_at=CREATED,
+        status="Draft",
     )
     app.dependency_overrides[get_db] = lambda: db
     try:

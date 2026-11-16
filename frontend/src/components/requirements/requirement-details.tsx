@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getRequirement, getAcceptanceCriteria, RequirementNotFoundError } from "@/lib/requirements";
+import { RequirementLifecycle } from "@/components/requirements/requirement-lifecycle";
 import { AcceptanceCriteriaEditor } from "@/components/requirements/acceptance-criteria-editor";
 
 type Props = { params: Promise<{ id: string }> };
@@ -68,6 +69,7 @@ export async function RequirementDetails({ params }: Props) {
           </dd>
         </div>
       </dl>
+      <RequirementLifecycle requirementId={detail.id} initialStatus={detail.status} />
       <section aria-labelledby="requirement-description-title">
         <h3 id="requirement-description-title" className="text-sm font-semibold text-slate-700">
           Description

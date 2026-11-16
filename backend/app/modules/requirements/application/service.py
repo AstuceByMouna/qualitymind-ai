@@ -3,6 +3,7 @@ from uuid import UUID
 
 from app.modules.requirements.domain.entities import RequirementEntity
 from app.modules.requirements.domain.ports import RequirementRepositoryPort
+from app.modules.requirements.application.lifecycle import ALLOWED_FROM, TransitionConflictError
 
 
 class RequirementNotFoundError(Exception):
@@ -31,6 +32,22 @@ class RequirementService:
         if requirement is None:
             raise RequirementNotFoundError("Requirement not found")
         return requirement
+
+    def transition(self, requirement_id: UUID, target_status: str) -> RequirementEntity:
+        if target_status not in ALLOWED_FROM:
+            raise TransitionConflictError("Unsupported target status")
+        requirement = self._repository.transition(
+            requirement_id, target_status=target_status, allowed_from=ALLOWED_FROM[target_status]
+        )
+        if requirement is None:
+            raise RequirementNotFoundError("Requirement not found")
+        return requirement
+
+    def history(self, requirement_id: UUID) -> list[object]:
+        result = self._repository.history(requirement_id)
+        if result is None:
+            raise RequirementNotFoundError("Requirement not found")
+        return result
 
     def list_page(
         self, *, limit: int, offset: int, query: str | None = None

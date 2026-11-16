@@ -12,8 +12,7 @@ permissions:
 jobs:
   postman-tests:
     name: Postman / Requirements API
-    # Opt-in only until Postman collection and credentials are validated.
-    # Set repository variable POSTMAN_CI_ENABLED=true after configuration.
+    # Run version-controlled Postman collection against isolated CI PostgreSQL.
     if: ${{ vars.POSTMAN_CI_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -21,7 +20,6 @@ jobs:
     env:
       POSTGRES_PASSWORD: ci_only_password
       POSTGRES_DB: qualitymind_test
-      POSTMAN_COLLECTION_ID: 14273198-16be7483-92c9-443d-b79c-b202e056a82e
 
     services:
       postgres:
@@ -75,20 +73,10 @@ jobs:
           cat /tmp/qualitymind-api.log
           exit 1
 
-      - name: Check Postman credential
-        env:
-          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
-        run: |
-          if [ -z "$POSTMAN_API_KEY" ]; then
-            echo "::error::POSTMAN_API_KEY repository secret is missing."
-            exit 1
-          fi
-
-      - name: Run cloud Postman collection
+      - name: Run versioned Postman collection
         uses: postmanlabs/postman-cli-action@v1
         with:
-          api-key: ${{ secrets.POSTMAN_API_KEY }}
-          command: 'collection run 14273198-16be7483-92c9-443d-b79c-b202e056a82e --env-var base_url=http://127.0.0.1:8000'
+          command: 'collection run ./postman/qualitymind-requirements.postman_collection.json --env-var base_url=http://127.0.0.1:8000'
 
       - name: Show API logs on failure
         if: failure()
