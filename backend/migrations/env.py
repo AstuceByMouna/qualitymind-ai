@@ -4,6 +4,7 @@ from alembic import context
 from app.db import engine
 from app.models.requirement import Base
 from app.models.import_batch import ImportBatch  # noqa: F401
+from app.models.ai_analysis import AIAnalysisRun, AISuggestion  # noqa: F401
 from app.models.acceptance_criterion import AcceptanceCriterion  # noqa: F401
 
 # this is the Alembic Config object, which provides
