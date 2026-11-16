@@ -63,3 +63,22 @@ export async function getRequirement(id: string): Promise<Requirement> {
 
   return (await response.json()) as Requirement;
 }
+
+export interface AcceptanceCriterion {
+  id: string;
+  requirement_id: string;
+  content: string;
+  position: number;
+  created_at: string;
+}
+
+export async function getAcceptanceCriteria(id: string): Promise<AcceptanceCriterion[]> {
+  const response = await fetch(
+    API_URL + "/api/v1/requirements/" + encodeURIComponent(id) + "/acceptance-criteria",
+    { cache: "no-store" },
+  );
+  if (response.status === 404) throw new RequirementNotFoundError();
+  if (!response.ok) throw new Error("Acceptance criteria API error: HTTP " + response.status);
+  const result = (await response.json()) as {items: AcceptanceCriterion[]};
+  return result.items;
+}
