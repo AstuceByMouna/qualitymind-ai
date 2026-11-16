@@ -32,6 +32,10 @@ class Requirement(Base):
 
     status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="Draft", default="Draft")
 
+    import_source: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    external_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    priority: Mapped[str | None] = mapped_column(String(32), nullable=True)
+
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, default=None)
     archive_source: Mapped[str | None] = mapped_column(String(32), nullable=True)
 
