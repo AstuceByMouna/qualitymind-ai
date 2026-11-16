@@ -6,6 +6,9 @@ export interface Requirement {
   created_at: string;
   status: "Draft" | "In Review" | "Ready";
   archived_at: string | null;
+  import_source?: string | null;
+  external_id?: string | null;
+  priority?: string | null;
 }
 
 export interface RequirementListResponse {

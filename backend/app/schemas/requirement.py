@@ -47,6 +47,9 @@ class RequirementRead(BaseModel):
     created_at: datetime
     status: str
     archived_at: datetime | None = None
+    import_source: str | None = None
+    external_id: str | None = None
+    priority: str | None = None
 
     model_config = {"from_attributes": True}
 

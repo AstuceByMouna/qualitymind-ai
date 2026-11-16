@@ -70,6 +70,12 @@ export async function RequirementDetails({ params }: Props) {
           </dd>
         </div>
       </dl>
+      {detail.import_source && <section aria-label="Import provenance" className="rounded-md border p-4 text-sm">
+        <p className="font-semibold">Imported requirement</p>
+        <p>Source: {detail.import_source}</p>
+        <p>External ID: {detail.external_id}</p>
+        {detail.priority && <p>Priority: {detail.priority}</p>}
+      </section>}
       <ArchiveRequirement requirementId={detail.id} archived={Boolean(detail.archived_at)} />
       {!detail.archived_at && <RequirementLifecycle requirementId={detail.id} initialStatus={detail.status} />}
       <section aria-labelledby="requirement-description-title">

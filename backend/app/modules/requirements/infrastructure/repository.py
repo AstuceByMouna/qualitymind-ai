@@ -16,6 +16,9 @@ def _to_domain(model: Requirement) -> RequirementEntity:
         created_at=model.created_at,
         status=model.status,
         archived_at=model.archived_at,
+        import_source=model.import_source,
+        external_id=model.external_id,
+        priority=model.priority,
     )
 
 
