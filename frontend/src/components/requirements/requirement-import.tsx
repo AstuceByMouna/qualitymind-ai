@@ -12,9 +12,11 @@ export function RequirementImport() {
   const [file,setFile]=useState<File|null>(null);
   const [mapping,setMapping]=useState("{}");
   const [preview,setPreview]=useState<Preview|null>(null);
+  const [completed,setCompleted]=useState<Preview|null>(null);
   const [error,setError]=useState("");
   const [busy,setBusy]=useState(false);
   const lock=useRef(false);
+  const fileInput=useRef<HTMLInputElement|null>(null);
   const router=useRouter();
 
   async function run(action:()=>Promise<void>) {
@@ -30,6 +32,7 @@ export function RequirementImport() {
     try{const parsed=JSON.parse(mapping);if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))throw Error();}
     catch{setError("Column mapping must be a JSON object.");return;}
     setPreview(null);
+    setCompleted(null);
     await run(async()=>{
       const payload=new FormData();payload.set("file",file);payload.set("mapping",mapping);
       const response=await fetch("/api/imports/preview",{method:"POST",body:payload});
@@ -52,7 +55,19 @@ export function RequirementImport() {
         setError("Import confirmed but requirement links could not be verified. Refresh the registry.");
         setPreview(result as Preview);router.refresh();return;
       }
-      setPreview(result as Preview);router.refresh();
+      const confirmed=result as Preview;
+      const created=confirmed.rows.filter((row:Row)=>row.decision==="create");
+      setPreview(null);
+      setFile(null);
+      setMapping("{}");
+      if(fileInput.current)fileInput.current.value="";
+      if(confirmed.rows.length===1&&created.length===1&&UUID.test(String(created[0].requirement_id||""))){
+        router.push("/requirements/"+encodeURIComponent(String(created[0].requirement_id)));
+      }else{
+        setCompleted(confirmed);
+        router.replace("/");
+        router.refresh();
+      }
     });
   }
 
@@ -61,10 +76,29 @@ export function RequirementImport() {
       <h3 className="font-semibold">Import requirements (CSV / XLSX)</h3>
       <p className="text-xs text-slate-600">Review every field before importing. No requirements are created until you confirm.</p>
     </div>
-    <form onSubmit={e=>void previewFile(e)} className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,250px)_auto] lg:items-end">
+    {completed ? <div data-testid="requirement-import-completed" role="status" className="space-y-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+      <p className="font-semibold text-emerald-900">Import completed</p>
+      <p className="text-sm text-emerald-950">{completed.accepted} created · {completed.ignored} already existed · {completed.rejected} rejected</p>
+      {completed.rows.some(row=>row.requirement_id&&UUID.test(row.requirement_id))&&<div className="space-y-2">
+        <p className="text-sm font-semibold">Open an imported requirement</p>
+        <ul className="space-y-1">{completed.rows.filter(row=>row.requirement_id&&UUID.test(row.requirement_id)).map(row=>
+          <li key={row.row} className="min-w-0">
+            <Link href={`/requirements/${encodeURIComponent(String(row.requirement_id))}`}
+              data-testid="requirement-import-completed-link"
+              className="inline-block break-words text-sm font-medium text-sky-800 underline underline-offset-2 hover:text-sky-950">
+              {row.title||row.external_id}
+            </Link>
+          </li>)}</ul>
+      </div>}
+      <button type="button" data-testid="requirement-import-another"
+        onClick={()=>{setCompleted(null);setPreview(null);setError("");}}
+        className="rounded-md border border-sky-700 px-3 py-2 text-sm font-medium text-sky-800 hover:bg-sky-50">
+        Import another file
+      </button>
+    </div> : <form onSubmit={e=>void previewFile(e)} className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,250px)_auto] lg:items-end">
       <div className="min-w-0 space-y-2">
         <p className="text-sm font-semibold text-slate-800" id="import-file-title">Import file</p>
-        <input id="requirement-import-file" data-testid="requirement-import-file"
+        <input ref={fileInput} id="requirement-import-file" data-testid="requirement-import-file"
           type="file" accept=".csv,.xlsx" disabled={busy}
           aria-labelledby="import-file-title" className="peer sr-only"
           onChange={e=>{setFile(e.target.files?.[0]??null);setPreview(null);setError("");}} />
@@ -79,7 +113,7 @@ export function RequirementImport() {
       </div>
       <label className="block space-y-2 text-sm font-semibold text-slate-700">Optional mapping JSON
         <input data-testid="requirement-import-mapping" value={mapping} disabled={busy}
-          onChange={e=>setMapping(e.target.value)}
+          onChange={e=>{setMapping(e.target.value);setPreview(null);setError("");}}
           className="block w-full rounded border border-slate-300 bg-white p-2 font-mono text-xs"
           aria-label="Column mapping JSON" />
       </label>
@@ -87,9 +121,9 @@ export function RequirementImport() {
         className="rounded bg-sky-700 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-50">
         {busy?"Processing...":"Preview"}
       </button>
-    </form>
+    </form>}
     {error&&<p role="alert" className="text-sm text-red-700">{error}</p>}
-    {preview&&<div data-testid="requirement-import-results" className="space-y-4 border-t border-slate-200 pt-4">
+    {!completed&&preview&&<div data-testid="requirement-import-results" className="space-y-4 border-t border-slate-200 pt-4">
       <div aria-live="polite" className={preview.state==="confirmed"?"rounded-md border border-emerald-200 bg-emerald-50 p-3":"space-y-1"}>
         <p className="text-sm font-semibold">{preview.state}: {preview.accepted} create / {preview.ignored} ignore / {preview.rejected} reject</p>
         <p className="text-xs text-slate-600">{preview.state==="confirmed"?
