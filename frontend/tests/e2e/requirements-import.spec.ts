@@ -25,12 +25,12 @@ test("QA-98 file picker supports long names and resets preview when replaced", a
   const name = "qualitymind-" + "requirements-long-filename-".repeat(6) + ".csv";
   await expect(page.getByText("Click to choose a CSV or XLSX file")).toBeVisible();
   await expect(page.getByTestId("requirement-import-preview")).toBeDisabled();
-  await input.setInputFiles({name, mimeType:"text/csv", buffer:Buffer.from("external_id,title,description\\nQA98-1,Example title,Example full description\\n")});
+  await input.setInputFiles({name, mimeType:"text/csv", buffer:Buffer.from("external_id,title,description\nQA98-1,Example title,Example full description\n")});
   await expect(page.getByTestId("requirement-import-selected-file")).toHaveText("Selected file: " + name);
   await page.getByTestId("requirement-import-preview").click();
   await expect(page.getByTestId("requirement-import-row-description")).toHaveText("Example full description");
   await input.setInputFiles({name:"replacement.csv",mimeType:"text/csv",
-    buffer:Buffer.from("external_id,title,description\\nQA98-2,Replacement,Another description\\n")});
+    buffer:Buffer.from("external_id,title,description\nQA98-2,Replacement,Another description\n")});
   await expect(page.getByTestId("requirement-import-selected-file")).toContainText("replacement.csv");
   await expect(page.getByTestId("requirement-import-results")).toHaveCount(0);
   await expect(page.getByTestId("requirement-import-preview")).toBeEnabled();
