@@ -21,8 +21,13 @@ def _summary(batch: ImportBatch):
         "id": batch.id, "source_name": batch.source_name, "state": batch.state,
         "accepted": batch.accepted, "rejected": batch.rejected, "ignored": batch.ignored,
         "created_at": batch.created_at, "confirmed_at": batch.confirmed_at,
-        "rows": [{"row": row["row"],"external_id": row["external_id"],"title": row["title"],
-                  "decision": row["decision"],"error": row.get("error")} for row in batch.rows],
+        "rows": [{
+            "row": row["row"], "external_id": row["external_id"],
+            "title": row["title"], "description": row["description"],
+            "priority": row["priority"], "acceptance_criteria": row["acceptance_criteria"],
+            "decision": row["decision"], "error": row.get("error"),
+            "requirement_id": row.get("requirement_id"),
+        } for row in batch.rows],
     }
 
 @router.post("/preview", status_code=201)
@@ -72,6 +77,7 @@ def confirm_import(batch_id: UUID, db: Session = Depends(get_db)):
         raise HTTPException(status_code=409,detail="Fix rejected rows and preview again before confirmation")
     new_count=0
     ignored_count=0
+    confirmed_rows=[]
     for row in batch.rows:
         if row["decision"]=="reject":
             raise HTTPException(status_code=409,detail="Invalid staging rows")
@@ -80,6 +86,7 @@ def confirm_import(batch_id: UUID, db: Session = Depends(get_db)):
         ))
         if exists:
             ignored_count+=1
+            confirmed_rows.append({**row, "decision": "ignore", "requirement_id": str(exists)})
             continue
         req=Requirement(title=row["title"],description=row["description"],status="Draft",
             import_source=batch.source_name,external_id=row["external_id"],
@@ -87,7 +94,9 @@ def confirm_import(batch_id: UUID, db: Session = Depends(get_db)):
         db.add(req);db.flush()
         if row["acceptance_criteria"]:
             db.add(AcceptanceCriterion(requirement_id=req.id,content=row["acceptance_criteria"],position=1))
+        confirmed_rows.append({**row, "decision": "create", "requirement_id": str(req.id)})
         new_count+=1
+    batch.rows=confirmed_rows
     batch.accepted=new_count
     batch.ignored=ignored_count
     batch.state="confirmed"
