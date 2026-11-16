@@ -30,14 +30,15 @@ def list_requirements(
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
     q: str = Query(default="", max_length=200, description="Case-insensitive text/UUID filter"),
+    archived: bool = Query(default=False),
     db: Session = Depends(get_db),
 ):
     service = _service(db)
     if q.strip():
-        items, total = service.list_page(limit=limit, offset=offset, query=q.strip())
+        items, total = service.list_page(limit=limit, offset=offset, query=q.strip(), archived=True) if archived else service.list_page(limit=limit, offset=offset, query=q.strip())
     else:
         # Preserve existing integrations/mocks using the original unfiltered signature.
-        items, total = service.list_page(limit=limit, offset=offset)
+        items, total = service.list_page(limit=limit, offset=offset, archived=True) if archived else service.list_page(limit=limit, offset=offset)
     return RequirementListResponse(items=items, total=total, limit=limit, offset=offset)
 
 
@@ -94,5 +95,19 @@ def transition_requirement(
 def requirement_transition_history(requirement_id: UUID, db: Session = Depends(get_db)):
     try:
         return _service(db).history(requirement_id)
+    except RequirementNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+@router.post("/{requirement_id}/archive", response_model=RequirementRead)
+def archive_requirement(requirement_id: UUID, db: Session = Depends(get_db)):
+    try:
+        return _service(db).set_archived(requirement_id, archived=True)
+    except RequirementNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+@router.post("/{requirement_id}/restore", response_model=RequirementRead)
+def restore_requirement(requirement_id: UUID, db: Session = Depends(get_db)):
+    try:
+        return _service(db).set_archived(requirement_id, archived=False)
     except RequirementNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
