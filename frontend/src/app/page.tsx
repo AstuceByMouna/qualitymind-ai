@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { RequirementImport } from "@/components/requirements/requirement-import";
 import { RequirementsContent, RequirementsLoading } from "@/components/requirements/requirements-content";
 
 type PageProps = { searchParams: Promise<{ page?: string | string[]; q?: string | string[] }> };
@@ -41,6 +42,7 @@ export default function Home({ searchParams }: PageProps) {
                 + Create Requirement
               </Link>
             </div>
+            <RequirementImport />
             <Suspense fallback={<RequirementsLoading />}>
               <RequirementsContent searchParams={searchParams} />
             </Suspense>
