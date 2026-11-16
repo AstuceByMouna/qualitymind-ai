@@ -17,6 +17,7 @@ def test_create_requirement():
     def simulate_refresh(requirement):
         requirement.id = UUID("12345678-1234-5678-1234-567812345678")
         requirement.created_at = datetime(2026, 11, 8, tzinfo=timezone.utc)
+        requirement.status = "Draft"
 
     db.refresh.side_effect = simulate_refresh
     app.dependency_overrides[get_db] = lambda: db
@@ -34,6 +35,7 @@ def test_create_requirement():
         assert body["title"] == "Authentification utilisateur"
         assert body["description"] == "Le système doit permettre la connexion."
         assert body["created_at"] is not None
+        assert body["status"] == "Draft"
         db.add.assert_called_once()
         db.commit.assert_called_once()
         db.refresh.assert_called_once()
