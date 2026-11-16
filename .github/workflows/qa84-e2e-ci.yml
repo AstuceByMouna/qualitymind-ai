@@ -6,6 +6,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature/QA-97-archive-restore
     paths:
       - "frontend/**"
       - "backend/**"

@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature/QA-97-archive-restore
   workflow_dispatch:
 
 permissions:

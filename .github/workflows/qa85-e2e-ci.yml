@@ -2,7 +2,7 @@ name: QA-85 Global Search E2E
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feature/QA-97-archive-restore]
     paths:
       - "frontend/**"
       - "backend/**"
