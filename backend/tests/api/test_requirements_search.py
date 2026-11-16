@@ -40,8 +40,13 @@ def test_empty_or_blank_query_preserves_unfiltered_listing():
         client = TestClient(app)
         for params in ({}, {"q": ""}, {"q": "   "}):
             assert client.get(BASE, params=params).status_code == 200
-        assert "WHERE" not in str(db.scalar.call_args.args[0]).upper()
-        assert "WHERE" not in str(db.scalars.call_args.args[0]).upper()
+        # The default listing must exclude archives, even without a text query.
+        count_sql = str(db.scalar.call_args.args[0]).upper()
+        rows_sql = str(db.scalars.call_args.args[0]).upper()
+        assert "ARCHIVED_AT IS NULL" in count_sql
+        assert "ARCHIVED_AT IS NULL" in rows_sql
+        assert " LIKE " not in count_sql
+        assert " LIKE " not in rows_sql
     finally:
         app.dependency_overrides.clear()
 
