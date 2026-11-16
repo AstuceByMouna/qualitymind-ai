@@ -32,7 +32,7 @@ def parse(content: bytes, filename: str, mapping: dict[str,str] | None = None) -
                 raise InvalidImport("XLSX must contain exactly one worksheet")
             if wb.active.max_column > 100:
                 raise InvalidImport("XLSX contains too many columns")
-            rows=list(wb.active.iter_rows(max_row=MAX_ROWS+2,max_col=100,values_only=True))
+            rows=list(wb.active.iter_rows(max_row=MAX_ROWS+2,max_col=wb.active.max_column,values_only=True))
             wb.close()
         except (ValueError, OSError, KeyError, TypeError, IndexError, BadZipFile) as exc:
             raise InvalidImport("Invalid XLSX spreadsheet") from exc
