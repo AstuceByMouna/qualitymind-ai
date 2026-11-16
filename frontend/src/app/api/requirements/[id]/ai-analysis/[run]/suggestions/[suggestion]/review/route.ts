@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 const BASE=process.env.API_BASE_URL??"http://127.0.0.1:8000";
-const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i;
+const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 type Context={params:Promise<{id:string;run:string;suggestion:string}>};
 export async function POST(request:Request,{params}:Context){
  const {id,run,suggestion}=await params;
