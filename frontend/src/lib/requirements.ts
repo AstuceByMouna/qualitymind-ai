@@ -4,6 +4,7 @@ export interface Requirement {
   title: string;
   description: string;
   created_at: string;
+  status: "Draft" | "In Review" | "Ready";
 }
 
 export interface RequirementListResponse {
