@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from alembic import context
 from app.db import engine
 from app.models.requirement import Base
+from app.models.acceptance_criterion import AcceptanceCriterion  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
