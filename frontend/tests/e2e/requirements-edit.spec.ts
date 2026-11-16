@@ -170,3 +170,88 @@ test("QA84-TC06 @critical @mock-api @qa-only - concurrent edit submissions are b
   await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
   expect(patchCount).toBe(1);
 });
+
+test("QA91-TC01 @real-api @qa-only - three rapid consecutive edits persist correctly", async ({
+  page, request,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || String(testInfo.project.use.baseURL ?? "") !== "http://127.0.0.1:3001",
+    "Dedicated QA fixture and isolated QA frontend required");
+
+  const api = `http://127.0.0.1:8001/api/v1/requirements/${id}`;
+  const originalResponse = await request.get(api);
+  expect(originalResponse.ok()).toBeTruthy();
+  const original = await originalResponse.json() as {
+    id: string; title: string; description: string; created_at: string;
+  };
+  const capturedErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && /hydration|hydrated/i.test(message.text())) {
+      capturedErrors.push(message.text());
+    }
+  });
+  page.on("pageerror", (error) => capturedErrors.push(error.message));
+
+  const first = `QA91-first-${Date.now()}`;
+  const second = `QA91-second-${Date.now()}`;
+  const third = `QA91-third-${Date.now()}`;
+  const edit = new RequirementEditPage(page);
+  try {
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: "Requirements Workbench" })).toBeVisible();
+    await edit.goto(id!);
+    await edit.title.fill(first);
+    await edit.submit.click();
+
+    // As soon as the details screen appears, reopen Edit immediately.
+    // Do not reload the page or delay between consecutive edits.
+    await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+    await page.getByTestId("requirement-edit-link").click();
+    await expect(edit.title).toHaveValue(first);
+    await edit.title.fill(second);
+    await edit.submit.click();
+    await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+    await expect(page.getByRole("heading", { name: second, exact: true })).toBeVisible();
+
+    // Regression reported by UAT: the THIRD immediate save got stuck "Saving...".
+    await page.getByTestId("requirement-edit-link").click();
+    await expect(edit.title).toHaveValue(second);
+    await edit.title.fill(third);
+    await edit.submit.click();
+    await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+    await expect(page.getByRole("heading", { name: third, exact: true })).toBeVisible();
+
+    const response = await request.get(api);
+    expect(response.ok()).toBeTruthy();
+    const persisted = await response.json() as typeof original;
+    expect(persisted.id).toBe(original.id);
+    expect(persisted.created_at).toBe(original.created_at);
+    expect(persisted.title).toBe(third);
+    expect(persisted.description).toBe(original.description);
+    expect(capturedErrors).toEqual([]);
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: "Requirements Workbench" })).toBeVisible();
+  } finally {
+    const restore = await request.patch(api, {
+      data: { title: original.title, description: original.description },
+    });
+    expect(restore.ok(), "QA fixture restoration must succeed").toBeTruthy();
+  }
+});
+
+
+test("QA91-TC02 @qa-only - edit Back link returns to the same requirement", async ({
+  page,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Requires isolated QA frontend and fixture.");
+
+  const edit = new RequirementEditPage(page);
+  await edit.goto(id!);
+  const back = page.getByRole("link", { name: "Back to Requirement Details" });
+  await expect(back).toHaveAttribute("href", `/requirements/${id}`);
+  await back.click();
+  await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
+  await expect(page.getByTestId("requirement-edit-link")).toBeVisible();
+});
