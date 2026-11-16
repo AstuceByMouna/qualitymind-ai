@@ -1,5 +1,6 @@
 alembic==1.20.1
 openpyxl==3.1.5
+openai==3.51.0
 python-multipart==0.0.20
 annotated-doc==0.0.5
 annotated-types==0.8.0
