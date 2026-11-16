@@ -26,10 +26,19 @@ def test_import_preview_confirm_and_reimport():
             batch_ids.append(data["id"])
             assert data["accepted"]==(1 if attempt==0 else 0)
             assert data["ignored"]==(0 if attempt==0 else 1)
+            row=data["rows"][0]
+            assert row["description"]=="Sign in"
+            assert row["priority"]=="High"
+            assert row["acceptance_criteria"]=="Given credentials"
+            assert row["requirement_id"] is None
+            snapshot=client.get(f"/api/v1/imports/{data['id']}")
+            assert snapshot.status_code==200
+            assert snapshot.json()["rows"][0]["description"]=="Sign in"
             assert client.get("/api/v1/requirements",params={"q":"Imported login"}).json()["total"]==(0 if attempt==0 else 1)
             confirmed=client.post(f"/api/v1/imports/{data['id']}/confirm")
             assert confirmed.status_code==200,confirmed.text
             assert confirmed.json()["state"]=="confirmed"
+            assert UUID(confirmed.json()["rows"][0]["requirement_id"])
             assert client.post(f"/api/v1/imports/{data['id']}/confirm").json()["state"]=="confirmed"
         with SessionLocal() as session:
             models=list(session.scalars(select(Requirement).where(
