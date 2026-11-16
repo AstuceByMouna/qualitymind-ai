@@ -255,3 +255,62 @@ test("QA91-TC02 @qa-only - edit Back link returns to the same requirement", asyn
   await expect(page).toHaveURL((url) => url.pathname === `/requirements/${id}`);
   await expect(page.getByTestId("requirement-edit-link")).toBeVisible();
 });
+
+test("QA93-TC01 @real-api @qa-only - 255-character title stays readable in registry", async ({
+  page, request,
+}, testInfo) => {
+  const id = process.env.QA84_FIXTURE_UUID;
+  test.skip(!id || testInfo.project.use.baseURL !== "http://127.0.0.1:3001",
+    "Requires isolated QA fixture and frontend.");
+
+  const api = `http://127.0.0.1:8001/api/v1/requirements/${id}`;
+  const originalResponse = await request.get(api);
+  expect(originalResponse.ok()).toBeTruthy();
+  const original = await originalResponse.json() as {
+    id: string; title: string; description: string;
+  };
+  const titles = [
+    ("Alpha beta gamma delta epsilon ").repeat(10).slice(0, 255),
+    "X".repeat(255),
+  ];
+  try {
+    for (const title of titles) {
+      expect(title.length).toBe(255);
+      const patch = await request.patch(api, { data: { title } });
+      expect(patch.status()).toBe(200);
+      await page.goto(`/?q=${encodeURIComponent(title.slice(0, 24))}`);
+      const link = page.getByRole("link", { name: title, exact: true });
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAttribute("title", title);
+      const span = link.getByTestId("requirement-registry-title");
+      await expect(span).toHaveCSS("-webkit-line-clamp", "2");
+      await expect(span).toHaveCSS("overflow-wrap", "anywhere");
+
+      const bounds = await span.boundingBox();
+      const lineHeight = await span.evaluate((node) =>
+        parseFloat(window.getComputedStyle(node).lineHeight));
+      expect(bounds).not.toBeNull();
+      expect(lineHeight).toBeGreaterThan(0);
+      expect(bounds!.height).toBeLessThanOrEqual(lineHeight * 2 + 3);
+      await link.click();
+      await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
+
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.goto(`/?q=${encodeURIComponent(title.slice(0, 24))}`);
+      const mobileTitle = page.getByRole("link", { name: title, exact: true });
+      await expect(mobileTitle).toBeVisible();
+      await expect(page.locator("table")).toHaveCSS("table-layout", "fixed");
+      const overflow = await page.evaluate(() => ({
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: document.documentElement.clientWidth,
+      }));
+      expect(overflow.documentWidth).toBeLessThanOrEqual(overflow.viewportWidth + 2);
+      await page.setViewportSize({ width: 1280, height: 720 });
+    }
+  } finally {
+    const restored = await request.patch(api, {
+      data: { title: original.title, description: original.description },
+    });
+    expect(restored.ok(), "Restore the QA-only fixture").toBeTruthy();
+  }
+});
