@@ -49,7 +49,13 @@ class RequirementService:
             raise RequirementNotFoundError("Requirement not found")
         return result
 
+    def set_archived(self, requirement_id: UUID, *, archived: bool) -> RequirementEntity:
+        result = self._repository.set_archived(requirement_id, archived=archived)
+        if result is None:
+            raise RequirementNotFoundError("Requirement not found")
+        return result
+
     def list_page(
-        self, *, limit: int, offset: int, query: str | None = None
+        self, *, limit: int, offset: int, query: str | None = None, archived: bool = False
     ) -> tuple[list[RequirementEntity], int]:
-        return self._repository.list_page(limit=limit, offset=offset, query=query)
+        return self._repository.list_page(limit=limit, offset=offset, query=query, archived=archived) if archived else self._repository.list_page(limit=limit, offset=offset, query=query)

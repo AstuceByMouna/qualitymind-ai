@@ -5,6 +5,7 @@ export interface Requirement {
   description: string;
   created_at: string;
   status: "Draft" | "In Review" | "Ready";
+  archived_at: string | null;
 }
 
 export interface RequirementListResponse {
@@ -21,12 +22,14 @@ export async function getRequirements(
   limit = 50,
   offset = 0,
   query = "",
+  archived = false,
 ): Promise<RequirementListResponse> {
   const params = new URLSearchParams({
     limit: String(limit),
     offset: String(offset),
   });
   if (query) params.set("q", query);
+  if (archived) params.set("archived", "true");
   const response = await fetch(
     `${API_URL}/api/v1/requirements?${params.toString()}`,
     { cache: "no-store" },

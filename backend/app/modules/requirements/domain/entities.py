@@ -11,3 +11,4 @@ class RequirementEntity:
     description: str
     created_at: datetime
     status: str = "Draft"
+    archived_at: datetime | None = None

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getRequirement, getAcceptanceCriteria, RequirementNotFoundError } from "@/lib/requirements";
+import { ArchiveRequirement } from "@/components/requirements/archive-requirement";
 import { RequirementLifecycle } from "@/components/requirements/requirement-lifecycle";
 import { AcceptanceCriteriaEditor } from "@/components/requirements/acceptance-criteria-editor";
 
@@ -50,11 +51,11 @@ export async function RequirementDetails({ params }: Props) {
           {detail.title}
         </h2>
         </div>
-        <Link href={`/requirements/${encodeURIComponent(detail.id)}/edit`}
+        {!detail.archived_at && <Link href={`/requirements/${encodeURIComponent(detail.id)}/edit`}
           data-testid="requirement-edit-link"
           className="inline-flex items-center rounded-md bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
           Edit Requirement
-        </Link>
+        </Link>}
       </div>
       <dl className="grid gap-5 md:grid-cols-2">
         <div>
@@ -69,7 +70,8 @@ export async function RequirementDetails({ params }: Props) {
           </dd>
         </div>
       </dl>
-      <RequirementLifecycle requirementId={detail.id} initialStatus={detail.status} />
+      <ArchiveRequirement requirementId={detail.id} archived={Boolean(detail.archived_at)} />
+      {!detail.archived_at && <RequirementLifecycle requirementId={detail.id} initialStatus={detail.status} />}
       <section aria-labelledby="requirement-description-title">
         <h3 id="requirement-description-title" className="text-sm font-semibold text-slate-700">
           Description

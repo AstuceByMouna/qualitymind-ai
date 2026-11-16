@@ -46,6 +46,7 @@ class RequirementRead(BaseModel):
     description: str
     created_at: datetime
     status: str
+    archived_at: datetime | None = None
 
     model_config = {"from_attributes": True}
 

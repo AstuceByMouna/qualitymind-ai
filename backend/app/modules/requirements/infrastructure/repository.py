@@ -15,6 +15,7 @@ def _to_domain(model: Requirement) -> RequirementEntity:
         description=model.description,
         created_at=model.created_at,
         status=model.status,
+        archived_at=model.archived_at,
     )
 
 
@@ -76,13 +77,27 @@ class SqlAlchemyRequirementRepository:
             .order_by(RequirementStatusHistory.changed_at, RequirementStatusHistory.id)
         ).all())
 
+    def set_archived(self, requirement_id: UUID, *, archived: bool) -> RequirementEntity | None:
+        model = self._db.scalar(select(Requirement).where(Requirement.id == requirement_id).with_for_update())
+        if model is None:
+            return None
+        if archived and model.archived_at is None:
+            model.archived_at = self._db.scalar(select(func.now()))
+            model.archive_source = "api"
+        elif not archived and model.archived_at is not None:
+            model.archived_at = None
+            model.archive_source = None
+        self._db.commit()
+        self._db.refresh(model)
+        return _to_domain(model)
+
     def list_page(
-        self, *, limit: int, offset: int, query: str | None = None
+        self, *, limit: int, offset: int, query: str | None = None, archived: bool = False
     ) -> tuple[list[RequirementEntity], int]:
         # Match the previous local UI behavior: title, description and UUID.
         # Escape LIKE metacharacters so %, _ and backslash are literal,
         # not SQL wildcards. SQLAlchemy binds the resulting pattern safely.
-        filters = []
+        filters = [Requirement.archived_at.is_not(None) if archived else Requirement.archived_at.is_(None)]
         if query and query.strip():
             escaped = (
                 query.strip().replace("\\", "\\\\")
