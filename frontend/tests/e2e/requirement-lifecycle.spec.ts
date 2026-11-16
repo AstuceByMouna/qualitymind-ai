@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("QA-95 lifecycle persists across page refresh", async ({ page, request }) => {
-  const backend = process.env.API_BASE_URL ?? "http://127.0.0.1:8000";
+  const backend = process.env.API_BASE_URL ?? "http://127.0.0.1:8001";
   const created = await request.post(backend + "/api/v1/requirements", {
     data: { title: "QA-95 lifecycle e2e", description: "state transition check" },
   });
