@@ -4,6 +4,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.imports import router as imports_router
 from app.api.v1.requirements import router as requirements_router
 from app.api.v1.acceptance_criteria import router as acceptance_criteria_router
 from app.core.config import get_cors_origins
@@ -24,6 +25,7 @@ app.add_middleware(
 )
 
 app.include_router(requirements_router)
+app.include_router(imports_router)
 app.include_router(acceptance_criteria_router)
 
 
