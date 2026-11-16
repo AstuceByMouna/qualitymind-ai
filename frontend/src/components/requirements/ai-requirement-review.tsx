@@ -11,7 +11,18 @@ export function AIRequirementReview({requirementId,eligible}:{requirementId:stri
   try{const r=await fetch(base,{cache:"no-store"});if(!r.ok)throw Error();setRuns(await r.json());}
   catch{setError("Cannot retrieve AI review history.");}
  }
- useEffect(()=>{void refresh();},[requirementId]);
+ useEffect(()=>{
+  let active=true;
+  fetch(base,{cache:"no-store"}).then(response=>{
+    if(!response.ok)throw new Error("History unavailable");
+    return response.json();
+  }).then(data=>{
+    if(active)setRuns(data as Run[]);
+  }).catch(()=>{
+    if(active)setError("Cannot retrieve AI review history.");
+  });
+  return ()=>{active=false;};
+ },[base]);
  async function analyze(){
   if(busy||!consent||!attest)return;setBusy(true);setError("");
   try{const r=await fetch(base,{method:"POST",headers:{"Content-Type":"application/json"},
