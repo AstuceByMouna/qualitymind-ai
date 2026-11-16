@@ -15,8 +15,9 @@ test("QA94-TC01 @real-api @qa-only - add, edit, cancel and delete isolated crite
     items: { id: string; content: string; position: number }[];
   };
   const knownIds = new Set(original.items.map((item) => item.id));
-  const titleA = "Given a registered customer, when submitting credentials, then access succeeds";
-  const titleB = "Given invalid credentials, when submitting, then the user sees an error";
+  const marker = Date.now().toString(36) + "-retry" + testInfo.retry;
+  const titleA = "Given registered customer " + marker + ", when logging in, then access succeeds";
+  const titleB = "Given invalid credentials " + marker + ", when submitting, then an error is shown";
   try {
     await page.goto("/requirements/" + requirementId);
     await expect(page.getByRole("heading", { name: "Acceptance Criteria" })).toBeVisible();
