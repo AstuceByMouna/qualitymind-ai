@@ -26,7 +26,7 @@
 
 ## Écarts de spécification à arbitrer avant stabilisation
 
-1. **Transitions d'états :** `backend/app/modules/requirements/application/lifecycle.py` définit le mapping `ALLOWED_FROM` comme des *sources autorisées par état cible*. Il permet techniquement `Draft → Ready` et `Ready → In Review`. Cependant le frontend ne propose pas ces transitions, et le contrat fonctionnel/ADR-002 ne les prévoit pas. **Divergence détectée : arbitrer et aligner backend/UI/tests avant validation finale de FR-007**, sans changer silencieusement la règle dans cette PR documentaire.
+1. **Transitions d'états :** le mapping `ALLOWED_FROM` de `lifecycle.py` indique, pour chaque **état cible**, les **états sources autorisés** ; il est cohérent avec l'UI et l'ADR-002 : `Draft → In Review`, `In Review → Ready`, `In Review → Draft`, `Ready → Draft`. Les transitions non prévues sont rejetées en HTTP 409.
 2. **Documentation ancienne :** `README.md`, `system-architecture.md` et quelques plans QA reflètent encore la baseline du 9 novembre et qualifient l'UI/IA de futures. Le dossier fonctionnel à jour prévaut pour l'**état implémenté**, en attendant une révision séparée des pages historiques.
 3. **Versionnement de l'exigence :** pas d'audit des anciennes valeurs de titre/description ; BR-008 partiel.
 4. **Module complet AI Test Design :** QA-90 propose des scénarios textuels mais ne crée pas d'entité TestCase du catalogue FR-008–014.
