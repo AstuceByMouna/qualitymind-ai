@@ -9,6 +9,13 @@
 3. [ADR-001 et décisions (Confluence)](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458771) et [ADR de code](../adr/ADR-001-modular-monolith.md) : décisions d'architecture.
 4. **Ce dossier** : comportements observables du MVP et diagrammes du code versionné. Si le catalogue et le code divergent, documenter l'écart ; ne pas réécrire silencieusement une règle métier.
 
+## Accès Confluence
+
+- [Dossier fonctionnel et diagrammes — page d'entrée](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162689)
+- [Spécification fonctionnelle du MVP](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162739)
+- [Diagrammes d'états, flux et données](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2228225)
+
+
 ## Documents
 
 | Document | Objet |
