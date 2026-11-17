@@ -72,6 +72,26 @@ The default branch `main` is protected by the active GitHub repository ruleset
 
 Before merging a PR: verify its diff, check the GitHub Actions run, ensure the required check succeeds, and resolve review conversations. A failing or missing required check should prevent merging via the normal GitHub workflow. Verify that the Ruleset is effectively enforced with a documentation-only PR and a controlled negative test before considering QA-66 fully validated.
 
+## Functional Reference — Sprint 5 (current)
+
+**Current implementation and scope as of 16 November 2026:** Next.js Requirements Workbench, FastAPI/PostgreSQL requirements and acceptance criteria, lifecycle and history, archive/restore, CSV/XLSX import, deterministic requirement analysis, and opt-in OpenAI structured review with human decisions. CI Pytest, Playwright and Postman; human QA recipe remains to be signed off. No production deployment, RBAC or enterprise multi-tenancy. Live OpenAI API validation remains to be performed using synthetic data and explicit permission.
+
+- [Confluence — Dossier fonctionnel et diagrammes Sprint 5](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162689)
+- [Confluence — Spécification Requirements Intelligence](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162739)
+- [Confluence — Diagrammes d'états, de flux et de données](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2228225)
+- [Functional documentation index](docs/functional/README.md)
+- [Functional specification](docs/functional/requirements-intelligence.md)
+- [State and sequence diagrams](docs/functional/diagrams.md)
+- [Entity model and API contract](docs/functional/data-contracts.md)
+- [Requirements-to-test traceability and discrepancies](docs/functional/traceability.md)
+- [As-built architecture](docs/architecture/as-built-sprint5.md)
+
+**Lifecycle policy:** backend, UI, and ADR-002 agree on four allowed transitions. The backend's `ALLOWED_FROM` dictionary is indexed by **target** state, and each value lists the allowed **source** states. See the [state diagrams](docs/functional/diagrams.md).
+
+## Historical project log (archive of earlier stages)
+
+The sections headed “Development Status — 9 November 2026” and below describe **historical milestones**, not current implementation status. Use the functional reference above for the Sprint 5 state.
+
 ## Project Documentation
 
 - [Requirements Catalogue](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145)
