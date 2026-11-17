@@ -2,6 +2,8 @@
 
 **Date :** 16 novembre 2026. **Vue :** code intégré sur `main` ; ne pas confondre avec une mise en production.
 
+**Gouvernance :** [Produit cible et release MVP-1](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145) · [ADR canoniques](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2129927) · [Risques et dépendances](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2195469) · [Sécurité IA](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2129964). **Status:** code intégré et CI validée, recette manuelle non signée, déploiement enterprise non autorisé.
+
 ## Diagramme des composants réellement livrés
 
 ```mermaid

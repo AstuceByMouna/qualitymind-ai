@@ -6,7 +6,7 @@
 
 1. [Catalogue officiel FR, NFR, AI, BR (Confluence)](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145) : exigences et identifiants **stables**. Ne pas renuméroter FR-008 et suivants.
 2. [Jira Epic QA-5 et Sprint 5](https://gharbiconsulting.atlassian.net/browse/QA-5) : réalisation, anomalies, décisions de recette.
-3. [ADR-001 et décisions (Confluence)](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458771) et [ADR de code](../adr/ADR-001-modular-monolith.md) : décisions d'architecture.
+3. [Registre ADR canonique Confluence](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2129927), [registre historique et alias](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458771) et [ADR versionnées](../adr/ADR-001-modular-monolith.md) : ADR-001 à ADR-005 sans réutilisation d'identifiants.
 4. **Ce dossier** : comportements observables du MVP et diagrammes du code versionné. Si le catalogue et le code divergent, documenter l'écart ; ne pas réécrire silencieusement une règle métier.
 
 ## Accès Confluence
