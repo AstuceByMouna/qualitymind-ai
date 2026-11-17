@@ -6,10 +6,11 @@
 
 ```mermaid
 stateDiagram-v2
+    state "In Review" as InReview
     [*] --> Draft: création manuelle ou import confirmé
-    Draft --> "In Review": demander revue
-    "In Review" --> Ready: marquer prêt
-    "In Review" --> Draft: retour correction
+    Draft --> InReview: demander revue
+    InReview --> Ready: marquer prêt
+    InReview --> Draft: retour correction
     Ready --> Draft: rouvrir
 ```
 
