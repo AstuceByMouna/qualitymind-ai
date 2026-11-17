@@ -1,6 +1,6 @@
 # Matrice de traçabilité fonctionnelle — Sprint 5
 
-**Date :** 16 novembre 2026. **Règle :** « intégré et CI verte » n'est pas « recette humaine PASS ». Les sources Jira restent les statuts officiels des tickets.
+**Date :** 16 novembre 2026. **Règle :** « intégré et CI verte » n'est pas « recette humaine PASS ». Les sources Jira restent les statuts officiels des tickets. Les 36 FR constituent la **plateforme cible** ; la première release MVP-1 est limitée à Requirements Intelligence. Références : [Catalogue cible/MVP-1](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145), [Sprint 5 et UAT](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/1998867), [Registre de risques](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2195469).
 
 | Fonction / FR | Jira | Code/API principal | Preuve automatisée | Recette |
 | --- | --- | --- | --- | --- |
