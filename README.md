@@ -83,7 +83,7 @@ Before merging a PR: verify its diff, check the GitHub Actions run, ensure the r
 - [Requirements-to-test traceability and discrepancies](docs/functional/traceability.md)
 - [As-built architecture](docs/architecture/as-built-sprint5.md)
 
-**Important traceability gap:** backend and UI currently disagree on two possible lifecycle transitions. See the discrepancy in the [functional traceability matrix](docs/functional/traceability.md). Resolve through a functional decision and separate code change before closing FR-007.
+**Lifecycle policy:** backend, UI, and ADR-002 agree on four allowed transitions. The backend's `ALLOWED_FROM` dictionary is indexed by **target** state, and each value lists the allowed **source** states. See the [state diagrams](docs/functional/diagrams.md).
 
 ## Historical project log (archive of earlier stages)
 
