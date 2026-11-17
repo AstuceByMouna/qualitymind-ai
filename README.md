@@ -76,6 +76,9 @@ Before merging a PR: verify its diff, check the GitHub Actions run, ensure the r
 
 **Current implementation and scope as of 16 November 2026:** Next.js Requirements Workbench, FastAPI/PostgreSQL requirements and acceptance criteria, lifecycle and history, archive/restore, CSV/XLSX import, deterministic requirement analysis, and opt-in OpenAI structured review with human decisions. CI Pytest, Playwright and Postman; human QA recipe remains to be signed off. No production deployment, RBAC or enterprise multi-tenancy. Live OpenAI API validation remains to be performed using synthetic data and explicit permission.
 
+- [Confluence — Dossier fonctionnel et diagrammes Sprint 5](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162689)
+- [Confluence — Spécification Requirements Intelligence](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162739)
+- [Confluence — Diagrammes d'états, de flux et de données](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2228225)
 - [Functional documentation index](docs/functional/README.md)
 - [Functional specification](docs/functional/requirements-intelligence.md)
 - [State and sequence diagrams](docs/functional/diagrams.md)
