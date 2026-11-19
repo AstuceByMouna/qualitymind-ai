@@ -35,3 +35,58 @@ def test_invalid_files_are_rejected_or_marked(content,name):
     except InvalidImport:
         return
     assert any(row["error"] for row in rows)
+
+
+def _xlsx_without_dimension(*rows):
+    """Generate a valid streaming XLSX with no worksheet dimension metadata."""
+    import re
+    from zipfile import ZipFile, ZIP_DEFLATED
+
+    wb = Workbook()
+    for row in rows:
+        wb.active.append(list(row))
+    source = io.BytesIO()
+    wb.save(source)
+    output = io.BytesIO()
+    with ZipFile(io.BytesIO(source.getvalue()), "r") as original:
+        with ZipFile(output, "w", compression=ZIP_DEFLATED) as rebuilt:
+            for info in original.infolist():
+                data = original.read(info.filename)
+                if info.filename == "xl/worksheets/sheet1.xml":
+                    data = re.sub(rb"<dimension\\b[^>]*/>", b"", data, count=1)
+                rebuilt.writestr(info, data)
+    return output.getvalue()
+
+
+def test_xlsx_without_dimension_header_is_importable():
+    content = _xlsx_without_dimension(
+        ("external_id", "title", "description", "priority", "acceptance_criteria"),
+        ("QA-105-1", "Valid XLSX", "Acceptance sample", "High", "Given A when B then C"),
+    )
+    rows = parse(content, "qa105-no-dimension.xlsx")
+    assert len(rows) == 1
+    assert rows[0]["external_id"] == "QA-105-1"
+    assert rows[0]["acceptance_criteria"] == "Given A when B then C"
+    assert rows[0]["error"] is None
+
+
+def test_xlsx_without_dimension_rejects_101_columns():
+    headings = ["external_id", "title", "description"] + [
+        "extra_" + str(i) for i in range(98)
+    ]
+    content = _xlsx_without_dimension(
+        headings,
+        ["QA-105-2", "Too many columns", "Description"] + [""] * 98,
+    )
+    with pytest.raises(InvalidImport, match="too many columns"):
+        parse(content, "too-wide-no-dimension.xlsx")
+
+
+def test_xlsx_with_dimension_rejects_101_columns():
+    wb = Workbook()
+    wb.active.append(["external_id", "title", "description"] + ["v"] * 98)
+    wb.active.append(["QA-105", "Title", "Description"] + ["v"] * 98)
+    buf = io.BytesIO()
+    wb.save(buf)
+    with pytest.raises(InvalidImport, match="too many columns"):
+        parse(buf.getvalue(), "too-wide.xlsx")
