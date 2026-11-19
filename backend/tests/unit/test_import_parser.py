@@ -53,9 +53,13 @@ def _xlsx_without_dimension(*rows):
             for info in original.infolist():
                 data = original.read(info.filename)
                 if info.filename == "xl/worksheets/sheet1.xml":
-                    data = re.sub(rb"<dimension\\b[^>]*/>", b"", data, count=1)
+                    data = re.sub(rb"<dimension\b[^>]*/>", b"", data, count=1)
                 rebuilt.writestr(info, data)
-    return output.getvalue()
+    result = output.getvalue()
+    # Verify the test fixture truly has *unknown* worksheet dimensions.
+    with load_workbook(io.BytesIO(result), read_only=True, data_only=True) as verify:
+        assert verify.active.max_column is None
+    return result
 
 
 def test_xlsx_without_dimension_header_is_importable():
