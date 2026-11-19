@@ -16,6 +16,20 @@ test("QA-97 archive and restore with explicit confirmation", async ({page,reques
   await expect(page.getByTestId("requirement-archive-action")).toHaveText("Restore requirement");
   await page.reload();
   await expect(page.getByTestId("requirement-archive-action")).toHaveText("Restore requirement");
+  const restored = page.waitForResponse(response =>
+    response.url().includes("/api/requirements/"+id+"/restore") &&
+    response.request().method() === "POST"
+  );
   await page.getByTestId("requirement-archive-action").click();
+  const restoreResponse = await restored;
+  expect(restoreResponse.status()).toBe(200);
+  const verified = await restoreResponse.json();
+  expect(verified.id).toBe(id);
+  expect(verified.archived_at).toBeNull();
+  await expect(page.getByTestId("requirement-archive-action")).toHaveText("Archive requirement");
+  const persisted = await request.get(api + "/api/v1/requirements/" + id);
+  expect(persisted.status()).toBe(200);
+  expect((await persisted.json()).archived_at).toBeNull();
+  await page.reload();
   await expect(page.getByTestId("requirement-archive-action")).toHaveText("Archive requirement");
 });
