@@ -4,6 +4,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.releases import router as releases_router
 from app.api.v1.quality_analysis import router as quality_router
 from app.api.v1.ai_analysis import router as ai_router
 from app.api.v1.imports import router as imports_router
@@ -30,6 +31,7 @@ app.include_router(requirements_router)
 app.include_router(imports_router)
 app.include_router(ai_router)
 app.include_router(quality_router)
+app.include_router(releases_router)
 app.include_router(acceptance_criteria_router)
 
 
