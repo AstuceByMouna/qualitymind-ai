@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 const navigation = [
   { label: "Overview", icon: "◫", available: false, href: "" },
@@ -13,8 +10,12 @@ const navigation = [
   { label: "Quality Governance", icon: "▤", available: true, href: "/governance" },
 ];
 
-export function AppSidebar() {
-  const pathname = usePathname();
+type AppSidebarProps = {
+  activeSection?: "requirements" | "governance";
+};
+
+/** Navigation state is provided by server routes: no client-only router hook. */
+export function AppSidebar({ activeSection = "requirements" }: AppSidebarProps) {
   return (
     <aside className="hidden w-64 shrink-0 bg-slate-950 p-6 text-white md:block">
       <div className="mb-10">
@@ -27,8 +28,8 @@ export function AppSidebar() {
       <nav aria-label="Main navigation" className="space-y-1">
         {navigation.map((item) => {
           const active = item.href === "/governance"
-            ? pathname.startsWith("/governance")
-            : item.href === "/" && (pathname === "/" || pathname.startsWith("/requirements"));
+            ? activeSection === "governance"
+            : item.href === "/" && activeSection === "requirements";
           return item.available ? (
             <Link
               key={item.label}
