@@ -57,8 +57,11 @@ def _xlsx_without_dimension(*rows):
                 rebuilt.writestr(info, data)
     result = output.getvalue()
     # Verify the test fixture truly has *unknown* worksheet dimensions.
-    with load_workbook(io.BytesIO(result), read_only=True, data_only=True) as verify:
+    verify = load_workbook(io.BytesIO(result), read_only=True, data_only=True)
+    try:
         assert verify.active.max_column is None
+    finally:
+        verify.close()
     return result
 
 
