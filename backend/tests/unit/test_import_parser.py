@@ -1,6 +1,6 @@
 import io
 import pytest
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from app.modules.requirements.application.import_parser import parse, InvalidImport
 
 def test_csv_preview_parsing_and_column_mapping():
