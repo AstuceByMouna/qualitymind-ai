@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function ArchiveRequirement({ requirementId, archived }: {requirementId: string; archived: boolean}) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [isArchived, setIsArchived] = useState(archived);
-  // Keep server-provided state authoritative after navigation or refresh.
-  useEffect(() => { setIsArchived(archived); }, [archived]);
   const locked = useRef(false);
   const router = useRouter();
   async function act() {
