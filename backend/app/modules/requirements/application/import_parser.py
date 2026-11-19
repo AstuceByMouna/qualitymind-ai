@@ -28,12 +28,26 @@ def parse(content: bytes, filename: str, mapping: dict[str,str] | None = None) -
     else:
         try:
             wb=load_workbook(io.BytesIO(content),read_only=True,data_only=True)
-            if len(wb.worksheets)!=1:
-                raise InvalidImport("XLSX must contain exactly one worksheet")
-            if wb.active.max_column > 100:
-                raise InvalidImport("XLSX contains too many columns")
-            rows=list(wb.active.iter_rows(max_row=MAX_ROWS+2,max_col=wb.active.max_column,values_only=True))
-            wb.close()
+            try:
+                if len(wb.worksheets)!=1:
+                    raise InvalidImport("XLSX must contain exactly one worksheet")
+                sheet=wb.active
+                # Read-only XLSX writers may legitimately omit worksheet dimensions.
+                # In that case max_column is None; let openpyxl infer columns
+                # while streaming only the bounded number of rows.
+                max_column=sheet.max_column
+                if max_column is not None and max_column > 100:
+                    raise InvalidImport("XLSX contains too many columns")
+                rows=list(sheet.iter_rows(
+                    max_row=MAX_ROWS+2, max_col=max_column, values_only=True
+                ))
+                # Enforce the limit even when the XLSX has no dimension metadata.
+                if any(len(row) > 100 for row in rows):
+                    raise InvalidImport("XLSX contains too many columns")
+            finally:
+                wb.close()
+        except InvalidImport:
+            raise
         except (ValueError, OSError, KeyError, TypeError, IndexError, BadZipFile) as exc:
             raise InvalidImport("Invalid XLSX spreadsheet") from exc
     if len(rows)<2 or len(rows)>MAX_ROWS+1:
