@@ -35,8 +35,8 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
 }
 
 export function DecisionChallenger({
-  releaseId, version, obligations,
-}: { releaseId: string; version: string; obligations: Obligation[] }) {
+  releaseId, version, obligations, baselineState,
+}: { releaseId: string; version: string; obligations: Obligation[]; baselineState: string }) {
   const [items, setItems] = useState<Challenge[]>([]);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [selectedId, setSelectedId] = useState("");
@@ -73,7 +73,7 @@ export function DecisionChallenger({
         if (live) setError(problem instanceof Error ? problem.message : "Could not load objections.");
       });
     return () => { live = false; };
-  }, [prefix]);
+  }, [prefix, baselineState]);
 
   const selected = items.find((item) => item.id === selectedId) ?? null;
 
