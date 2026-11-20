@@ -185,7 +185,7 @@ export function GovernanceWorkbench() {
           </form>
         </section>
       </div>}
-      {selected && readiness && <DecisionChallenger key={selected.id} releaseId={selected.id} version={selected.version} obligations={readiness.obligations} />}
+      {selected && readiness && <DecisionChallenger key={selected.id} releaseId={selected.id} version={selected.version} obligations={readiness.obligations} baselineState={readiness.state} />}
       <p className="text-xs text-slate-500">Prototype DC-01 — evidence is manually recorded and not independently verified. No authentication, decision signing or release authorization is available.</p>
     </div>
   );
