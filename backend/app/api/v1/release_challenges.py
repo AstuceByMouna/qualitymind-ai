@@ -52,13 +52,13 @@ def create_challenge(release_id: UUID, data: ChallengeCreate, db: Session = Depe
         severity=data.severity, plausible_harm=data.plausible_harm,
         required_evidence=data.required_evidence, status="OPEN_UNQUALIFIED",
     )
-    db.add(item)
-    db.flush()
-    db.add(ReleaseChallengeEvent(
-        challenge_id=item.id, from_status=None, to_status="OPEN_UNQUALIFIED",
-        actor=data.owner, justification="Created by source: " + data.source,
-    ))
     try:
+        db.add(item)
+        db.flush()
+        db.add(ReleaseChallengeEvent(
+            challenge_id=item.id, from_status=None, to_status="OPEN_UNQUALIFIED",
+            actor=data.owner, justification="Created by source: " + data.source,
+        ))
         db.commit()
     except IntegrityError as exc:
         db.rollback()
