@@ -6,12 +6,18 @@ const GET_ALLOWED = [
   /^releases$/,
   new RegExp(`^releases/${UUID}$`),
   new RegExp(`^releases/${UUID}/readiness$`),
+  new RegExp(`^releases/${UUID}/challenges$`),
+  new RegExp(`^releases/${UUID}/challenges/assessment$`),
+  new RegExp(`^releases/${UUID}/challenges/${UUID}$`),
+  new RegExp(`^releases/${UUID}/challenges/${UUID}/history$`),
   /^requirements$/,
 ];
 const POST_ALLOWED = [
   /^releases$/,
   new RegExp(`^releases/${UUID}/obligations$`),
   new RegExp(`^releases/${UUID}/obligations/${UUID}/evidence$`),
+  new RegExp(`^releases/${UUID}/challenges$`),
+  new RegExp(`^releases/${UUID}/challenges/${UUID}/transitions$`),
 ];
 
 type Context = { params: Promise<{ segments: string[] }> };
@@ -41,7 +47,12 @@ async function forward(request: Request, context: Context, method: "GET" | "POST
       cache: "no-store", signal: AbortSignal.timeout(10000),
     });
     if (!response.ok) {
-      return NextResponse.json({ error: response.status === 422 ? "Please check the supplied values." : response.status === 404 ? "The selected item was not found." : "The action could not be completed." }, { status: response.status === 422 ? 422 : response.status === 404 ? 404 : 502 });
+      const message = response.status === 422 ? "Please check the supplied values."
+        : response.status === 404 ? "The selected item was not found."
+        : response.status === 409 ? "This item already exists, or this state change is not allowed."
+        : "The action could not be completed.";
+      const status = [404, 409, 422].includes(response.status) ? response.status : 502;
+      return NextResponse.json({ error: message }, { status });
     }
     return NextResponse.json(await response.json(), { status: response.status });
   } catch {

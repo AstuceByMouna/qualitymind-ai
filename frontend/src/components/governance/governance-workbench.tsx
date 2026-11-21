@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { DecisionChallenger } from "./decision-challenger";
 
 type Release = { id: string; name: string; version: string; created_at: string };
 type Requirement = { id: string; title: string; archived_at: string | null };
@@ -184,6 +185,7 @@ export function GovernanceWorkbench() {
           </form>
         </section>
       </div>}
+      {selected && readiness && <DecisionChallenger key={selected.id} releaseId={selected.id} version={selected.version} obligations={readiness.obligations} baselineState={readiness.state} />}
       <p className="text-xs text-slate-500">Prototype DC-01 — evidence is manually recorded and not independently verified. No authentication, decision signing or release authorization is available.</p>
     </div>
   );
