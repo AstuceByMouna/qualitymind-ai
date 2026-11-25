@@ -14,7 +14,8 @@ type Suggestion = {
   expected_result: string;
   requires_rule_clarification: boolean;
 };
-type TestCase = Suggestion & {
+type TestCase = Omit<Suggestion, "criterion_id"> & {
+  criterion_id: string | null;
   id: string;
   requirement_id: string;
   status: "DRAFT";

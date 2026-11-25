@@ -7,7 +7,7 @@ from sqlalchemy import select
 from app.db import SessionLocal, engine
 from app.main import app
 from app.models.requirement import Requirement
-from app.models.test_case import TestCase
+from app.models.test_case import TestCase as StoredTestCase
 
 
 def test_test_design_preview_persistence_scoping_and_rejection():
@@ -47,7 +47,7 @@ def test_test_design_preview_persistence_scoping_and_rejection():
         assert [x["kind"] for x in persisted.json()] == ["POSITIVE", "NEGATIVE"]
         assert all(x["source_criterion"] == criterion.json()["content"] for x in persisted.json())
         with SessionLocal() as db:
-            rows = db.scalars(select(TestCase).where(TestCase.requirement_id == a)).all()
+            rows = db.scalars(select(StoredTestCase).where(StoredTestCase.requirement_id == a)).all()
             assert len(rows) == 2
             assert all(row.status == "DRAFT" for row in rows)
         archived = client.post(f"/api/v1/requirements/{a}/archive")
@@ -55,6 +55,14 @@ def test_test_design_preview_persistence_scoping_and_rejection():
         assert client.get(root + "/suggestions").json() == []
         assert client.post(root, json={"criterion_id": cid, "kind": "NEGATIVE"}).status_code == 409
         assert len(client.get(root).json()) == 2
+        # Deleting a source criterion must preserve saved drafts and their
+        # source snapshots, without returning a response-schema error.
+        assert client.delete(f"/api/v1/requirements/{a}/acceptance-criteria/{cid}").status_code == 204
+        retained = client.get(root)
+        assert retained.status_code == 200, retained.text
+        assert len(retained.json()) == 2
+        assert all(case["criterion_id"] is None for case in retained.json())
+        assert all(case["source_criterion"] == criterion.json()["content"] for case in retained.json())
     finally:
         with SessionLocal() as db:
             for rid in (a, b):

@@ -25,6 +25,8 @@ class TestCaseCreate(BaseModel):
 
 class TestCaseRead(TestSuggestion):
     model_config = ConfigDict(from_attributes=True)
+    # Preserve draft snapshots even after their source criterion is deleted.
+    criterion_id: UUID | None
     id: UUID
     requirement_id: UUID
     status: Literal["DRAFT"]
