@@ -3,7 +3,7 @@ import Link from "next/link";
 const navigation = [
   { label: "Overview", icon: "◫", available: false, href: "" },
   { label: "Requirements", icon: "≡", available: true, href: "/" },
-  { label: "AI Test Design", icon: "◇", available: false, href: "" },
+  { label: "AI Test Design", icon: "◇", available: true, href: "/test-design" },
   { label: "Risk Analysis", icon: "△", available: false, href: "" },
   { label: "Automation Hub", icon: "▣", available: false, href: "" },
   { label: "Failure Analysis", icon: "⌕", available: false, href: "" },
@@ -11,7 +11,7 @@ const navigation = [
 ];
 
 type AppSidebarProps = {
-  activeSection?: "requirements" | "governance";
+  activeSection?: "requirements" | "governance" | "test-design";
 };
 
 /** Navigation state is provided by server routes: no client-only router hook. */
@@ -29,7 +29,9 @@ export function AppSidebar({ activeSection = "requirements" }: AppSidebarProps) 
         {navigation.map((item) => {
           const active = item.href === "/governance"
             ? activeSection === "governance"
-            : item.href === "/" && activeSection === "requirements";
+            : item.href === "/test-design"
+              ? activeSection === "test-design"
+              : item.href === "/" && activeSection === "requirements";
           return item.available ? (
             <Link
               key={item.label}

@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from alembic import context
 from app.db import engine
 from app.models.requirement import Base
+from app.models.test_case import TestCase  # noqa: F401
 from app.models.quality_governance import QualityRelease, ReleaseObligation, ReleaseEvidence  # noqa: F401
 from app.models.release_challenge import ReleaseChallenge, ReleaseChallengeEvent  # noqa: F401
 from app.models.import_batch import ImportBatch  # noqa: F401
