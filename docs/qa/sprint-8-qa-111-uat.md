@@ -19,7 +19,7 @@ Scope: FR-015 / FR-016 / FR-018. This is a human-assessed risk register and *dra
 | S8-UAT-02 | P0 | On a disposable requirement, change UNKNOWN to HIGH, reload (F5). | HIGH persists after reload; requirement sorts above MEDIUM/LOW/UNKNOWN. | PASS (user-reported) |
 | S8-UAT-03 | P0 | Enable the HIGH-only filter. | Only HIGH requirements are shown; disabling restores the full loaded list. | PASS (user-reported) |
 | S8-UAT-04 | P0 | For a HIGH requirement without test cases, then with one persisted *draft* test case, inspect the UI. | Initially HIGH + NO_DRAFT / design priority; afterwards DRAFT_ONLY, no false claim of approved/executed coverage. | PASS (user-reported) |
-| S8-UAT-05 | P0 | Through the API, try invalid risk CRITICAL, extra field approved=true, nonexistent UUID and an archived requirement. | HTTP 422 / 422 / 404 / 409 respectively; existing stored risks remain unchanged. | NOT_RUN |
+| S8-UAT-05 | P0 | Through the API, try invalid risk CRITICAL, extra field approved=true, nonexistent UUID and an archived requirement. | HTTP 422 / 422 / 404 / 409 respectively; existing stored risks remain unchanged. | PASS (user-reported) |
 | S8-UAT-06 | P0 | Verify use of isolated QA DB, archive a synthetic requirement, then refresh the Risk page. | No DEV/production writes; archived item is absent from active risks; no stale approval or release verdict. | NOT_RUN |
 
 ## Manual execution log — 2026-11-25 (America/Toronto)
@@ -28,7 +28,8 @@ Scope: FR-015 / FR-016 / FR-018. This is a human-assessed risk register and *dra
 - **S8-UAT-02 PASS (user-reported):** The user confirmed risk `HIGH` persisted after an F5 refresh, with no observations. Evidence: user report; exact disposable fixture ID, backend database name, commit SHA and ordering observation were not separately captured. Do not treat these as independently verified.
 - **S8-UAT-03 PASS (user-reported):** User confirmed HIGH-only filter functioned correctly and full list was restored upon unchecking, with no observations. Evidence: user report; not independently verified.
 - **S8-UAT-04 PASS (user-reported):** User confirmed transition of a HIGH requirement from NO_DRAFT to DRAFT_ONLY after saving a test case draft, with no observations. Evidence: user's conversation report; fixture identity and screenshots were not supplied, and result is not independently verified.
-- **S8-UAT-05–06:** NOT_RUN; release decision remains NO_GO.
+- **S8-UAT-05 PASS (user-reported):** User confirmed invalid risk=422, extra approved field=422, nonexistent requirement=404, archived requirement=409, and saved risk unchanged after rejected requests; no observations. Evidence: conversation result; Swagger screenshots and test IDs not attached. 
+- **S8-UAT-06:** NOT_RUN; release decision remains NO_GO.
 
 ## Evidence record
 
