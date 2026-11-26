@@ -1,6 +1,6 @@
 # Sprint 8 — QA-111 Risk-Based Testing MVP — UAT
 
-Status: **PENDING MANUAL UAT** | Release decision: **NO_GO** until all P0 checks pass and evidence is recorded.
+Status: **6/6 P0 UAT PASS (user-reported; post-merge)** | Production release decision: **NO_GO** pending release authorization and evidence review.
 
 Scope: FR-015 / FR-016 / FR-018. This is a human-assessed risk register and *draft-design gap* view, **not** evidence of executed, approved or adequate test coverage.
 
@@ -20,7 +20,7 @@ Scope: FR-015 / FR-016 / FR-018. This is a human-assessed risk register and *dra
 | S8-UAT-03 | P0 | Enable the HIGH-only filter. | Only HIGH requirements are shown; disabling restores the full loaded list. | PASS (user-reported) |
 | S8-UAT-04 | P0 | For a HIGH requirement without test cases, then with one persisted *draft* test case, inspect the UI. | Initially HIGH + NO_DRAFT / design priority; afterwards DRAFT_ONLY, no false claim of approved/executed coverage. | PASS (user-reported) |
 | S8-UAT-05 | P0 | Through the API, try invalid risk CRITICAL, extra field approved=true, nonexistent UUID and an archived requirement. | HTTP 422 / 422 / 404 / 409 respectively; existing stored risks remain unchanged. | PASS (user-reported) |
-| S8-UAT-06 | P0 | Verify use of isolated QA DB, archive a synthetic requirement, then refresh the Risk page. | No DEV/production writes; archived item is absent from active risks; no stale approval or release verdict. | NOT_RUN |
+| S8-UAT-06 | P0 | Verify use of isolated QA DB, archive a synthetic requirement, then refresh the Risk page. | No DEV/production writes; archived item is absent from active risks; no stale approval or release verdict. | PASS (user-reported) |
 
 ## Manual execution log — 2026-11-25 (America/Toronto)
 
@@ -29,7 +29,13 @@ Scope: FR-015 / FR-016 / FR-018. This is a human-assessed risk register and *dra
 - **S8-UAT-03 PASS (user-reported):** User confirmed HIGH-only filter functioned correctly and full list was restored upon unchecking, with no observations. Evidence: user report; not independently verified.
 - **S8-UAT-04 PASS (user-reported):** User confirmed transition of a HIGH requirement from NO_DRAFT to DRAFT_ONLY after saving a test case draft, with no observations. Evidence: user's conversation report; fixture identity and screenshots were not supplied, and result is not independently verified.
 - **S8-UAT-05 PASS (user-reported):** User confirmed invalid risk=422, extra approved field=422, nonexistent requirement=404, archived requirement=409, and saved risk unchanged after rejected requests; no observations. Evidence: conversation result; Swagger screenshots and test IDs not attached. 
-- **S8-UAT-06:** NOT_RUN; release decision remains NO_GO.
+- **S8-UAT-06 PASS (user-reported):** User reported PASS for isolated QA environment, archival exclusion after reload, and absence of automatic approval, with no observations. This is self-reported; exact logs/fixture and screenshots not attached.
+
+## Process deviation and PR status
+
+- **PR #52 was already merged into `main` on 2026-11-25 at 22:00 EST (2026-11-26 03:00 UTC), before UAT finished.** Review/ready-for-review decision is therefore no longer applicable to PR #52. This is a deviation from UAT-before-merge procedure; no attempt to retroactively mark pre-merge approval.
+- The UAT evidence updates after that merge reside on `feature/QA-111-risk-based-mvp` until separately incorporated into `main` through a new reviewable documentation PR.
+- **Release decision: NO_GO for production** pending evidence completeness and explicit deployment approval. A merge is not a production release.
 
 ## Evidence record
 
