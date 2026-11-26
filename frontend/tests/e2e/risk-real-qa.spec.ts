@@ -4,7 +4,6 @@ const fixtureId = process.env.QA84_FIXTURE_UUID;
 
 test("QA-111 @smoke @real-qa assesses risk through browser/API/PostgreSQL and persists after reload", async ({ page }) => {
   test.skip(!fixtureId, "Requires ephemeral GitHub Actions QA84 fixture; never write DEV.");
-  const id = fixtureId!;
   await page.goto("/risk");
   const source = page.locator('[data-testid="risk-row"]').filter({
     has: page.getByRole("link", { name: "QA84 CI isolated fixture", exact: true }),
