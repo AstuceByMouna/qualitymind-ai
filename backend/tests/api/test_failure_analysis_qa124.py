@@ -43,3 +43,13 @@ def test_rejects_blank_too_short_too_large_and_unknown_fields():
 
 def test_no_get_or_arbitrary_execution_endpoint():
     assert client.get("/api/v1/failure-analysis/classify").status_code == 405
+
+
+def test_validation_does_not_reflect_rejected_input():
+    marker = "synthetic-private-canary"
+    response = client.post("/api/v1/failure-analysis/classify", json={
+        "excerpt": marker + ("x" * 2001),
+    })
+    assert response.status_code == 422
+    assert marker not in response.text
+    assert response.json() == {"detail": "Invalid failure excerpt"}
