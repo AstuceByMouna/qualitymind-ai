@@ -4,14 +4,14 @@ const navigation = [
   { label: "Overview", icon: "◫", available: false, href: "" },
   { label: "Requirements", icon: "≡", available: true, href: "/" },
   { label: "AI Test Design", icon: "◇", available: true, href: "/test-design" },
-  { label: "Risk Analysis", icon: "△", available: false, href: "" },
+  { label: "Risk-Based Testing", icon: "△", available: true, href: "/risk" },
   { label: "Automation Hub", icon: "▣", available: false, href: "" },
   { label: "Failure Analysis", icon: "⌕", available: false, href: "" },
   { label: "Quality Governance", icon: "▤", available: true, href: "/governance" },
 ];
 
 type AppSidebarProps = {
-  activeSection?: "requirements" | "governance" | "test-design";
+  activeSection?: "requirements" | "governance" | "test-design" | "risk";
 };
 
 /** Navigation state is provided by server routes: no client-only router hook. */
@@ -27,7 +27,9 @@ export function AppSidebar({ activeSection = "requirements" }: AppSidebarProps) 
       <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500">Workspace</p>
       <nav aria-label="Main navigation" className="space-y-1">
         {navigation.map((item) => {
-          const active = item.href === "/governance"
+          const active = item.href === "/risk"
+            ? activeSection === "risk"
+            : item.href === "/governance"
             ? activeSection === "governance"
             : item.href === "/test-design"
               ? activeSection === "test-design"

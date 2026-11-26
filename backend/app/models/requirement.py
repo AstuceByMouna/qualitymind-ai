@@ -2,7 +2,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, Text, func, ForeignKey
+from sqlalchemy import DateTime, String, Text, func, ForeignKey, CheckConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -13,6 +13,9 @@ class Base(DeclarativeBase):
 
 class Requirement(Base):
     __tablename__ = "requirements"
+    __table_args__ = (
+        CheckConstraint("risk_level IN ('UNKNOWN', 'LOW', 'MEDIUM', 'HIGH')", name="ck_requirements_risk_level"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -35,6 +38,8 @@ class Requirement(Base):
     import_source: Mapped[str | None] = mapped_column(String(255), nullable=True)
     external_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
     priority: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    # Risk is independent of the imported priority field.
+    risk_level: Mapped[str] = mapped_column(String(10), nullable=False, default="UNKNOWN", server_default="UNKNOWN")
 
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, default=None)
     archive_source: Mapped[str | None] = mapped_column(String(32), nullable=True)
