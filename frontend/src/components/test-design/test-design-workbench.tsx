@@ -48,6 +48,9 @@ export function TestDesignWorkbench() {
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const selectedRef = useRef("");
+  const activeRequirement = requirements.find((item) => item.id === selected);
+  // Never show drafts for an absent/archived requirement whose option cannot be selected.
+  const visibleSelection = activeRequirement ? selected : "";
 
   useEffect(() => {
     void read<{ items: Requirement[] }>("/api/test-design/requirements")
@@ -83,8 +86,8 @@ export function TestDesignWorkbench() {
   }
 
   async function save(proposal: Suggestion) {
-    if (busy || !selected) return;
-    const requirementId = selected;
+    if (busy || !visibleSelection) return;
+    const requirementId = visibleSelection;
     setBusy(true);
     setError("");
     setInfo("");
@@ -121,17 +124,20 @@ export function TestDesignWorkbench() {
       <section className="rounded-xl border border-slate-200 bg-white p-6">
         <label htmlFor="design-requirement" className="block text-sm font-semibold">Choose an active requirement</label>
         <select id="design-requirement" data-testid="test-design-requirement"
-          value={selected} onChange={(event) => void choose(event.target.value)}
+          value={visibleSelection} onChange={(event) => void choose(event.target.value)}
           className="mt-2 w-full rounded-md border border-slate-300 p-3 text-sm">
           <option value="">Select requirement</option>
           {requirements.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}
         </select>
         {loading && <p role="status" className="mt-3 text-sm text-slate-500">Loading requirements…</p>}
         {!loading && requirements.length === 0 && <p className="mt-3 text-sm text-slate-600">No active requirements available.</p>}
-        {selected && <Link className="mt-3 inline-block text-sm text-sky-700 underline"
-          href={"/requirements/" + encodeURIComponent(selected)}>View source requirement and acceptance criteria</Link>}
+        {activeRequirement && <p className="mt-3 text-sm font-medium text-slate-700" data-testid="test-design-selected-label">
+          Selected requirement: {activeRequirement.title}
+        </p>}
+        {visibleSelection && <Link className="mt-3 inline-block text-sm text-sky-700 underline"
+          href={"/requirements/" + encodeURIComponent(visibleSelection)}>View source requirement and acceptance criteria</Link>}
       </section>
-      {selected && (
+      {visibleSelection && (
         <div className="grid gap-6 lg:grid-cols-2">
           <section className="space-y-4" aria-label="Suggestions">
             <h2 className="text-lg font-semibold">Suggested cases ({suggestions.length})</h2>
