@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PlaywrightAssociation } from "./playwright-association";
 import { useEffect, useRef, useState } from "react";
 
 type Requirement = { id: string; title: string; archived_at: string | null };
@@ -172,6 +173,7 @@ export function TestDesignWorkbench() {
               <p className="text-xs text-slate-600">Type: {item.kind} · Source criterion: {item.criterion_id ?? "deleted (snapshot retained)"}</p>
               <p><strong>Expected result:</strong> {item.expected_result}</p>
               {item.requires_rule_clarification && <p className="font-medium text-amber-800">Rule clarification required</p>}
+              <PlaywrightAssociation testCaseId={item.id} />
             </article>)}
           </section>
         </div>
