@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.test_design import router as test_design_router
+from app.api.v1.automation_hub import router as automation_hub_router
 from app.api.v1.risk import router as risk_router
 from app.api.v1.releases import router as releases_router
 from app.api.v1.release_challenges import router as challenges_router
@@ -38,6 +39,7 @@ app.include_router(releases_router)
 app.include_router(challenges_router)
 app.include_router(acceptance_criteria_router)
 app.include_router(test_design_router)
+app.include_router(automation_hub_router)
 app.include_router(risk_router)
 
 

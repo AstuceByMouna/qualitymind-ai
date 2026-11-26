@@ -33,4 +33,6 @@ class TestCase(Base):
     requires_rule_clarification: Mapped[bool] = mapped_column(nullable=False, default=False)
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT", server_default="DRAFT")
     generator_version: Mapped[str] = mapped_column(String(40), nullable=False, default="rules-v1")
+    # Metadata only; never treated as an execution result.
+    playwright_script_path: Mapped[str | None] = mapped_column(String(300), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

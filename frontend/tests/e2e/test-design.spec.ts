@@ -65,3 +65,43 @@ test("QA-107 @smoke @mock-api suggest and save only review-required drafts", asy
   await page.getByTestId("test-design-requirement").selectOption(REQ);
   await expect(page.getByRole("heading", { name: "Saved drafts (1)" })).toBeVisible();
 });
+
+test("QA-123 @mock-api keeps selected requirement visibly identifiable and hides drafts when removed", async ({ page }) => {
+  let active = true;
+  const fixture = {
+    criterion_id: CRITERION,
+    source_criterion: "A valid user signs in.",
+    kind: "POSITIVE",
+    title: "QA123 draft",
+    preconditions: "User exists",
+    steps: "Sign in",
+    expected_result: "Dashboard opens",
+    requires_rule_clarification: false,
+    id: SAVED,
+    requirement_id: REQ,
+    status: "DRAFT",
+    generator_version: "rules-v1",
+    created_at: "2026-11-26T00:00:00Z",
+  };
+  await page.route("**/api/test-design/**", async (route) => {
+    const path = new URL(route.request().url()).pathname;
+    const body = path === "/api/test-design/requirements"
+      ? { items: active ? [{ id: REQ, title: "QA123 active requirement", archived_at: null }] : [] }
+      : path === base + "/suggestions" ? [fixture] : path === base ? [fixture] : [];
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+  });
+  await page.goto("/test-design");
+  const select = page.getByTestId("test-design-requirement");
+  await select.selectOption(REQ);
+  await expect(select).toHaveValue(REQ);
+  await expect(select.locator("option:checked")).toHaveText("QA123 active requirement");
+  await expect(page.getByText("Selected requirement: QA123 active requirement")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Saved drafts (1)" })).toBeVisible();
+
+  // External archive / removed requirement followed by navigation refresh.
+  active = false;
+  await page.reload();
+  await expect(select).toHaveValue("");
+  await expect(page.getByRole("heading", { name: "Saved drafts (1)" })).toHaveCount(0);
+  await expect(page.getByText("View source requirement and acceptance criteria")).toHaveCount(0);
+});
