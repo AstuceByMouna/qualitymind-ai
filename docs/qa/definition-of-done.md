@@ -61,3 +61,8 @@ Les décisions automatisées sont déterministes. L'IA ne peut pas contourner un
 ## Utilisation pour QA-22
 
 QA-22 est un ticket documentaire. Pour le clôturer : stratégie et DoD versionnées sur GitHub, liens Confluence, Pull Request revue/fusionnée, validation du contenu par le propriétaire et preuve sur `main`.
+
+
+## QA-125 — Lean governance alignment (2026-11-26 Montreal)
+
+The owner-approved [12 operating principles](project-operating-rules.md#7-lean-ai-engineering-governance--approved-operating-layer-qa-125) and [risk-based checklists](operational-checklists.md) govern the verification cadence. Classify L1 minor, L2 functional or L3 critical; escalate uncertain impact. Historical snapshots above remain unchanged. DoR and DoD apply proportionately; mandatory controls and explicit approvals remain. Before any merge verify the exact candidate HEAD, required CI, review and owner authorization. For functional changes, accepted and documented P0 UAT must precede merge (RP-092); documentation-only changes use document review and applicable CI, not invented software UAT. After merge verify main and reconcile affected Jira/Confluence records at major milestones. Production requires separate approval and security/operational readiness. No automated live OpenAI tests or unverified PASS.
