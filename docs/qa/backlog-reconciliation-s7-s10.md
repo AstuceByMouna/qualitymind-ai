@@ -39,3 +39,29 @@ Sprint 6 (Jira ID 7): after QA-102 and QA-103 were verified Terminé, closed 202
 - No backdated Jira Sprint 7/8/9 creation. Retrospective report preserves the distinction between work executed and Scrum events recorded.
 - Maintain open backlog of improvements and product milestones needed for first demonstrable MVP. Sprint 10 Jira ID 8 and QA-124/QA-125 are the live execution source.
 - Each subsequent sprint starts with a real Jira sprint, issue allocation, DoR/P0/UAT, PR draft; ends with validated UAT/CI, merge approval, Jira status update and closure.
+
+
+## Confluence reconciliation proposal — owner-approved preparation, not publication
+
+Decision: 2026-11-26 Montreal. No page edits, deletion, merge, or deployment authorized by this preparation. Preserve prior dated snapshots and page versions. Before publication, re-read each page and its version, compare concurrent edits, verify linked evidence and obtain publication authorization.
+
+| Page / version at audit | Proposed correction | Evidence / constraint |
+| --- | --- | --- |
+| [458753 SDLC](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458753), v4 | Add current policy: P0 UAT before functional merge; retain old sequencing as dated history | RP-092, owner decision, PR #51/#52 deviations |
+| [425986 QA strategy](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/425986), v4 | Align validation gate and exact-HEAD evidence; retain historical strategy | RP-059–064, RP-092; no invented coverage threshold |
+| [262145 catalog](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145), v7 | Add dated implementation-status overlay for S6–S10; preserve normative FR/NFR/AI/BR text, priorities and IDs | PR #45/#48/#49/#50/#51/#52/#54 merged; #55 draft; parent FR remain partial/open as appropriate; FR-037–039 candidate |
+| [2818093 Sprint 6](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2818093), v10 | Add closure summary and distinguish initial statuses from final statuses | QA-102/103 Done, 7/7 and 12/12 scenario records; no production GO |
+| [3866625 Sprint 7](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/3866625), v11 | Retain accepted-with-reservations verdict and pre-UAT merge deviation; preserve missing HTTP evidence | PR #51, QA-107 Done, seven user-reported PASS |
+| [4096023 Sprint 8](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/4096023), v6 | Add current closure summary, retain stale Draft/NOT_RUN statements as historical snapshot | PR #52/#53 merged; six user-reported PASS; merge-before-UAT deviation; QA-111 Done |
+| [1441794 defect register](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/1441794), v9 | Add dated Jira closure reconciliation for QA-98–101, QA-104/105 and QA-123, with evidence links; retain unresolved root-cause caveats | Jira statuses and PR #41/#42/#46/#47/#54; no invented retest |
+| [2129927 ADR registry](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2129927), v2 | Keep ADR-003/004 Proposed pending explicit ratification; distinguish implementation from approval | QA-97/87; no silent ratification |
+| [2162844 MVP-1 acceptance](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162844), v2 | Preserve Requirements Intelligence release baseline and QA-90 reservation; link later increments without retroactively enlarging MVP-1 | local acceptance only; NO_GO production |
+| Sprint 9 and Sprint 10 PV | Search existing pages/archives again before proposing new pages; if absent, draft linked records | S9 PR #54, QA-112/123 Done, six user-reported PASS; S10 PR #55 Draft, QA-124 In Progress, five user-reported PASS and S10-UAT-06 NOT_RUN |
+
+### Acceptance checks for reconciliation
+
+- Each page change is append-only or clearly dated with original history preserved; use current version checks before publishing.
+- Verify Jira/PR links, exact source SHA and evidence classification. Do not close parent FRs on narrow MVP slices.
+- Preserve separate local demonstration acceptance, release recommendation and production authorization.
+- Report publication failures individually; no claim of global synchronization until all authorized changes are reread.
+- Remaining QA-125 work: document review, current-head CI, owner merge approval, publication authorization and reconciliation verification. QA-124 remains In Progress until S10-UAT-06 is validated; no merge without authorization.
