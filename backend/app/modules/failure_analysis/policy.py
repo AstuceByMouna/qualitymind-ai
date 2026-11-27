@@ -10,7 +10,7 @@ FailureKind = Literal["TIMEOUT", "LOCATOR", "ASSERTION", "HTTP", "UNKNOWN"]
 
 # Explicit precedence makes contradictory samples deterministic.
 _PATTERNS: tuple[tuple[FailureKind, re.Pattern[str]], ...] = (
-    ("TIMEOUT", re.compile(r"\b(?:timeout|timed\s*out|exceeded\s+.*?\s+ms|deadline exceeded)\b", re.I)),
+    ("TIMEOUT", re.compile(r"\b(?:timeouterror|timeout|timed\s*out|exceeded\s+.*?\s+ms|deadline exceeded)\b", re.I)),
     ("LOCATOR", re.compile(r"\b(?:locator\s+not\s+found|no\s+such\s+element|element\s+not\s+found|strict\s+mode\s+violation|unable\s+to\s+locate)\b", re.I)),
     ("ASSERTION", re.compile(r"\b(?:assertionerror|expect\s*\(|assert\s+.*?failed|expected\s+.*?\s+received)\b", re.I)),
     ("HTTP", re.compile(r"\b(?:http\s*[45][0-9]{2}|status\s*(?:code\s*)?[:=]?\s*[45][0-9]{2}|response\s+status\s*[45][0-9]{2})\b", re.I)),
