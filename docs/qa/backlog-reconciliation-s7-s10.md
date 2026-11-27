@@ -70,3 +70,8 @@ Decision: 2026-11-26 Montreal. No page edits, deletion, merge, or deployment aut
 ## Status addendum — 2026-11-26 Montreal / 2026-11-27 UTC
 
 PR #55 was merged into main at `ec6cbf642166dd41b6ca4b3a14fc4fc6b96fa355` on 2026-11-27 UTC. Earlier Draft references above describe the historical audit snapshot. The versioned Sprint 10 plan still records S10-UAT-06 as NOT_RUN; Jira QA-124 remains In Progress. The recorded evidence does not establish P0 UAT completion before merge (RP-092). Retain this as a validation/process gap; do not fabricate acceptance, backdate evidence or close QA-124 until verified. QA-125 remains documentation-only and requires relevant review, exact-head CI and explicit merge approval; no production GO.
+
+
+## Follow-up status — 2026-11-26 Montreal / 2026-11-27 UTC
+
+PR #56 was observed merged at 8ad2e4007b7e561606226c734380f912dc8f94fc, candidate HEAD 7d6955a2ec995fe2a7cdf8510cd9370806ce487d. PR #55 remains merged at ec6cbf642166dd41b6ca4b3a14fc4fc6b96fa355, candidate HEAD a57a09315ba9c1ce8ec2b00ce1c2705316f68187. All returned candidate workflows were successful (3 and 5 respectively); this does not establish local UAT or explicit historical merge authorization. Main now contains AGENTS, the 110 original rules, 12-principle mapping and risk-based checklists; historical registry prefix unchanged, all 110 IDs mapped exactly once. QA-124/125 remain In Progress, Sprint 10 ID 8. S10-UAT-06 remains NOT_RUN in the versioned plan. Continue QA-125 on a dedicated documentation-only follow-up Draft PR. Supervisor plugin alignment and Confluence publication require separate verification; do not infer completion. No application code changes or software test execution requested for this follow-up.
