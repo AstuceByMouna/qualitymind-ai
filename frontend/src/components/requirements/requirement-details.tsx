@@ -53,12 +53,20 @@ export async function RequirementDetails({ params }: Props) {
           {detail.title}
         </h2>
         </div>
-        {!detail.archived_at && <Link href={`/requirements/${encodeURIComponent(detail.id)}/edit`}
+        {!detail.archived_at && <div className="flex flex-wrap items-center gap-3">
+        <Link href={`/requirements/${encodeURIComponent(detail.id)}/traceability`}
+          prefetch={false}
+          data-testid="requirement-traceability-link"
+          className="inline-flex rounded-md px-4 py-2 text-sm font-medium text-sky-700 underline focus-visible:outline-2">
+          View traceability
+        </Link>
+        <Link href={`/requirements/${encodeURIComponent(detail.id)}/edit`}
           prefetch={false}
           data-testid="requirement-edit-link"
           className="inline-flex items-center rounded-md bg-sky-700 px-4 py-2 text-sm font-medium text-white hover:bg-sky-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
           Edit Requirement
-        </Link>}
+        </Link>
+        </div>}
       </div>
       <dl className="grid gap-5 md:grid-cols-2">
         <div>

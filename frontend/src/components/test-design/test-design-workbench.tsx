@@ -179,6 +179,10 @@ export function TestDesignWorkbench() {
               <p className="text-xs text-slate-600">Type: {item.kind} · Source criterion: {item.criterion_id ?? "deleted (snapshot retained)"}</p>
               <p><strong>Expected result:</strong> {item.expected_result}</p>
               {item.requires_rule_clarification && <p className="font-medium text-amber-800">Rule clarification required</p>}
+              <Link className="text-sky-700 underline" prefetch={false} data-testid="test-design-traceability-link"
+                href={"/requirements/" + encodeURIComponent(item.requirement_id) + "/traceability#test-" + encodeURIComponent(item.id)}>
+                View test traceability
+              </Link>
               <PlaywrightAssociation testCaseId={item.id} />
             </article>)}
           </section>
