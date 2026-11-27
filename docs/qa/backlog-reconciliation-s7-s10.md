@@ -65,3 +65,8 @@ Decision: 2026-11-26 Montreal. No page edits, deletion, merge, or deployment aut
 - Preserve separate local demonstration acceptance, release recommendation and production authorization.
 - Report publication failures individually; no claim of global synchronization until all authorized changes are reread.
 - Remaining QA-125 work: document review, current-head CI, owner merge approval, publication authorization and reconciliation verification. QA-124 remains In Progress until S10-UAT-06 is validated; no merge without authorization.
+
+
+## Status addendum — 2026-11-26 Montreal / 2026-11-27 UTC
+
+PR #55 was merged into main at `ec6cbf642166dd41b6ca4b3a14fc4fc6b96fa355` on 2026-11-27 UTC. Earlier Draft references above describe the historical audit snapshot. The versioned Sprint 10 plan still records S10-UAT-06 as NOT_RUN; Jira QA-124 remains In Progress. The recorded evidence does not establish P0 UAT completion before merge (RP-092). Retain this as a validation/process gap; do not fabricate acceptance, backdate evidence or close QA-124 until verified. QA-125 remains documentation-only and requires relevant review, exact-head CI and explicit merge approval; no production GO.
