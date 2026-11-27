@@ -25,7 +25,18 @@ Epic: QA-1. Issue: QA-124. Previous sprint: QA-112 merged as PR #54.
 5. **S10-UAT-05:** Swagger send `{"excerpt":"tiny"}`, an unknown field, and 2,001 characters; expect HTTP 422. Plain GET endpoint should be 405. No excerpt must be reflected in success payload.
 6. **S10-UAT-06:** Validate isolated QA services, regression checks and no live script execution/AI calls or stored failure text.
 
-**UAT state: NOT_RUN.** Do not replace with PASS without execution evidence.
+**UAT progress (2026-11-26, user-reported, no independent environment replay):**
+
+| Scenario | Result | Evidence |
+| --- | --- | --- |
+| S10-UAT-01 | PASS (user-reported) | User reported startup and empty-state validation PASS |
+| S10-UAT-02 | PASS (user-reported) | User reported TIMEOUT classification PASS |
+| S10-UAT-03 | PASS (user-reported) | User explicitly reported LOCATOR PASS |
+| S10-UAT-04 | PASS (user-reported) | User explicitly reported UNKNOWN PASS |
+| S10-UAT-05 | NOT_RUN | Swagger negative API validation pending |
+| S10-UAT-06 | NOT_RUN | QA isolation, regression CI and no execution verification pending |
+
+Do not mark remaining scenarios PASS without execution evidence.
 
 ## Deferred
 
