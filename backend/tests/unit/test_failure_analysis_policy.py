@@ -6,6 +6,7 @@ from app.modules.failure_analysis.policy import classify_failure
 
 @pytest.mark.parametrize(("sample", "expected"), [
     ("TimeoutError: locator.waitFor: timeout 30000ms exceeded", "TIMEOUT"),
+    ("TimeoutError: synthetic-sensitive-marker exceeded", "TIMEOUT"),
     ("Error: locator not found after navigation", "LOCATOR"),
     ("AssertionError: expected true received false", "ASSERTION"),
     ("HTTP 503 during the synthetic service check", "HTTP"),
