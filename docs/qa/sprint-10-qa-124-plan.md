@@ -33,10 +33,12 @@ Epic: QA-1. Issue: QA-124. Previous sprint: QA-112 merged as PR #54.
 | S10-UAT-02 | PASS (user-reported) | User reported TIMEOUT classification PASS |
 | S10-UAT-03 | PASS (user-reported) | User explicitly reported LOCATOR PASS |
 | S10-UAT-04 | PASS (user-reported) | User explicitly reported UNKNOWN PASS |
-| S10-UAT-05 | NOT_RUN | Swagger negative API validation pending |
+| S10-UAT-05 | PASS (user-reported) | User confirmed A:422 short, B:422 forbidden field, C:422 too long, D:405 GET, E:200 success without echo of input; no independent local execution evidence |
 | S10-UAT-06 | NOT_RUN | QA isolation, regression CI and no execution verification pending |
 
-Do not mark remaining scenarios PASS without execution evidence.
+S10-UAT-06 remains NOT_RUN; do not mark PASS without execution evidence.
+
+CI follow-up: API Tests failed on commit `5221925` (66 passed, 1 failed): `TimeoutError: synthetic-sensitive-marker exceeded` incorrectly classified as UNKNOWN. Regression test added `89bbd3c`, rule fixed `a8fefb9` to recognize `TimeoutError`; new head CI must pass before release sign-off.
 
 ## Deferred
 
