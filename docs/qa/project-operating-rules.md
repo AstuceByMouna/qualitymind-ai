@@ -256,3 +256,14 @@ QA-124 remains In Progress; S10-UAT-06 remains NOT_RUN until verified. QA-125 re
 **Non-negotiable:** security/privacy/isolation, evidence integrity, exact-head CI, RP-092 P0 UAT before functional merge, explicit merge approval, no automated real OpenAI testing, deterministic release gates, no automatic GO, critical decision traceability and explicit production approval. Documentation-only work requires appropriate review and CI, not fabricated functional UAT. QA-124 and S10-UAT-06 NOT_RUN are unchanged.
 
 **Verification:** mapping covers RP-001 through RP-110 exactly once; verify historical text preservation and record review/CI for this candidate. Measure preflight effort, repeated reporting and missed-control defects in future sprints before asserting efficiency gains. No merge or deployment authorized.
+
+
+## 8. Supervisor–Codex responsibility boundary (QA-125)
+
+**Decision:** 2026-11-26 Montreal / 2026-11-27 UTC. **Owner:** project owner. **Source:** explicit instructions that the Supervisor handles documentation and governance only and prepares a Codex prompt whenever development is required. **Status:** approved operating instruction; repository publication pending review and explicit merge approval. **Impact:** narrows delegation in section 7 and RP-019 for this collaboration; preserves the original 110 rules and 12 principles.
+
+| ID | Approved rule | Source / mapping |
+| --- | --- | --- |
+| RP-111 | Engineering Supervisor owns business analysis, planning, requirements, architecture/design, documentation, Jira/Confluence, traceability and review of actual evidence. Codex executes software implementation, migrations, debugging and software tests through an authorized mission. For every technical task, the Supervisor provides a ready-to-use Codex prompt with ticket, scope, acceptance criteria, applicable risks/constraints, evidence and recommended model/reasoning effort subject to availability. The Supervisor does not perform application development or execute software tests. | Owner instruction; LG-02, LG-04, LG-07, LG-12 |
+
+The Supervisor may maintain documentation-only GitHub branches/Draft PRs and review CI results without invoking software tests itself. No automatic cross-chat delegation or evidence transfer is assumed. All merge and production approvals, security constraints, isolated QA, manual-only authorized paid OpenAI calls, and evidence integrity remain unchanged. No application code, migrations or software tests are authorized by this documentation update. QA-124 remains In Progress pending S10-UAT-06 evidence.

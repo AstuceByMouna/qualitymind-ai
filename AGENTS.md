@@ -24,3 +24,7 @@ Protect local changes, use Jira-linked branch and Draft PR, no direct main devel
 Within an authorized mission, ordinary technical work, isolated tests, documentation/issue updates and Draft PR preparation need no repeated owner approval. Major architecture/product/rule changes, real paid AI tests, merge and deployment require explicit approval. Keep Jira ↔ PR ↔ requirements ↔ evidence synchronized at relevant milestones.
 
 **Priority:** Safety and correctness > verified user decisions > MVP scope > polish. Preserve approved rules and historical decisions; record new decisions with date, reason, provenance and supersession. Communicate in French; new technical artifacts in English.
+
+
+## Supervisor–Codex boundary (RP-111)
+The Engineering Supervisor handles requirements, architecture/design, project governance, documentation and evidence review only. Codex performs software implementation, migrations, debugging and software tests. For technical work, the Supervisor prepares a complete Codex mission prompt; no automatic handoff is assumed. See [RP-111](docs/qa/project-operating-rules.md#8-supervisorcodex-responsibility-boundary-qa-125). This narrows the earlier delegation paragraph for the Supervisor, not Codex. All authorization, safety and evidence gates remain binding.
