@@ -97,3 +97,8 @@ Cette stratégie est une **baseline de conception**, non une preuve d'exécution
 | Frontend, Playwright UI/E2E, couverture chiffrée, évaluations IA | Futur ; contrôle non applicable ou non exécuté |
 
 La collection Postman utilise `{{base_url}}` ; la CI fournit `http://127.0.0.1:8000` et des credentials par `GitHub Secrets`, jamais dans le code. Les changements des contrats API doivent entraîner une analyse d'impact sur Pytest et Postman. Distinguer validation des API de QualityMind AI et tests futurs sur le SUT RealWorld.
+
+
+## QA-125 — Risk-proportionate verification (2026-11-26 Montreal)
+
+Use [operational checklists](operational-checklists.md) and the [110-rule register / 12 principles](project-operating-rules.md#7-lean-ai-engineering-governance--approved-operating-layer-qa-125). L1: document/presentation-only review and applicable CI; justify N/A. L2: applicable unit/API/integration/E2E, negative and regression checks, exact candidate CI and P0 UAT before functional merge. L3: add risk-based security, privacy, migration/recovery, decision-policy and evidence checks. Reclassify if impact is uncertain. Tests use synthetic data, isolated QA verified before execution/migrations and mocked AI providers; paid real OpenAI tests remain manual and explicitly authorized. Distinguish simulated, user-reported and observed evidence; never infer a PASS from a merge or a green older SHA. Keep historical test strategy snapshots above; no new coverage threshold or release authorization is introduced here.
