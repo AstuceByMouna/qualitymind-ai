@@ -53,3 +53,178 @@
 - [Sprint 9 UAT](sprint-9-qa-112-uat.md)
 - [Sprint 7–10 reconciliation](backlog-reconciliation-s7-s10.md)
 - Jira QA-125, QA-113, QA-124; GitHub PR #51, #52, #53, #54, #55.
+
+
+## 6. Approved permanent-rule index — QA-125
+
+**Decision record:** 2026-11-26 Montreal / 2026-11-27 UTC. The project owner explicitly approved the 110-rule consolidation, mandatory pre-merge P0 UAT, preparation of PR #56 documentation and Confluence reconciliation, and keeping QA-124 In Progress until S10-UAT-06 is validated. No merge or deployment was authorized. This decision is effective for subsequent work; repository publication remains pending review and merge. The preceding sections are preserved verbatim. The index is part of this same agreement, not a competing policy.
+
+**Approval/provenance convention:** all RP entries below are accepted as part of this consolidation on the decision date. Source codes identify the historical source families, not a claim that every individual historical approval date was recovered. Original approval dates not evidenced remain unknown; architecture or product implementation status is separate (e.g. ADR-003/004 remain Proposed in the historical registry, FR-037–039 remain candidate, and QA Foundation remains backlog). No retroactive ratification or proof of execution is inferred. New entries must identify owner, status, effective date, source, scope, rationale, verification and supersession where applicable. Do not renumber existing IDs.
+
+### Product and scope
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-001 | Apply MVP First — Enterprise by Design. | O1, CAT, ADR, VISION |
+| RP-002 | Deliver one functional end-to-end increment per sprint. | O1, CAT, ADR, VISION |
+| RP-003 | Prioritize the first demonstrable version over perfection of each module. | O1, CAT, ADR, VISION |
+| RP-004 | Defer nonessential improvements into Jira with rationale. | O1, CAT, ADR, VISION |
+| RP-005 | Never defer essential security, integrity, privacy or validation controls. | O1, CAT, ADR, VISION |
+| RP-006 | Distinguish target platform, implemented MVP and production-authorized release. | O1, CAT, ADR, VISION |
+| RP-007 | Retain the six original functional modules. | O1, CAT, ADR, VISION |
+| RP-008 | Integrate QA Foundation Builder progressively without replacing existing modules. | O1, CAT, ADR, VISION |
+| RP-009 | Preserve the living business specification vision generated from versioned sources. | O1, CAT, ADR, VISION |
+| RP-010 | Preserve the senior QA Architect portfolio demonstration objective. | O1, CAT, ADR, VISION |
+
+### Continuity
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-011 | Read AGENTS.md before every resumption. | O5, AG, SUP, OWNER |
+| RP-012 | Verify actual GitHub, Jira and Confluence state before intervening. | O5, AG, SUP, OWNER |
+| RP-013 | Never rely solely on conversation memory for project state. | O5, AG, SUP, OWNER |
+| RP-014 | Apply every newly approved rule to subsequent work. | O5, AG, SUP, OWNER |
+| RP-015 | Never silently remove or forget a previously approved rule. | O5, AG, SUP, OWNER |
+| RP-016 | Version new decisions with date, rationale, provenance and impact. | O5, AG, SUP, OWNER |
+| RP-017 | Escalate conflicts for arbitration and preserve the replaced rule's history. | O5, AG, SUP, OWNER |
+| RP-018 | Report unavailable information and unperformed operations explicitly. | O5, AG, SUP, OWNER |
+| RP-019 | Perform authorized tasks directly when access permits. | O5, AG, SUP, OWNER |
+| RP-020 | Communicate in French; write new technical artifacts in English under the supervisor protocol. | O5, AG, SUP, OWNER |
+
+### Scrum and backlog
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-021 | Create and activate the Jira sprint before implementation starts. | O2, SDLC, REC, QA-125 |
+| RP-022 | Define sprint goal, P0 scope, dependencies and acceptance criteria. | O2, SDLC, REC, QA-125 |
+| RP-023 | Assign issues to the corresponding sprint. | O2, SDLC, REC, QA-125 |
+| RP-024 | Keep Jira statuses current throughout the sprint. | O2, SDLC, REC, QA-125 |
+| RP-025 | Review remaining issues from previous sprints. | O2, SDLC, REC, QA-125 |
+| RP-026 | Record defects found during UAT. | O2, SDLC, REC, QA-125 |
+| RP-027 | Do not close an entire requirement when only a subset is delivered. | O2, SDLC, REC, QA-125 |
+| RP-028 | Review and reconcile the backlog after each integration. | O2, SDLC, REC, QA-125 |
+| RP-029 | Record deferred improvements and functionality. | O2, SDLC, REC, QA-125 |
+| RP-030 | Prepare a UAT campaign for each sprint. | O2, SDLC, REC, QA-125 |
+| RP-031 | Close sprints after reviewing results, defects and carryover. | O2, SDLC, REC, QA-125 |
+| RP-032 | Never backdate sprints or fabricate Scrum metrics. | O2, SDLC, REC, QA-125 |
+
+### Development and GitHub
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-033 | Preserve the approved modular architecture. | O3, SDLC, ADR, DOD, SUP |
+| RP-034 | Inspect existing code and interfaces before changing them. | O3, SDLC, ADR, DOD, SUP |
+| RP-035 | Synchronize the starting branch and protect local changes. | O3, SDLC, ADR, DOD, SUP |
+| RP-036 | Create a dedicated branch linked to the Jira issue. | O3, SDLC, ADR, DOD, SUP |
+| RP-037 | Use Conventional Commits with a Jira reference. | O3, SDLC, ADR, DOD, SUP |
+| RP-038 | Open a Draft Pull Request for each increment. | O3, SDLC, ADR, DOD, SUP |
+| RP-039 | Do not develop directly on main. | O3, SDLC, ADR, DOD, SUP |
+| RP-040 | Review the diff, dependencies, risks and migrations. | O3, SDLC, ADR, DOD, SUP |
+| RP-041 | Never expose API keys, secrets or customer data. | O3, SDLC, ADR, DOD, SUP |
+| RP-042 | Do not overwrite existing user changes. | O3, SDLC, ADR, DOD, SUP |
+| RP-043 | Do not merge without required validations and authorization. | O3, SDLC, ADR, DOD, SUP |
+| RP-044 | Never claim local commands were executed without evidence. | O3, SDLC, ADR, DOD, SUP |
+| RP-045 | Maintain coherent, minimal, versioned technical documentation. | O3, SDLC, ADR, DOD, SUP |
+
+### Quality engineering
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-046 | Define requirement coverage before validation. | O3, DOD, QA, S8, SUP |
+| RP-047 | Apply risk-based testing. | O3, DOD, QA, S8, SUP |
+| RP-048 | Run applicable unit tests. | O3, DOD, QA, S8, SUP |
+| RP-049 | Verify API contracts with Pytest, HTTPX and Postman as applicable. | O3, DOD, QA, S8, SUP |
+| RP-050 | Verify real integration with isolated PostgreSQL. | O3, DOD, QA, S8, SUP |
+| RP-051 | Automate critical UI journeys with Playwright. | O3, DOD, QA, S8, SUP |
+| RP-052 | Cover negative cases, boundaries, duplicates and errors. | O3, DOD, QA, S8, SUP |
+| RP-053 | Add regression coverage for significant fixes. | O3, DOD, QA, S8, SUP |
+| RP-054 | Use synthetic test data. | O3, DOD, QA, S8, SUP |
+| RP-055 | Strictly isolate DEV, QA and automated test databases. | O3, DOD, QA, S8, SUP |
+| RP-056 | Verify database identity before tests or migrations. | O3, DOD, QA, S8, SUP |
+| RP-057 | Verify migration reversibility when applicable. | O3, DOD, QA, S8, SUP |
+| RP-058 | Avoid shared fixtures that cause conflicts between parallel tests. | O3, DOD, QA, S8, SUP |
+| RP-059 | Distinguish mocked tests from real integration tests. | O3, DOD, QA, S8, SUP |
+| RP-060 | Run CI on the exact merge candidate. | O3, DOD, QA, S8, SUP |
+| RP-061 | Green CI on an earlier commit does not validate a later one. | O3, DOD, QA, S8, SUP |
+| RP-062 | Record PASS, FAIL, BLOCKED and NOT_RUN; use NOT_APPLICABLE with justification. | O3, DOD, QA, S8, SUP |
+| RP-063 | Label user-reported PASS separately. | O3, DOD, QA, S8, SUP |
+| RP-064 | Never fabricate test results or evidence. | O3, DOD, QA, S8, SUP |
+| RP-065 | Distinguish requirement coverage, execution result and business acceptance. | O3, DOD, QA, S8, SUP |
+| RP-066 | Never represent AI-assisted review as independent human audit. | O3, DOD, QA, S8, SUP |
+
+### AI and privacy
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-067 | Real OpenAI tests are manual only. | O4, AI, CAT, REL, QA-90 |
+| RP-068 | No automated paid OpenAI calls in CI. | O4, AI, CAT, REL, QA-90 |
+| RP-069 | Use mocks for automated AI integration tests. | O4, AI, CAT, REL, QA-90 |
+| RP-070 | Obtain explicit consent before authorized external calls. | O4, AI, CAT, REL, QA-90 |
+| RP-071 | Minimize data sent to the AI provider. | O4, AI, CAT, REL, QA-90 |
+| RP-072 | Use Structured Outputs and backend Pydantic validation. | O4, AI, CAT, REL, QA-90 |
+| RP-073 | Reject or explicitly handle invalid AI responses. | O4, AI, CAT, REL, QA-90 |
+| RP-074 | Do not invent business rules or acceptance criteria absent from sources. | O4, AI, CAT, REL, QA-90 |
+| RP-075 | Retain source, model and version metadata where applicable. | O4, AI, CAT, REL, QA-90 |
+| RP-076 | Require human review of AI proposals. | O4, AI, CAT, REL, QA-90 |
+| RP-077 | AI proposals must not automatically modify approved requirements. | O4, AI, CAT, REL, QA-90 |
+| RP-078 | Do not represent basic sensitive-data detection as certified DLP. | O4, AI, CAT, REL, QA-90 |
+| RP-079 | Control real-call budgets and protect the API key on the backend. | O4, AI, CAT, REL, QA-90 |
+| RP-080 | Do not transmit real customer data without appropriate controls and authorization. | O4, AI, CAT, REL, QA-90 |
+
+### Release management
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-081 | Quality Gates must be deterministic. | O3, O4, DC, REL, OWNER |
+| RP-082 | An LLM must not approve a release alone. | O3, O4, DC, REL, OWNER |
+| RP-083 | An applicable critical FAIL causes NO_GO. | O3, O4, DC, REL, OWNER |
+| RP-084 | Missing or stale evidence must not become PASS. | O3, O4, DC, REL, OWNER |
+| RP-085 | Associate evidence with the correct release version. | O3, O4, DC, REL, OWNER |
+| RP-086 | An active, applicable, qualified CRITICAL objection causes NO_GO. | O3, O4, DC, REL, OWNER |
+| RP-087 | Unqualified objections must not automatically block release. | O3, O4, DC, REL, OWNER |
+| RP-088 | HIGH, MEDIUM and LOW objections require human review. | O3, O4, DC, REL, OWNER |
+| RP-089 | Preserve traceability of objection resolution and rejection. | O3, O4, DC, REL, OWNER |
+| RP-090 | Preserve prototype decisions NO_GO, UNDETERMINED and REVIEW_REQUIRED. | O3, O4, DC, REL, OWNER |
+| RP-091 | No automatic GO is permitted. | O3, O4, DC, REL, OWNER |
+| RP-092 | P0 UAT must be accepted and documented BEFORE any functional PR merge. | O3, O4, DC, REL, OWNER |
+| RP-093 | Required CI and review must pass before merge. | O3, O4, DC, REL, OWNER |
+| RP-094 | A merged PR is not functional acceptance. | O3, O4, DC, REL, OWNER |
+| RP-095 | Local functional acceptance is not production authorization. | O3, O4, DC, REL, OWNER |
+| RP-096 | Production deployment requires explicit approval and appropriate security controls. | O3, O4, DC, REL, OWNER |
+
+### Traceability and documentation
+
+| ID | Approved rule | Source families |
+| --- | --- | --- |
+| RP-097 | Maintain end-to-end business, technical and QA traceability. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-098 | Use stable identifiers for requirements, rules, tests and decisions. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-099 | Maintain bidirectional links where available. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-100 | Synchronize GitHub, Jira and Confluence at major milestones. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-101 | Maintain the official requirements catalog. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-102 | Version ADRs and never reuse identifiers. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-103 | Distinguish Proposed, Accepted, Superseded and Rejected decisions. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-104 | Maintain relevant functional, technical and data diagrams. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-105 | Document UAT results by scenario and version. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-106 | Retain defects, residual risks and acceptance reservations. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-107 | Prefer versioned specifications as the source of generated views. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-108 | Do not maintain conflicting duplicate catalogs. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-109 | Do not treat script association as execution evidence. | O1, O2, O3, ADR, CAT, VISION, SUP |
+| RP-110 | Do not treat a DRAFT test as validated coverage. | O1, O2, O3, ADR, CAT, VISION, SUP |
+
+### Source index (observed during the 2026-11-26 audit)
+
+- O1/O2/O3/O4/O5: existing sections 1–5 of this file, preserved at baseline [73a8e98](https://github.com/AstuceByMouna/qualitymind-ai/blob/73a8e98d519cefb4de55d0e72ef6decf175c538e/docs/qa/project-operating-rules.md).
+- AG: [candidate AGENTS.md](https://github.com/AstuceByMouna/qualitymind-ai/blob/73a8e98d519cefb4de55d0e72ef6decf175c538e/AGENTS.md), blob c00725b7ca80b0a459216b54fea2402b529e90b4; default-branch read returned 404 at audit.
+- SDLC: [Confluence 458753](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458753), v4; QA: [425986](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/425986), v4; DOD: [repository DoR/DoD](definition-of-done.md), baseline blob 8a629ce0f2efc282b0d21363d758bc8a1946ebeb.
+- ADR: [canonical ADR registry 2129927](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2129927), v2; CAT: [catalog 262145](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/262145), v7; AI: [AI governance 2129964](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2129964), v1; REL: [MVP-1 release 2162844](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2162844), v2.
+- DC: [QA-103 policy 3080208](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/3080208), v22, and [Sprint 6 2818093](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/2818093), v10; S8: [Sprint 8 4096023](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/4096023), v6 and [PR #53](https://github.com/AstuceByMouna/qualitymind-ai/pull/53).
+- REC: [reconciliation](backlog-reconciliation-s7-s10.md); QA-125 and QA-90: corresponding Jira issues; VISION: QA-108/109/110, QA-44, QA-113 and prior project discussions accessible at audit.
+- OWNER: explicit project-owner approval in the audit follow-up dated 2026-11-26 Montreal; SUP: engineering supervisor mandatory gates used in this audit. Conversation and plugin instructions are not independent test evidence.
+
+### Explicit precedence and verification
+
+RP-092 supersedes the older operational sequence in Confluence SDLC v4 and QA v4 which allowed local UAT after merge; preserve those passages as historical practice, including PR #51/#52 sequencing deviations. For functional changes: Draft PR → exact-head CI → P0 UAT acceptance with evidence and blocking issues resolved or explicitly risk-accepted within policy → required review and explicit owner merge authorization → merge → verify main and reconcile Jira/Confluence. A documentation-only change uses a relevant documented review/CI gate rather than fabricated functional UAT. No automatic production GO. The owner approved preparation, not publication/merge or production deployment.
+
+QA-124 remains In Progress; S10-UAT-06 remains NOT_RUN until verified. QA-125 remains In Progress until its documentation, review and reconciliation gates are met. Do not infer a release decision from approval of this index.
+
+**Known audit limits:** historical conversation access was partial, nested AGENTS inventory and local environment were not established, and not all Confluence revisions or historical test artifacts were inspected. Preserve any additional verified historical rule; do not treat the 110 entries as proof of exhaustive recovery. When an apparent conflict or missing source is found, record and resolve it before expanding write scope.
