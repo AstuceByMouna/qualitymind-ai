@@ -1,6 +1,6 @@
 # QualityMind AI — Definition of Ready et Definition of Done
 
-**Version :** 1.1 — état d'adoption mis à jour le 9 novembre 2026  
+**Version :** 1.2 — recette P0 avant fusion, 26 novembre 2026  
 **Jira :** [QA-22](https://gharbiconsulting.atlassian.net/browse/QA-22)  
 **Confluence :** [Gouvernance SDLC](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/458753) · [Stratégie QA](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/425986)
 
@@ -22,7 +22,9 @@ Une tâche purement documentaire peut être évaluée sur ses propres livrables 
 - [ ] Les fichiers ont été revus, sans secrets ni modifications non souhaitées.
 - [ ] Tests pertinents exécutés et résultats enregistrés ; si aucun test d'exécution n'est applicable, justification notée.
 - [ ] Les contrôles CI **effectivement configurés** ont réussi ; les contrôles non déployés sont marqués `NOT_RUN` ou `NOT_APPLICABLE`, jamais `PASS`.
-- [ ] Revue de Pull Request enregistrée et validation finale par le propriétaire.
+- [ ] Avant toute fusion fonctionnelle, la CI a réussi sur le SHA candidat et la recette P0 a été acceptée. Consigner les scénarios, les résultats et les preuves applicables à ce SHA dans la PR ou le procès-verbal de recette. [Règle RP-092](project-operating-rules.md)
+- [ ] Les anomalies bloquantes sont corrigées ou leur risque résiduel est explicitement accepté conformément aux règles du projet.
+- [ ] La revue finale est enregistrée et le Product Owner a explicitement autorisé la fusion.
 - [ ] Pull Request fusionnée sur `main` et artefacts vérifiés sur `main`.
 - [ ] Documents Confluence/GitHub synchronisés ; décisions importantes et limites documentées.
 - [ ] Liens Jira ↔ exigences ↔ branche/commits ↔ PR ↔ tests/résultats ajoutés.
