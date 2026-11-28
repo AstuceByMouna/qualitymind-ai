@@ -1,0 +1,211 @@
+{
+  "dataset_size": 40,
+  "application_sha": "fda962e0b450e8b9f42dc5e5cf593c76213edd23",
+  "postgresql_version": "17.11 (Debian 17.11-1.pgdg13+2)",
+  "warmup": {
+    "concurrency": 1,
+    "duration_seconds": 1.304,
+    "overall": {
+      "requests": 40,
+      "errors": 0,
+      "error_percent": 0.0,
+      "p50_ms": 12.19,
+      "p95_ms": 19.1,
+      "p99_ms": 26.43,
+      "requests_per_second": 30.68
+    },
+    "endpoints": {
+      "health": {
+        "requests": 10,
+        "errors": 0,
+        "error_percent": 0.0,
+        "p50_ms": 5.43,
+        "p95_ms": 12.72,
+        "p99_ms": 12.72,
+        "requests_per_second": 7.67
+      },
+      "list": {
+        "requests": 10,
+        "errors": 0,
+        "error_percent": 0.0,
+        "p50_ms": 13.33,
+        "p95_ms": 26.43,
+        "p99_ms": 26.43,
+        "requests_per_second": 7.67
+      },
+      "details": {
+        "requests": 10,
+        "errors": 0,
+        "error_percent": 0.0,
+        "p50_ms": 10.59,
+        "p95_ms": 17.36,
+        "p99_ms": 17.36,
+        "requests_per_second": 7.67
+      },
+      "search": {
+        "requests": 10,
+        "errors": 0,
+        "error_percent": 0.0,
+        "p50_ms": 13.89,
+        "p95_ms": 18.53,
+        "p99_ms": 18.53,
+        "requests_per_second": 7.67
+      }
+    }
+  },
+  "stages": [
+    {
+      "concurrency": 1,
+      "duration_seconds": 2.453,
+      "overall": {
+        "requests": 80,
+        "errors": 0,
+        "error_percent": 0.0,
+        "p50_ms": 10.56,
+        "p95_ms": 15.38,
+        "p99_ms": 18.48,
+        "requests_per_second": 32.61
+      },
+      "endpoints": {
+        "health": {
+          "requests": 20,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 5.68,
+          "p95_ms": 6.7,
+          "p99_ms": 7.07,
+          "requests_per_second": 8.15
+        },
+        "list": {
+          "requests": 20,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 12.28,
+          "p95_ms": 14.18,
+          "p99_ms": 14.33,
+          "requests_per_second": 8.15
+        },
+        "details": {
+          "requests": 20,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 9.54,
+          "p95_ms": 15.38,
+          "p99_ms": 18.13,
+          "requests_per_second": 8.15
+        },
+        "search": {
+          "requests": 20,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 11.78,
+          "p95_ms": 17.79,
+          "p99_ms": 18.48,
+          "requests_per_second": 8.15
+        }
+      }
+    },
+    {
+      "concurrency": 2,
+      "duration_seconds": 2.827,
+      "overall": {
+        "requests": 160,
+        "errors": 0,
+        "error_percent": 0.0,
+        "p50_ms": 12.62,
+        "p95_ms": 28.1,
+        "p99_ms": 80.87,
+        "requests_per_second": 56.6
+      },
+      "endpoints": {
+        "health": {
+          "requests": 40,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 6.55,
+          "p95_ms": 10.6,
+          "p99_ms": 22.79,
+          "requests_per_second": 14.15
+        },
+        "list": {
+          "requests": 40,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 13.95,
+          "p95_ms": 28.49,
+          "p99_ms": 80.87,
+          "requests_per_second": 14.15
+        },
+        "details": {
+          "requests": 40,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 12.34,
+          "p95_ms": 29.11,
+          "p99_ms": 76.54,
+          "requests_per_second": 14.15
+        },
+        "search": {
+          "requests": 40,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 14.09,
+          "p95_ms": 28.1,
+          "p99_ms": 108.44,
+          "requests_per_second": 14.15
+        }
+      }
+    },
+    {
+      "concurrency": 4,
+      "duration_seconds": 2.655,
+      "overall": {
+        "requests": 320,
+        "errors": 0,
+        "error_percent": 0.0,
+        "p50_ms": 11.86,
+        "p95_ms": 23.28,
+        "p99_ms": 27.83,
+        "requests_per_second": 120.51
+      },
+      "endpoints": {
+        "health": {
+          "requests": 80,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 6.28,
+          "p95_ms": 10.19,
+          "p99_ms": 13.87,
+          "requests_per_second": 30.13
+        },
+        "list": {
+          "requests": 80,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 14.33,
+          "p95_ms": 25.66,
+          "p99_ms": 47.71,
+          "requests_per_second": 30.13
+        },
+        "details": {
+          "requests": 80,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 11.04,
+          "p95_ms": 21.2,
+          "p99_ms": 27.66,
+          "requests_per_second": 30.13
+        },
+        "search": {
+          "requests": 80,
+          "errors": 0,
+          "error_percent": 0.0,
+          "p50_ms": 14.28,
+          "p95_ms": 26.23,
+          "p99_ms": 27.93,
+          "requests_per_second": 30.13
+        }
+      }
+    }
+  ]
+}
