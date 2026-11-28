@@ -8,6 +8,7 @@ from app.api.v1.failure_analysis import router as failure_analysis_router
 from app.api.v1.test_design import router as test_design_router
 from app.api.v1.automation_hub import router as automation_hub_router
 from app.api.v1.risk import router as risk_router
+from app.api.v1.traceability import router as traceability_router
 from app.api.v1.releases import router as releases_router
 from app.api.v1.release_challenges import router as challenges_router
 from app.api.v1.quality_analysis import router as quality_router
@@ -43,6 +44,7 @@ app.include_router(test_design_router)
 app.include_router(automation_hub_router)
 app.include_router(failure_analysis_router)
 app.include_router(risk_router)
+app.include_router(traceability_router)
 
 
 @app.get("/health")
