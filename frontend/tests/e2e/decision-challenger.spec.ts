@@ -7,7 +7,12 @@ const base = `/api/governance/releases/${RELEASE}/challenges`;
 
 test("QA-103 @smoke @mock-api unqualified objection cannot block; qualification requires harm and proof", async ({ page }) => {
   let saved = false;
-  let qualified = false;
+  let challengeStatus = "OPEN_UNQUALIFIED";
+  const history = [{ id: "created", from_status: null as string | null,
+    to_status: challengeStatus, actor: "QA reviewer", justification: "Created",
+    created_at: "2026-11-20T00:00:00Z" }];
+  const qualified = () => challengeStatus === "QUALIFIED";
+  await page.setViewportSize({ width: 390, height: 844 });
 
   await page.route("**/api/governance/**", async (route) => {
     const url = new URL(route.request().url());
@@ -39,27 +44,31 @@ test("QA-103 @smoke @mock-api unqualified objection cannot block; qualification 
       response = saved ? [{
         id: CHALLENGE, obligation_id: OBLIGATION, release_id: RELEASE, version: "2026.11.19",
         source: "Manual UAT", owner: "QA reviewer (unverified)",
-        reason: "Synthetic critical objection", severity: "CRITICAL", status: qualified ? "QUALIFIED" : "OPEN_UNQUALIFIED",
-        plausible_harm: qualified ? "Risk of missing proof" : null,
-        required_evidence: qualified ? "Independent review log" : null,
+        reason: "Synthetic critical objection", severity: "CRITICAL", status: challengeStatus,
+        plausible_harm: qualified() ? "Risk of missing proof" : null,
+        required_evidence: qualified() ? "Independent review log" : null,
         created_at: "2026-11-20T00:00:00Z", updated_at: "2026-11-20T00:00:00Z",
       }] : [];
     } else if (path === `${base}/assessment`) {
       response = {
-        dc01_state: "REVIEW_REQUIRED", state: qualified ? "NO_GO" : "REVIEW_REQUIRED",
-        explanation: qualified ? "Qualified critical objection" : "Human review required.",
-        qualifying_critical_challenge_ids: qualified ? [CHALLENGE] : [],
-        challenges_total: saved ? 1 : 0, qualified_open: qualified ? 1 : 0,
+        dc01_state: "REVIEW_REQUIRED", state: qualified() ? "NO_GO" : "REVIEW_REQUIRED",
+        explanation: qualified() ? "Qualified critical objection" : "Human review required.",
+        qualifying_critical_challenge_ids: qualified() ? [CHALLENGE] : [],
+        challenges_total: saved ? 1 : 0, qualified_open: qualified() ? 1 : 0,
       };
     } else if (path === `${base}/${CHALLENGE}/history`) {
-      response = [{ id: "00000000-0000-4000-8000-000000000064", from_status: null, to_status: "OPEN_UNQUALIFIED", actor: "QA reviewer (unverified)", justification: "Created", created_at: "2026-11-20T00:00:00Z" }];
+      response = history;
     } else if (path === `${base}/${CHALLENGE}/transitions` && method === "POST") {
-      const payload = route.request().postDataJSON() as { plausible_harm?: string; required_evidence?: string; to_status: string };
-      if (!payload.plausible_harm || !payload.required_evidence) {
+      const payload = route.request().postDataJSON() as {
+        plausible_harm?: string; required_evidence?: string; to_status: string; justification: string;
+      };
+      if (payload.to_status === "QUALIFIED" && (!payload.plausible_harm || !payload.required_evidence)) {
         status = 422; response = { error: "Qualification requires a harm and required evidence." };
       } else {
-        qualified = true;
-        response = { id: CHALLENGE, status: "QUALIFIED" };
+        history.push({ id: String(history.length), from_status: challengeStatus, to_status: payload.to_status,
+          actor: "QA reviewer", justification: payload.justification, created_at: "2026-11-20T00:00:00Z" });
+        challengeStatus = payload.to_status;
+        response = { id: CHALLENGE, status: challengeStatus };
       }
     } else {
       status = 404;
@@ -71,6 +80,12 @@ test("QA-103 @smoke @mock-api unqualified objection cannot block; qualification 
 
   await page.goto("/governance");
   await page.getByRole("button", { name: /QA-103 synthetic demo/ }).click();
+  await expect(page.getByText("Selected release")).toBeVisible();
+  const challenger = page.getByRole("button", { name: "Decision Challenger", exact: true });
+  await challenger.focus();
+  await challenger.press("Enter");
+  await expect(challenger).toBeFocused();
+  await expect(challenger).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByTestId("decision-challenger")).toBeVisible();
   await expect(page.getByTestId("challenger-assessment")).toContainText("REVIEW_REQUIRED");
   await page.getByTestId("challenge-obligation").selectOption(OBLIGATION);
@@ -88,4 +103,18 @@ test("QA-103 @smoke @mock-api unqualified objection cannot block; qualification 
   await expect(page.getByTestId("challenge-list")).toContainText("QUALIFIED");
   await expect(page.getByTestId("challenger-assessment")).toContainText("NO_GO");
   await expect(page.getByTestId("decision-challenger")).not.toContainText("GO approved");
+  await expect(page.getByRole("region", { name: "DC-01 baseline" })).toContainText("REVIEW_REQUIRED");
+  await expect(page.getByRole("region", { name: "Combined decision" })).toContainText("Hold the release");
+  await expect(page.getByTestId("challenger-assessment")).toContainText("Synthetic critical objection");
+  await page.getByRole("button", { name: "History", exact: true }).click();
+  await expect(page.getByTestId("challenge-history")).toContainText("Created");
+  await expect(page.getByTestId("challenge-review")).toHaveCount(0);
+  await page.getByRole("button", { name: "Decision Challenger", exact: true }).click();
+  await page.getByRole("textbox", { name: "Decision justification" }).fill("Synthetic evidence reviewed");
+  await page.getByRole("button", { name: "Resolve", exact: true }).click();
+  await expect(page.getByTestId("challenge-list")).toContainText("RESOLVED");
+  await expect(page.getByRole("region", { name: "Combined decision" })).toContainText("REVIEW_REQUIRED");
+  await page.getByRole("button", { name: "History", exact: true }).click();
+  await expect(page.getByTestId("challenge-history")).toContainText("Synthetic evidence reviewed");
+  await expect(page.getByText("Selected release")).toBeVisible();
 });

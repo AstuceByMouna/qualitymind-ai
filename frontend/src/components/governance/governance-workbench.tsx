@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { DecisionChallenger } from "./decision-challenger";
+import { DecisionSummary } from "./decision-summary";
 
 type Release = { id: string; name: string; version: string; created_at: string };
 type Requirement = { id: string; title: string; archived_at: string | null };
@@ -39,6 +40,8 @@ export function GovernanceWorkbench() {
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [section, setSection] = useState<"Release Readiness" | "Decision Challenger" | "History">("Release Readiness");
 
   const refresh = useCallback(async (release: Release | null) => {
     const list = await api<Release[]>("releases");
@@ -59,7 +62,7 @@ export function GovernanceWorkbench() {
 
   async function submit(action: () => Promise<void>) {
     if (busy) return;
-    setBusy(true); setError("");
+    setBusy(true); setError(""); setNotice("");
     try { await action(); }
     catch (issue) { setError(issue instanceof Error ? issue.message : "The operation failed."); }
     finally { setBusy(false); }
@@ -70,6 +73,7 @@ export function GovernanceWorkbench() {
     void submit(async () => {
       const created = await api<Release>("releases", { name, version });
       setName(""); setVersion(""); setSelected(created); setTestedVersion(created.version);
+      setNotice("Release created.");
       await refresh(created);
     });
   }
@@ -79,7 +83,7 @@ export function GovernanceWorkbench() {
     if (!selected) return;
     void submit(async () => {
       await api(`releases/${selected.id}/obligations`, { requirement_id: requirementId, title: obligationTitle, critical });
-      setObligationTitle(""); setRequirementId(""); await refresh(selected);
+      setObligationTitle(""); setRequirementId(""); setNotice("Obligation saved."); await refresh(selected);
     });
   }
 
@@ -90,18 +94,19 @@ export function GovernanceWorkbench() {
       await api(`releases/${selected.id}/obligations/${evidenceObligationId}/evidence`, {
         reference: evidenceRef, tested_version: testedVersion, result: evidenceResult,
       });
-      setEvidenceRef(""); setEvidenceObligationId(""); await refresh(selected);
+      setEvidenceRef(""); setEvidenceObligationId(""); setNotice("Evidence recorded for the tested version."); await refresh(selected);
     });
   }
 
   return (
     <div className="space-y-6" data-testid="governance-workbench">
       <div>
-        <h2 className="text-2xl font-semibold">Release Readiness</h2>
+        <h2 className="text-2xl font-semibold">Release review</h2>
         <p className="mt-2 text-sm text-slate-600">Record obligations and version-specific evidence. This prototype cannot authorize a GO; human approval and access controls are not implemented.</p>
       </div>
       {error && <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">{error}</p>}
-      <div className="grid gap-6 xl:grid-cols-2">
+      {notice && <p role="status" className="text-sm text-sky-800">{notice}</p>}
+      <div className="grid gap-6">
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="text-lg font-semibold">Releases</h3>
           <form onSubmit={createRelease} className="mt-4 flex flex-col gap-3">
@@ -117,22 +122,47 @@ export function GovernanceWorkbench() {
             {loading && <p className="text-sm text-slate-500">Loading releases...</p>}
             {!loading && releases.length === 0 && <p className="text-sm text-slate-500">No release has been recorded yet.</p>}
             {releases.map((release) => (
-              <button key={release.id} type="button" onClick={() => {
-                setSelected(release); setTestedVersion(release.version); setError(""); setReadiness(null);
-                void api<Readiness>(`releases/${release.id}/readiness`).then(setReadiness).catch((issue: unknown) => setError(issue instanceof Error ? issue.message : "Unable to load release."));
+              <button key={release.id} type="button" aria-pressed={selected?.id === release.id} disabled={busy} onClick={() => {
+                setSelected(release); setTestedVersion(release.version); setReadiness(null);
+                setRequirementId(""); setObligationTitle(""); setEvidenceObligationId(""); setEvidenceRef("");
+                setCritical(true); setEvidenceResult("PASS");
+                void submit(async () => setReadiness(await api<Readiness>(`releases/${release.id}/readiness`)));
               }} className={`block w-full rounded-lg border p-3 text-left text-sm ${selected?.id === release.id ? "border-sky-600 bg-sky-50" : "border-slate-200 hover:bg-slate-50"}`}>
                 <span className="font-medium">{release.name}</span> · {release.version}
               </button>
             ))}
           </div>
         </section>
+      </div>
+      <div className="sticky top-0 z-10 space-y-2 rounded-lg border border-slate-300 bg-white p-3 shadow-sm">
+        <p className="break-words text-sm"><strong>Selected release</strong>{" "}
+          {selected ? `${selected.name} · ${selected.version}` : "None selected"}
+        </p>
+        <nav aria-label="Governance sections" className="flex flex-wrap gap-2">
+          {(["Release Readiness", "Decision Challenger", "History"] as const).map((name) => (
+            <button type="button" key={name} aria-pressed={section === name} onClick={() => setSection(name)}
+              className={`rounded-md border px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 ${section === name ? "border-sky-700 bg-sky-700 text-white" : "border-slate-300 text-slate-800"}`}>
+              {name}
+            </button>
+          ))}
+        </nav>
+      </div>
+      <div hidden={section !== "Release Readiness"} className="space-y-5">
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm" aria-label="Readiness result">
           <h3 className="text-lg font-semibold">Decision assessment</h3>
           {!selected && <p className="mt-3 text-sm text-slate-500">Select a release to inspect its evidence.</p>}
-          {selected && !readiness && <p className="mt-3 text-sm text-slate-500">Loading assessment...</p>}
+          {selected && !readiness && <p role="status" className="mt-3 text-sm text-slate-600">{busy ? "Loading assessment…" : "Select the release to retry loading its assessment."}</p>}
           {selected && readiness && <div className="mt-4 space-y-3" data-testid="release-readiness">
-            <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${readiness.state === "NO_GO" ? "bg-rose-100 text-rose-800" : "bg-amber-100 text-amber-800"}`}>{readiness.state.replaceAll("_", " ")}</span>
-            <p className="text-sm text-slate-600">{readiness.explanation}</p>
+            <DecisionSummary label="DC-01 readiness" state={readiness.state} explanation={readiness.explanation} />
+            {readiness.obligations.length === 0 && <p className="text-sm text-slate-600">No release obligations recorded. Add one to start tracking evidence.</p>}
+            {readiness.obligations.some((item) => item.critical && item.evidence_status !== "PASS") && (
+              <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-950">
+                <h4 className="font-semibold">Critical obligations needing attention</h4>
+                <ul className="list-disc pl-5">{readiness.obligations.filter((item) => item.critical && item.evidence_status !== "PASS").map((item) => (
+                  <li key={item.id}>{item.title} · {item.evidence_status}</li>
+                ))}</ul>
+              </div>
+            )}
             <ul className="space-y-2">{readiness.obligations.map((obligation) => (
               <li key={obligation.id} className="rounded-md border border-slate-200 p-3 text-sm">
                 <span className="font-medium">{obligation.title}</span>
@@ -142,7 +172,6 @@ export function GovernanceWorkbench() {
             ))}</ul>
           </div>}
         </section>
-      </div>
       {selected && <div className="grid gap-6 xl:grid-cols-2">
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="text-lg font-semibold">Add an obligation</h3>
@@ -185,7 +214,12 @@ export function GovernanceWorkbench() {
           </form>
         </section>
       </div>}
-      {selected && readiness && <DecisionChallenger key={selected.id} releaseId={selected.id} version={selected.version} obligations={readiness.obligations} baselineState={readiness.state} />}
+      </div>
+      {section !== "Release Readiness" && !readiness && <p role="status" className="text-sm text-slate-700">Select a release with a loaded assessment.</p>}
+      {selected && readiness && <div hidden={section === "Release Readiness"}>
+        <DecisionChallenger key={selected.id} releaseId={selected.id} version={selected.version}
+          obligations={readiness.obligations} baselineState={readiness.state} showHistory={section === "History"} />
+      </div>}
       <p className="text-xs text-slate-500">Prototype DC-01 — evidence is manually recorded and not independently verified. No authentication, decision signing or release authorization is available.</p>
     </div>
   );
