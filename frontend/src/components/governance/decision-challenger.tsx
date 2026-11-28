@@ -36,11 +36,16 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
 }
 
 export function DecisionChallenger({
-  releaseId, version, obligations, baselineState, showHistory,
-}: { releaseId: string; version: string; obligations: Obligation[]; baselineState: string; showHistory: boolean }) {
+  releaseId, version, obligations, showHistory, beginOperation, endOperation,
+}: {
+  releaseId: string; version: string; obligations: Obligation[]; showHistory: boolean;
+  beginOperation: () => boolean; endOperation: () => void;
+}) {
   const [items, setItems] = useState<Challenge[]>([]);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [selectedId, setSelectedId] = useState("");
+  const currentObjection = useRef("");
+
   const [history, setHistory] = useState<Event[] | null>(null);
   const [historyError, setHistoryError] = useState("");
   const historyRequest = useRef(0);
@@ -76,32 +81,35 @@ export function DecisionChallenger({
         if (live) setError(problem instanceof Error ? problem.message : "Could not load objections.");
       });
     return () => { live = false; };
-  }, [prefix, baselineState]);
+  }, [prefix]);
 
   const selected = items.find((item) => item.id === selectedId) ?? null;
 
   async function perform(operation: () => Promise<void>) {
-    if (busy) return;
+    if (!beginOperation()) return;
+    setAssessment(null);
     setBusy(true); setError(""); setNotice("");
     try { await operation(); }
     catch (problem) { setError(problem instanceof Error ? problem.message : "Operation failed."); }
-    finally { setBusy(false); }
+    finally {
+      setBusy(false);
+      endOperation();
+    }
   }
 
   function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const originalSelection = currentObjection.current;
     void perform(async () => {
       const created = await request<Challenge>(prefix, {
         obligation_id: obligationId, version, source, owner, reason,
         severity, plausible_harm: plausibleHarm.trim() || null,
         required_evidence: requiredEvidence.trim() || null,
       });
-      setReason(""); setObligationId(""); setSelectedId(created.id);
-      setPlausibleHarm(created.plausible_harm ?? "");
-      setRequiredEvidence(created.required_evidence ?? "");
-      setJustification("");
+      setReason("");
+      setObligationId("");
+      if (currentObjection.current === originalSelection) inspect(created);
       setNotice("Objection recorded as OPEN_UNQUALIFIED. Review it to decide whether to qualify or reject it.");
-      await refreshHistory(created.id);
       await reload();
     });
   }
@@ -114,33 +122,34 @@ export function DecisionChallenger({
         plausible_harm: plausibleHarm.trim() || null,
         required_evidence: requiredEvidence.trim() || null,
       });
-      await reload();
-      await refreshHistory(selected.id);
-      setNotice("Transition saved. Assessment recalculated; no GO is issued.");
-      setJustification("");
+      if (currentObjection.current === selected.id) setJustification("");
+      setNotice("Objection transition saved.");
+      await Promise.all([reload(), refreshHistory(selected.id)]);
     });
   }
 
   async function refreshHistory(id: string) {
+    // A write may finish while the user is reading another objection.
+    if (currentObjection.current !== id) return;
     const sequence = ++historyRequest.current;
     setHistory(null);
     setHistoryError("");
     try {
       const events = await request<Event[]>(`${prefix}/${id}/history`);
-      if (sequence === historyRequest.current) setHistory(events);
+      if (sequence === historyRequest.current && id === currentObjection.current) setHistory(events);
     } catch (problem) {
-      if (sequence === historyRequest.current) {
+      if (sequence === historyRequest.current && id === currentObjection.current) {
         setHistoryError(problem instanceof Error ? problem.message : "History unavailable.");
       }
     }
   }
 
   function inspect(item: Challenge) {
+    currentObjection.current = item.id;
     setSelectedId(item.id);
     setPlausibleHarm(item.plausible_harm ?? "");
     setRequiredEvidence(item.required_evidence ?? "");
     setJustification("");
-    setError("");
     void refreshHistory(item.id);
   }
 
@@ -199,7 +208,10 @@ export function DecisionChallenger({
               <p className="mt-2 text-slate-700">{assessment.challenges_total} objections · {assessment.qualified_open} qualified and open</p>
             </div>
           </div>
-        ) : !error && <p role="status" className="text-sm text-slate-600">Loading evaluation…</p>}
+        ) : error ? (
+          <button type="button" disabled={busy} onClick={() => void perform(reload)}
+            className="mt-2 rounded-md border border-slate-400 px-3 py-2 text-sm">Retry assessment</button>
+        ) : <p role="status" className="text-sm text-slate-600">Loading evaluation…</p>}
       </div>
       <div className="mt-5 grid gap-6 xl:grid-cols-2">
         <form onSubmit={create} className="space-y-3">
@@ -228,7 +240,7 @@ export function DecisionChallenger({
               {(["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const).map((x) => <option key={x}>{x}</option>)}
             </select>
           </label>
-          <button data-testid="create-challenge" disabled={busy || obligations.length === 0}
+          <button data-testid="create-challenge" disabled={busy || !assessment || obligations.length === 0}
             className="rounded-md bg-sky-700 px-4 py-2 text-sm text-white disabled:opacity-50">Register objection</button>
           {obligations.length === 0 && <p className="text-xs text-slate-500">Add a release obligation first.</p>}
         </form>
@@ -271,14 +283,14 @@ export function DecisionChallenger({
             </label>
             <div className="flex flex-wrap gap-2">
               {selected.status === "OPEN_UNQUALIFIED" && <button type="button" data-testid="qualify-challenge"
-                disabled={busy || !actor.trim() || !justification.trim() || !plausibleHarm.trim() || !requiredEvidence.trim()}
+                disabled={busy || !assessment || !actor.trim() || !justification.trim() || !plausibleHarm.trim() || !requiredEvidence.trim()}
                 onClick={() => changeStatus("QUALIFIED")}
                 className="rounded-md bg-sky-700 px-3 py-2 text-xs text-white disabled:opacity-50">Qualify</button>}
-              {selected.status === "QUALIFIED" && <button type="button" disabled={busy || !actor.trim() || !justification.trim()}
+              {selected.status === "QUALIFIED" && <button type="button" disabled={busy || !assessment || !actor.trim() || !justification.trim()}
                 onClick={() => changeStatus("RESOLVED")}
                 className="rounded-md bg-sky-700 px-3 py-2 text-xs text-white disabled:opacity-50">Resolve</button>}
               {(["OPEN_UNQUALIFIED", "QUALIFIED"] as ChallengeStatus[]).includes(selected.status) &&
-                <button type="button" disabled={busy || !actor.trim() || !justification.trim()}
+                <button type="button" disabled={busy || !assessment || !actor.trim() || !justification.trim()}
                   onClick={() => changeStatus("REJECTED")}
                   className="rounded-md border border-slate-400 px-3 py-2 text-xs disabled:opacity-50">Reject with reason</button>}
             </div>

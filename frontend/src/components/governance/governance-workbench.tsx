@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { DecisionChallenger } from "./decision-challenger";
 import { DecisionSummary } from "./decision-summary";
 
@@ -27,7 +27,9 @@ export function GovernanceWorkbench() {
   const [releases, setReleases] = useState<Release[]>([]);
   const [requirements, setRequirements] = useState<Requirement[]>([]);
   const [selected, setSelected] = useState<Release | null>(null);
-  const [readiness, setReadiness] = useState<Readiness | null>(null);
+  const [assessment, setAssessment] = useState<{ releaseId: string; version: string; data: Readiness } | null>(null);
+  const readiness = assessment && selected && assessment.releaseId === selected.id &&
+    assessment.version === selected.version ? assessment.data : null;
   const [name, setName] = useState("");
   const [version, setVersion] = useState("");
   const [requirementId, setRequirementId] = useState("");
@@ -38,17 +40,28 @@ export function GovernanceWorkbench() {
   const [evidenceResult, setEvidenceResult] = useState<"PASS" | "FAIL">("PASS");
   const [evidenceObligationId, setEvidenceObligationId] = useState("");
   const [busy, setBusy] = useState(false);
+  const operationInFlight = useRef(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [section, setSection] = useState<"Release Readiness" | "Decision Challenger" | "History">("Release Readiness");
 
-  const refresh = useCallback(async (release: Release | null) => {
-    const list = await api<Release[]>("releases");
-    setReleases(list);
-    if (release) setReadiness(await api<Readiness>(`releases/${release.id}/readiness`));
-    else setReadiness(null);
-  }, []);
+  async function loadReadiness(release: Release) {
+    const data = await api<Readiness>(`releases/${release.id}/readiness`);
+    setAssessment({ releaseId: release.id, version: release.version, data });
+  }
+
+  function selectRelease(release: Release) {
+    setAssessment(null);
+    setSelected(release);
+    setTestedVersion(release.version);
+    setRequirementId("");
+    setObligationTitle("");
+    setEvidenceObligationId("");
+    setEvidenceRef("");
+    setCritical(true);
+    setEvidenceResult("PASS");
+  }
 
   useEffect(() => {
     Promise.all([api<Release[]>("releases"), api<{ items: Requirement[] }>("requirements")])
@@ -60,41 +73,59 @@ export function GovernanceWorkbench() {
       .finally(() => setLoading(false));
   }, []);
 
+  function beginOperation() {
+    // Release selection, evidence writes and objection writes share the same lock.
+    if (operationInFlight.current) return false;
+    operationInFlight.current = true;
+    setBusy(true);
+    return true;
+  }
+
+  function endOperation() {
+    operationInFlight.current = false;
+    setBusy(false);
+  }
+
   async function submit(action: () => Promise<void>) {
-    if (busy) return;
-    setBusy(true); setError(""); setNotice("");
+    if (!beginOperation()) return;
+    setError(""); setNotice("");
     try { await action(); }
     catch (issue) { setError(issue instanceof Error ? issue.message : "The operation failed."); }
-    finally { setBusy(false); }
+    finally { endOperation(); }
   }
 
   function createRelease(event: FormEvent) {
     event.preventDefault();
     void submit(async () => {
       const created = await api<Release>("releases", { name, version });
-      setName(""); setVersion(""); setSelected(created); setTestedVersion(created.version);
+      setName("");
+      setVersion("");
+      setReleases((list) => [created, ...list.filter((release) => release.id !== created.id)]);
+      selectRelease(created);
       setNotice("Release created.");
-      await refresh(created);
+      await loadReadiness(created);
     });
   }
 
   function addObligation(event: FormEvent) {
     event.preventDefault();
-    if (!selected) return;
+    if (!selected || !readiness) return;
     void submit(async () => {
+      setAssessment(null);
       await api(`releases/${selected.id}/obligations`, { requirement_id: requirementId, title: obligationTitle, critical });
-      setObligationTitle(""); setRequirementId(""); setNotice("Obligation saved."); await refresh(selected);
+      setObligationTitle(""); setRequirementId(""); setNotice("Obligation saved."); await loadReadiness(selected);
     });
   }
 
   function addEvidence(event: FormEvent) {
     event.preventDefault();
-    if (!selected) return;
+    if (!selected || !readiness) return;
     void submit(async () => {
+      setAssessment(null);
       await api(`releases/${selected.id}/obligations/${evidenceObligationId}/evidence`, {
         reference: evidenceRef, tested_version: testedVersion, result: evidenceResult,
       });
-      setEvidenceRef(""); setEvidenceObligationId(""); setNotice("Evidence recorded for the tested version."); await refresh(selected);
+      setEvidenceRef(""); setEvidenceObligationId(""); setNotice("Evidence recorded for the tested version."); await loadReadiness(selected);
     });
   }
 
@@ -116,17 +147,17 @@ export function GovernanceWorkbench() {
             <label className="text-sm font-medium">Version
               <input data-testid="release-version" required maxLength={80} value={version} onChange={(e) => setVersion(e.target.value)} className="mt-1 w-full rounded-md border border-slate-300 p-2" placeholder="1.2.0" />
             </label>
-            <button data-testid="create-release" disabled={busy} className="rounded-md bg-sky-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">Create release</button>
+            <button data-testid="create-release" disabled={busy || loading} className="rounded-md bg-sky-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">Create release</button>
           </form>
           <div className="mt-5 space-y-2" aria-label="Release list">
             {loading && <p className="text-sm text-slate-500">Loading releases...</p>}
             {!loading && releases.length === 0 && <p className="text-sm text-slate-500">No release has been recorded yet.</p>}
             {releases.map((release) => (
               <button key={release.id} type="button" aria-pressed={selected?.id === release.id} disabled={busy} onClick={() => {
-                setSelected(release); setTestedVersion(release.version); setReadiness(null);
-                setRequirementId(""); setObligationTitle(""); setEvidenceObligationId(""); setEvidenceRef("");
-                setCritical(true); setEvidenceResult("PASS");
-                void submit(async () => setReadiness(await api<Readiness>(`releases/${release.id}/readiness`)));
+                void submit(async () => {
+                  selectRelease(release);
+                  await loadReadiness(release);
+                });
               }} className={`block w-full rounded-lg border p-3 text-left text-sm ${selected?.id === release.id ? "border-sky-600 bg-sky-50" : "border-slate-200 hover:bg-slate-50"}`}>
                 <span className="font-medium">{release.name}</span> · {release.version}
               </button>
@@ -172,7 +203,7 @@ export function GovernanceWorkbench() {
             ))}</ul>
           </div>}
         </section>
-      {selected && <div className="grid gap-6 xl:grid-cols-2">
+      {selected && readiness && <div className="grid gap-6 xl:grid-cols-2">
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="text-lg font-semibold">Add an obligation</h3>
           <form onSubmit={addObligation} className="mt-4 space-y-3">
@@ -217,8 +248,9 @@ export function GovernanceWorkbench() {
       </div>
       {section !== "Release Readiness" && !readiness && <p role="status" className="text-sm text-slate-700">Select a release with a loaded assessment.</p>}
       {selected && readiness && <div hidden={section === "Release Readiness"}>
-        <DecisionChallenger key={selected.id} releaseId={selected.id} version={selected.version}
-          obligations={readiness.obligations} baselineState={readiness.state} showHistory={section === "History"} />
+        <DecisionChallenger key={selected.id + ":" + selected.version} releaseId={selected.id} version={selected.version}
+          obligations={readiness.obligations} showHistory={section === "History"}
+          beginOperation={beginOperation} endOperation={endOperation} />
       </div>}
       <p className="text-xs text-slate-500">Prototype DC-01 — evidence is manually recorded and not independently verified. No authentication, decision signing or release authorization is available.</p>
     </div>
