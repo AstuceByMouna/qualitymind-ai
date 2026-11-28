@@ -111,12 +111,12 @@ def test_list_order_and_pagination_with_isolated_test_records():
             expected_ids = [
                 str(item)
                 for item in db.scalars(
-                    select(Requirement.id)
+                    select(Requirement.id).where(Requirement.archived_at.is_(None))
                     .order_by(Requirement.created_at.desc(), Requirement.id.desc())
                 ).all()
             ]
             expected_total = db.scalar(
-                select(func.count()).select_from(Requirement)
+                select(func.count()).select_from(Requirement).where(Requirement.archived_at.is_(None))
             )
         assert expected_total >= 3
 

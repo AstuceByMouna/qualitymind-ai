@@ -352,6 +352,78 @@
           }
         }
       ]
+    },
+    {
+      "name": "QA-127 — Reject invalid evidence without echoing input",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 422\", () => pm.response.to.have.status(422));",
+              "pm.test(\"Body is sanitized\", () => pm.expect(pm.response.text()).not.to.include(\"synthetic-marker\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"test_case_id\": \"00000000-0000-4000-8000-000000000127\",\n  \"raw_log\": \"synthetic-marker\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/test-cases/00000000-0000-4000-8000-000000000127/execution-evidence",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "test-cases",
+            "00000000-0000-4000-8000-000000000127",
+            "execution-evidence"
+          ]
+        }
+      }
+    },
+    {
+      "name": "QA-127 — Missing test has no history",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/test-cases/00000000-0000-4000-8000-000000000127/execution-evidence",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "test-cases",
+            "00000000-0000-4000-8000-000000000127",
+            "execution-evidence"
+          ]
+        }
+      }
     }
   ]
 }

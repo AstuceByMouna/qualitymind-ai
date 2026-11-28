@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
+import { ExecutionEvidencePanel } from "@/components/requirements/execution-evidence-panel";
 import { useEffect, useState } from "react";
 import type { AcceptanceCriterion, Requirement } from "@/lib/requirements";
 
@@ -136,7 +137,8 @@ export function TraceabilityView({ requirementId }: { requirementId: string }) {
                 <code className={identifier}>{item.playwright_script_path}</code>
               </p>
             ) : <p className="text-sm">No script association.</p>}
-            <p className="text-sm">Execution <strong>{item.execution_status}</strong></p>
+            <p className="text-sm">QualityMind execution <strong>{item.execution_status}</strong></p>
+            <ExecutionEvidencePanel testCaseId={item.test_case_id} scriptPath={item.playwright_script_path} />
           </article>
         ))}
       </section>
