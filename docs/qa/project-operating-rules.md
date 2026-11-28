@@ -267,3 +267,14 @@ QA-124 remains In Progress; S10-UAT-06 remains NOT_RUN until verified. QA-125 re
 | RP-111 | Engineering Supervisor owns business analysis, planning, requirements, architecture/design, documentation, Jira/Confluence, traceability and review of actual evidence. Codex executes software implementation, migrations, debugging and software tests through an authorized mission. For every technical task, the Supervisor provides a ready-to-use Codex prompt with ticket, scope, acceptance criteria, applicable risks/constraints, evidence and recommended model/reasoning effort subject to availability. The Supervisor does not perform application development or execute software tests. | Owner instruction; LG-02, LG-04, LG-07, LG-12 |
 
 The Supervisor may maintain documentation-only GitHub branches/Draft PRs and review CI results without invoking software tests itself. No automatic cross-chat delegation or evidence transfer is assumed. All merge and production approvals, security constraints, isolated QA, manual-only authorized paid OpenAI calls, and evidence integrity remain unchanged. No application code, migrations or software tests are authorized by this documentation update. QA-124 remains In Progress pending S10-UAT-06 evidence.
+
+
+## 9. Operational handoff — QA-129 (RP-112)
+
+**Decision:** 2026-11-27 Montreal / 2026-11-28 UTC. **Source:** owner instruction recorded in [Sprint 12 PV](https://gharbiconsulting.atlassian.net/wiki/spaces/KAN/pages/4128865), explicitly authorized for versioned formalization in QA-129. **Status:** owner operating instruction applies now; repository publication pending review and explicit merge approval. No prior rule is superseded.
+
+| ID | Approved rule | Source / mapping |
+| --- | --- | --- |
+| RP-112 | For every technical execution or candidate handoff, supply concrete Git synchronization, local-work protection and exact-candidate verification commands; applicable isolated QA database, backend and frontend startup/check commands; then detailed validation steps. Mark irrelevant services N/A with rationale; reuse an already verified environment without needless restarts. Stop on unexpected local changes or isolation conflicts. If a merge is required, request explicit owner authorization only after applicable CI, review and documented accepted P0 UAT. Never merge automatically. | Owner instruction, Sprint 12 PV; LG-02, LG-04, LG-05, LG-07, LG-10, LG-12; complements RP-092 and RP-111. |
+
+Documentation-only work does not require invented software UAT or restarting QA. No permission to execute tests as Supervisor, access production, bypass checks, or deploy is introduced. Preserve RP-001–111 and the 12 operating principles.

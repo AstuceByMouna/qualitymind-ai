@@ -39,3 +39,10 @@ Jira / scope / risk level / branch / exact HEAD / changed files / applicable tes
 
 ## 6. Efficiency measurement
 Record preflight time, repeated manual reporting, missed controls and rework over subsequent sprints; compare against a measured baseline. No efficiency improvement claimed yet.
+
+
+## 7. Operational handoff checklist — RP-112 (QA-129)
+- [ ] Ticket/branch, exact SHA, source links and current state verified; provide Git status/fetch/synchronization commands and protect local changes/stashes. Stop on unexpected differences.
+- [ ] Provide applicable isolated DB, backend and frontend startup and health-check commands; identify environment, ports and database. If a service is unnecessary, mark N/A with rationale. Reuse verified running services when unchanged; do not restart needlessly.
+- [ ] Give reproducible validation steps with test data, expected results and evidence to record. Distinguish NOT_RUN, simulated, reported and observed results. Respect RP-111: Codex implements and executes tests; Supervisor reviews evidence.
+- [ ] When a merge is required, verify exact-head CI, review and applicable documented P0 UAT, then explicitly request owner authorization under RP-092. No automatic merge or deployment.
