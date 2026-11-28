@@ -1,0 +1,20 @@
+name: qualitymind-sut
+services:
+  db:
+    image: postgres:17
+    pull_policy: never
+    environment:
+      POSTGRES_DB: qualitymind_sut
+      POSTGRES_USER: qualitymind_sut
+      POSTGRES_PASSWORD: ${SUT_POSTGRES_PASSWORD:?Initialize the isolated SUT password}
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - sut_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qualitymind_sut -d qualitymind_sut"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+volumes:
+  sut_pgdata:
