@@ -1,0 +1,21 @@
+{
+  "pytest": {
+    "skipped": 0,
+    "errors": 0,
+    "failures": 0,
+    "duration_seconds": 3.535,
+    "junit": "backend/reports/qa69-local.xml",
+    "tests": 165
+  },
+  "browser": {
+    "junit": "frontend/test-results/qa69-junit.xml",
+    "mode": "mocked API",
+    "tests": 2,
+    "html": "frontend/playwright-report/qa69/index.html",
+    "skipped": 0,
+    "errors": 0,
+    "duration_seconds": 12.718072,
+    "failures": 0
+  },
+  "application_sha": "fda962e0b450e8b9f42dc5e5cf593c76213edd23"
+}
