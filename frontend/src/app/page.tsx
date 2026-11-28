@@ -43,6 +43,7 @@ export default function Home({ searchParams }: PageProps) {
               </Link>
             </div>
             <RequirementImport />
+            <Link href="/requirements/jira-preview" className="inline-block text-sm font-medium text-sky-700 underline">Preview Jira issue JSON</Link>
             <Suspense fallback={<RequirementsLoading />}>
               <RequirementsContent searchParams={searchParams} />
             </Suspense>
