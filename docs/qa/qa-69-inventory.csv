@@ -1,0 +1,214 @@
+kind,path,line,declaration,source_observation
+pytest unit,backend/tests/unit/test_acceptance_criteria.py,15,test_valid_criterion_normalized,
+pytest unit,backend/tests/unit/test_acceptance_criteria.py,27,test_invalid_criterion_rejected,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_acceptance_criteria.py,32,test_service_missing_parent_and_criterion,
+pytest unit,backend/tests/unit/test_ai_contract.py,7,test_consent_and_attestation_mandatory,
+pytest unit,backend/tests/unit/test_ai_contract.py,14,test_review_edit_contract,
+pytest unit,backend/tests/unit/test_ai_contract.py,21,test_structured_output_validation,
+pytest unit,backend/tests/unit/test_ai_contract.py,30,test_digests_sensitive_patterns_and_limits,
+pytest unit,backend/tests/unit/test_automation_hub_policy.py,12,test_valid_playwright_reference,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_automation_hub_policy.py,24,test_invalid_playwright_reference,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_challenger_policy.py,33,test_reference_policy,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_challenger_policy.py,39,test_stale_critical_does_not_override_baseline,
+pytest unit,backend/tests/unit/test_challenger_policy.py,45,test_incomplete_claim_does_not_block_without_qualification,
+pytest unit,backend/tests/unit/test_challenger_policy.py,51,test_unknown_baseline_is_not_approved,
+pytest unit,backend/tests/unit/test_failure_analysis_policy.py,16,test_failure_clues,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_failure_analysis_policy.py,25,test_case_insensitive,
+pytest unit,backend/tests/unit/test_import_parser.py,6,test_csv_preview_parsing_and_column_mapping,
+pytest unit,backend/tests/unit/test_import_parser.py,15,test_xlsx_preview_parsing,
+pytest unit,backend/tests/unit/test_import_parser.py,32,test_invalid_files_are_rejected_or_marked,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_import_parser.py,68,test_xlsx_without_dimension_header_is_importable,
+pytest unit,backend/tests/unit/test_import_parser.py,80,test_xlsx_without_dimension_rejects_101_columns,
+pytest unit,backend/tests/unit/test_import_parser.py,92,test_xlsx_with_dimension_rejects_101_columns,
+pytest unit,backend/tests/unit/test_lifecycle.py,3,test_transition_policy_is_complete,
+pytest unit,backend/tests/unit/test_quality_governance_readiness.py,18,test_empty_release_never_approves,
+pytest unit,backend/tests/unit/test_quality_governance_readiness.py,22,test_missing_evidence_is_not_pass,
+pytest unit,backend/tests/unit/test_quality_governance_readiness.py,28,test_previous_version_is_stale,
+pytest unit,backend/tests/unit/test_quality_governance_readiness.py,34,test_critical_failure_blocks,
+pytest unit,backend/tests/unit/test_quality_governance_readiness.py,38,test_noncritical_failure_requires_human_review,
+pytest unit,backend/tests/unit/test_quality_governance_readiness.py,42,test_all_pass_cannot_auto_go,
+pytest unit,backend/tests/unit/test_quality_governance_readiness.py,48,test_critical_failure_takes_precedence_over_missing,
+pytest unit,backend/tests/unit/test_quality_rules.py,4,test_flags_vague_wording_and_missing_acceptance_criteria,
+pytest unit,backend/tests/unit/test_quality_rules.py,11,test_explicit_testable_requirement_does_not_invent_defects,
+pytest unit,backend/tests/unit/test_quality_rules.py,19,test_word_boundaries_do_not_flag_substrings,
+pytest unit,backend/tests/unit/test_requirement_update_validation.py,15,test_partial_update_normalizes_fields,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_requirement_update_validation.py,28,test_partial_update_rejects_invalid_payload,pytest.mark.parametrize
+pytest unit,backend/tests/unit/test_requirement_validation.py,9,test_title_rejects_null_character,
+pytest unit,backend/tests/unit/test_requirement_validation.py,18,test_title_length_checked_after_trimming,
+pytest unit,backend/tests/unit/test_requirement_validation.py,28,test_title_rejects_more_than_255_characters,
+pytest unit,backend/tests/unit/test_requirement_validation.py,37,test_description_rejects_excessive_length,
+pytest unit,backend/tests/unit/test_requirement_validation.py,46,test_valid_requirement_is_accepted,
+pytest unit,backend/tests/unit/test_requirement_validation.py,56,test_title_normalization_at_maximum_length,
+pytest unit,backend/tests/unit/test_risk_policy.py,7,test_draft_state_is_not_coverage,
+pytest unit,backend/tests/unit/test_risk_policy.py,15,test_only_high_without_drafts_triggers_initial_test_design_alert,
+pytest unit,backend/tests/unit/test_test_design_suggestions.py,7,test_generates_two_traceable_reviewable_cases,
+pytest api,backend/tests/api/test_acceptance_criteria.py,33,test_list_and_empty_list,patch
+pytest api,backend/tests/api/test_acceptance_criteria.py,46,test_add_normalizes_and_returns_201,patch
+pytest api,backend/tests/api/test_acceptance_criteria.py,56,test_patch_updates_only_target,patch
+pytest api,backend/tests/api/test_acceptance_criteria.py,69,test_delete_returns_204,patch
+pytest api,backend/tests/api/test_acceptance_criteria.py,84,test_invalid_payload_never_calls_service,pytest.mark.parametrize
+pytest api,backend/tests/api/test_acceptance_criteria.py,93,test_invalid_uuid_returns_422,
+pytest api,backend/tests/api/test_acceptance_criteria.py,100,test_missing_requirement_and_criterion_return_404,patch
+pytest api,backend/tests/api/test_acceptance_criteria.py,114,test_openapi_has_all_crud_paths,
+pytest api,backend/tests/api/test_archiving.py,9,test_archive_not_found,
+pytest api,backend/tests/api/test_archiving.py,16,test_invalid_uuid_rejected_without_service_call,
+pytest api,backend/tests/api/test_cors.py,13,test_cors_allows_frontend_origin,
+pytest api,backend/tests/api/test_cors.py,30,test_cors_rejects_unknown_origin,
+pytest api,backend/tests/api/test_failure_analysis_qa124.py,9,test_classifies_synthetic_timeout_without_echoing_excerpt,
+pytest api,backend/tests/api/test_failure_analysis_qa124.py,23,test_unknown_not_claimed_as_root_cause,
+pytest api,backend/tests/api/test_failure_analysis_qa124.py,32,test_rejects_blank_too_short_too_large_and_unknown_fields,
+pytest api,backend/tests/api/test_failure_analysis_qa124.py,44,test_no_get_or_arbitrary_execution_endpoint,
+pytest api,backend/tests/api/test_failure_analysis_qa124.py,48,test_validation_does_not_reflect_rejected_input,
+pytest api,backend/tests/api/test_health.py,8,test_health_returns_200,
+pytest api,backend/tests/api/test_quality_governance.py,14,test_governance_contract_and_no_go_endpoint,
+pytest api,backend/tests/api/test_quality_governance.py,23,test_release_create_with_isolated_fake_session,
+pytest api,backend/tests/api/test_quality_governance.py,43,test_missing_release_is_404,
+pytest api,backend/tests/api/test_quality_governance.py,53,test_malformed_evidence_rejected_without_db_access,
+pytest api,backend/tests/api/test_release_challenger_contract.py,10,test_contract_exposes_only_challenger_and_never_approves,
+pytest api,backend/tests/api/test_release_challenger_contract.py,18,test_invalid_challenge_payload_is_rejected_before_database,
+pytest api,backend/tests/api/test_release_challenger_contract.py,30,test_status_transition_requires_actor_and_reason,
+pytest api,backend/tests/api/test_requirement_validation_api.py,19,test_api_rejects_invalid_requirements,pytest.mark.parametrize
+pytest api,backend/tests/api/test_requirements.py,14,test_create_requirement,
+pytest api,backend/tests/api/test_requirements.py,46,test_create_requirement_with_empty_title,
+pytest api,backend/tests/api/test_requirements.py,54,test_list_page_shape_and_total,
+pytest api,backend/tests/api/test_requirements.py,71,test_pagination_invalid_parameters,
+pytest api,backend/tests/api/test_requirements.py,77,test_get_requirement_not_found,
+pytest api,backend/tests/api/test_requirements.py,91,test_get_requirement_invalid_uuid,
+pytest api,backend/tests/api/test_requirements.py,95,test_openapi_contract,
+pytest api,backend/tests/api/test_requirements_search.py,10,test_search_is_applied_to_count_and_rows_before_pagination,
+pytest api,backend/tests/api/test_requirements_search.py,34,test_empty_or_blank_query_preserves_unfiltered_listing,
+pytest api,backend/tests/api/test_requirements_search.py,54,test_query_is_bounded_by_api_contract,
+pytest api,backend/tests/api/test_requirements_search.py,59,test_search_openapi_contract,
+pytest api,backend/tests/api/test_requirements_update.py,33,test_patch_title_only_preserves_description_and_identity,
+pytest api,backend/tests/api/test_requirements_update.py,45,test_patch_description_only,
+pytest api,backend/tests/api/test_requirements_update.py,55,test_patch_both_fields,
+pytest api,backend/tests/api/test_requirements_update.py,64,test_patch_missing_requirement_returns_404_without_commit,
+pytest api,backend/tests/api/test_requirements_update.py,79,test_patch_invalid_payload_never_writes,pytest.mark.parametrize
+pytest api,backend/tests/api/test_requirements_update.py,85,test_patch_invalid_uuid_returns_422_without_commit,
+pytest api,backend/tests/api/test_requirements_update.py,91,test_patch_boundaries_accepted,
+pytest api,backend/tests/api/test_requirements_update.py,100,test_patch_openapi_contract,
+pytest api,backend/tests/api/test_traceability_qa126.py,10,test_traceability_validates_ids_and_exposes_no_write_method,
+pytest api,backend/tests/api/test_traceability_qa126.py,17,test_missing_and_archived_requirements_do_not_load_children,
+pytest integration,backend/tests/integration/test_acceptance_criteria.py,13,test_acceptance_criteria_are_ordered_scoped_editable_and_deletable,
+pytest integration,backend/tests/integration/test_acceptance_criteria.py,80,test_missing_parent_never_creates_a_criterion,
+pytest integration,backend/tests/integration/test_ai_analysis_review.py,10,test_consent_review_audit_and_source_unchanged,
+pytest integration,backend/tests/integration/test_ai_analysis_review.py,52,test_missing_openai_key_never_creates_provider,
+pytest integration,backend/tests/integration/test_archiving.py,11,test_archive_restore_preserves_identity_and_history,
+pytest integration,backend/tests/integration/test_automation_hub_qa112.py,11,test_automation_association_is_metadata_only_and_safe,
+pytest integration,backend/tests/integration/test_decision_challenger_qa103.py,23,test_challenger_reference_decisions_and_append_only_history,
+pytest integration,backend/tests/integration/test_decision_challenger_qa103.py,152,test_dc02_10_rejects_stale_qualification_without_side_effects,
+pytest integration,backend/tests/integration/test_import_requirements.py,15,test_import_preview_confirm_and_reimport,
+pytest integration,backend/tests/integration/test_release_readiness_qa102.py,20,test_versioned_release_evidence_and_human_review,
+pytest integration,backend/tests/integration/test_requirement_lifecycle.py,16,test_lifecycle_persists_and_preserves_data,
+pytest integration,backend/tests/integration/test_requirement_patch.py,12,test_patch_persists_and_cleans_up_in_isolated_postgres,
+pytest integration,backend/tests/integration/test_requirements_api_coverage.py,24,test_get_unknown_requirement_returns_404,
+pytest integration,backend/tests/integration/test_requirements_api_coverage.py,31,test_get_invalid_uuid_returns_422,pytest.mark.parametrize
+pytest integration,backend/tests/integration/test_requirements_api_coverage.py,48,test_list_invalid_pagination_returns_422,pytest.mark.parametrize
+pytest integration,backend/tests/integration/test_requirements_api_coverage.py,53,test_list_defaults_and_empty_page,
+pytest integration,backend/tests/integration/test_requirements_api_coverage.py,70,test_list_returns_empty_dataset,
+pytest integration,backend/tests/integration/test_requirements_api_coverage.py,92,test_list_order_and_pagination_with_isolated_test_records,
+pytest integration,backend/tests/integration/test_requirements_integration.py,18,test_database_connection,
+pytest integration,backend/tests/integration/test_requirements_integration.py,24,test_create_and_retrieve_requirement,
+pytest integration,backend/tests/integration/test_requirements_search.py,14,test_global_search_filters_before_pagination_and_escapes_like_metacharacters,
+pytest integration,backend/tests/integration/test_risk_qa111.py,10,test_risk_assessment_prioritization_and_draft_truth,
+pytest integration,backend/tests/integration/test_test_design_qa107.py,13,test_test_design_preview_persistence_scoping_and_rejection,
+pytest integration,backend/tests/integration/test_traceability_qa126.py,15,test_traceability_uses_existing_links_without_writes,
+playwright,frontend/tests/e2e/acceptance-criteria.spec.ts,5,"QA94-TC01 @real-api @qa-only - add, edit, cancel and delete isolated criteria",integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/automation-hub.spec.ts,18,QA-112 @smoke @mock-api links Playwright script without claiming execution,simulated API
+playwright,frontend/tests/e2e/decision-challenger.spec.ts,8,QA-103 @smoke @mock-api unqualified objection cannot block; qualification requires harm and proof,simulated API
+playwright,frontend/tests/e2e/failure-analysis.spec.ts,3,QA-124 @mock-api classifies synthetic failure with honest human-review label,simulated API
+playwright,frontend/tests/e2e/home.spec.ts,5,QA-71 @smoke - affiche la page Requirements Workbench,browser; API coverage unclassified
+playwright,frontend/tests/e2e/quality-governance.spec.ts,3,DC-01 @smoke governance navigation and initial state,simulated API
+playwright,frontend/tests/e2e/requirement-ai-review.spec.ts,3,QA-90 requires affirmative consent before the AI request,integration intent; inspect environment and run
+playwright,frontend/tests/e2e/requirement-archive.spec.ts,3,QA-97 archive and restore with explicit confirmation,integration intent; inspect environment and run
+playwright,frontend/tests/e2e/requirement-edit-freshness.spec.ts,4,QA-101 displays latest requirement data and acceptance criteria in Edit,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirement-lifecycle.spec.ts,3,QA-95 lifecycle persists across page refresh,integration intent; inspect environment and run
+playwright,frontend/tests/e2e/requirement-quality-analysis.spec.ts,2,QA-96 rules identify ambiguous wording without changing source,integration intent; inspect environment and run
+playwright,frontend/tests/e2e/requirements-create.spec.ts,5,QA82-TC03 @regression - Cancel discards an unsaved draft,browser; API coverage unclassified
+playwright,frontend/tests/e2e/requirements-create.spec.ts,20,QA82-TC04 @regression - Back navigation discards an unsaved draft,browser; API coverage unclassified
+playwright,frontend/tests/e2e/requirements-create.spec.ts,34,QA82-TC06 @critical @mock-api - friendly failure message retains input,simulated API
+playwright,frontend/tests/e2e/requirements-create.spec.ts,59,QA82-TC01 @critical @mock-api - successful creation redirects to requirement details,simulated API
+playwright,frontend/tests/e2e/requirements-create.spec.ts,97,QA82-TC02 @critical - required fields show linked errors and focus Title,browser; API coverage unclassified
+playwright,frontend/tests/e2e/requirements-create.spec.ts,123,QA82-TC08 @critical - focus moves to Description when Title is valid,browser; API coverage unclassified
+playwright,frontend/tests/e2e/requirements-create.spec.ts,139,QA82-TC05 @critical @mock-api - concurrent submit is blocked while saving,simulated API
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,10,"QA84-TC01 @real-api @qa-only - edit persists, then restore fixture",integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,52,QA84-TC02 @qa-only - Cancel does not write and edit reloads original,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,74,QA84-TC03 @qa-only - invalid input focuses field and prevents PATCH,browser; API coverage unclassified; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,94,QA84-TC04 @qa-only - non-existing requirement shows 404,browser; API coverage unclassified; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,103,QA84-TC05 @mock-api @qa-only - error preserves values and enables retry,simulated API; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,131,QA84-TC06 @critical @mock-api @qa-only - concurrent edit submissions are blocked,simulated API; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,174,QA91-TC01 @real-api @qa-only - three rapid consecutive edits persist correctly,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,243,QA91-TC02 @qa-only - edit Back link returns to the same requirement,browser; API coverage unclassified; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-edit.spec.ts,259,QA93-TC01 @real-api @qa-only - 255-character title stays readable in registry,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-import.spec.ts,3,QA-87 CSV preview and confirm,integration intent; inspect environment and run
+playwright,frontend/tests/e2e/requirements-import.spec.ts,29,QA-98 file picker supports long names and resets preview when replaced,browser; API coverage unclassified
+playwright,frontend/tests/e2e/requirements-import.spec.ts,46,QA-100 multiple imported requirements collapse the form and show verified navigation,browser; API coverage unclassified
+playwright,frontend/tests/e2e/requirements-search.spec.ts,12,QA85-TC01 @real-api @qa-only - find an item beyond the first page,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-search.spec.ts,21,QA85-TC02 @real-api @qa-only - blank and clear return unfiltered list,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-search.spec.ts,32,QA85-TC03 @real-api @qa-only - zero results have a clear empty state,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-search.spec.ts,40,"QA85-TC04 @real-api @qa-only - filtered counts, pages and URL are stable",integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-search.spec.ts,60,QA85-TC05 @real-api @qa-only - LIKE wildcards are treated literally,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/requirements-search.spec.ts,67,QA85-TC06 @real-api @qa-only - page outside range normalizes URL,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/risk-real-qa.spec.ts,3,QA-111 @smoke @real-qa assesses risk through browser/API/PostgreSQL and persists after reload,integration intent; inspect environment and run; skip/fixme declaration present
+playwright,frontend/tests/e2e/risk.spec.ts,6,QA-111 @smoke @mock-api risk assessment persists and drafts are not coverage,simulated API
+playwright,frontend/tests/e2e/test-design.spec.ts,8,QA-107 @smoke @mock-api suggest and save only review-required drafts,simulated API
+playwright,frontend/tests/e2e/test-design.spec.ts,69,QA-123 @mock-api keeps selected requirement visibly identifiable and hides drafts when removed,simulated API
+playwright,frontend/tests/e2e/traceability.spec.ts,13,QA-126 @mock-api navigates exact links and exposes missing evidence,simulated API
+playwright,frontend/tests/e2e/traceability.spec.ts,59,QA-126 @mock-api displays loading and an empty requirement,simulated API
+playwright,frontend/tests/resilience/synthetic-network.spec.ts,14,QA-77 network failure preserves excerpt and permits retry @mock-api,simulated API
+playwright,frontend/tests/resilience/synthetic-network.spec.ts,54,QA-77 risk loading and HTTP 503 are distinct from an empty registry @mock-api,simulated API
+declared API route,backend/app/api/v1/acceptance_criteria.py,36,GET /api/v1/requirements/{requirement_id}/acceptance-criteria,source declaration
+declared API route,backend/app/api/v1/acceptance_criteria.py,44,POST /api/v1/requirements/{requirement_id}/acceptance-criteria,source declaration
+declared API route,backend/app/api/v1/acceptance_criteria.py,54,PATCH /api/v1/requirements/{requirement_id}/acceptance-criteria/{criterion_id},source declaration
+declared API route,backend/app/api/v1/acceptance_criteria.py,65,DELETE /api/v1/requirements/{requirement_id}/acceptance-criteria/{criterion_id},source declaration
+declared API route,backend/app/api/v1/ai_analysis.py,48,POST /api/v1/requirements/{requirement_id}/ai-analysis,source declaration
+declared API route,backend/app/api/v1/ai_analysis.py,91,GET /api/v1/requirements/{requirement_id}/ai-analysis,source declaration
+declared API route,backend/app/api/v1/ai_analysis.py,99,POST /api/v1/requirements/{requirement_id}/ai-analysis/{run_id}/suggestions/{suggestion_id}/review,source declaration
+declared API route,backend/app/api/v1/automation_hub.py,33,GET /api/v1/test-cases/{test_case_id}/automation,source declaration
+declared API route,backend/app/api/v1/automation_hub.py,39,PATCH /api/v1/test-cases/{test_case_id}/automation,source declaration
+declared API route,backend/app/api/v1/failure_analysis.py,35,POST /api/v1/failure-analysis/classify,source declaration
+declared API route,backend/app/api/v1/imports.py,33,POST /api/v1/imports/preview,source declaration
+declared API route,backend/app/api/v1/imports.py,63,GET /api/v1/imports/{batch_id},source declaration
+declared API route,backend/app/api/v1/imports.py,69,POST /api/v1/imports/{batch_id}/confirm,source declaration
+declared API route,backend/app/api/v1/quality_analysis.py,16,POST /api/v1/requirements/{requirement_id}/quality-analysis,source declaration
+declared API route,backend/app/api/v1/release_challenges.py,41,POST /api/v1/releases/{release_id}/challenges,source declaration
+declared API route,backend/app/api/v1/release_challenges.py,70,GET /api/v1/releases/{release_id}/challenges,source declaration
+declared API route,backend/app/api/v1/release_challenges.py,83,GET /api/v1/releases/{release_id}/challenges/assessment,source declaration
+declared API route,backend/app/api/v1/release_challenges.py,130,GET /api/v1/releases/{release_id}/challenges/{challenge_id},source declaration
+declared API route,backend/app/api/v1/release_challenges.py,136,POST /api/v1/releases/{release_id}/challenges/{challenge_id}/transitions,source declaration
+declared API route,backend/app/api/v1/release_challenges.py,173,GET /api/v1/releases/{release_id}/challenges/{challenge_id}/history,source declaration
+declared API route,backend/app/api/v1/releases.py,27,POST /api/v1/releases,source declaration
+declared API route,backend/app/api/v1/releases.py,36,GET /api/v1/releases,source declaration
+declared API route,backend/app/api/v1/releases.py,41,GET /api/v1/releases/{release_id},source declaration
+declared API route,backend/app/api/v1/releases.py,46,POST /api/v1/releases/{release_id}/obligations,source declaration
+declared API route,backend/app/api/v1/releases.py,62,POST /api/v1/releases/{release_id}/obligations/{obligation_id}/evidence,source declaration
+declared API route,backend/app/api/v1/releases.py,78,GET /api/v1/releases/{release_id}/readiness,source declaration
+declared API route,backend/app/api/v1/requirements.py,23,POST /api/v1/requirements,source declaration
+declared API route,backend/app/api/v1/requirements.py,28,GET /api/v1/requirements,source declaration
+declared API route,backend/app/api/v1/requirements.py,45,GET /api/v1/requirements/{requirement_id},source declaration
+declared API route,backend/app/api/v1/requirements.py,57,PATCH /api/v1/requirements/{requirement_id},source declaration
+declared API route,backend/app/api/v1/requirements.py,74,POST /api/v1/requirements/{requirement_id}/transitions,source declaration
+declared API route,backend/app/api/v1/requirements.py,90,GET /api/v1/requirements/{requirement_id}/transitions,source declaration
+declared API route,backend/app/api/v1/requirements.py,101,POST /api/v1/requirements/{requirement_id}/archive,source declaration
+declared API route,backend/app/api/v1/requirements.py,108,POST /api/v1/requirements/{requirement_id}/restore,source declaration
+declared API route,backend/app/api/v1/risk.py,17,GET /api/v1/risk/requirements,source declaration
+declared API route,backend/app/api/v1/risk.py,60,PATCH /api/v1/risk/requirements/{requirement_id}/risk,source declaration
+declared API route,backend/app/api/v1/test_design.py,33,GET /api/v1/requirements/{requirement_id}/test-cases/suggestions,source declaration
+declared API route,backend/app/api/v1/test_design.py,42,GET /api/v1/requirements/{requirement_id}/test-cases,source declaration
+declared API route,backend/app/api/v1/test_design.py,50,POST /api/v1/requirements/{requirement_id}/test-cases,source declaration
+declared API route,backend/app/api/v1/traceability.py,24,GET /api/v1/requirements/{requirement_id}/traceability,source declaration
+postman request,postman/qualitymind-requirements.postman_collection.json,,GET — Health,GET; 2 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,POST — Create Requirement,POST; 3 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,GET — List Requirements,GET; 3 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,GET — Requirement Details,GET; 3 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,POST — Transition In Review,POST; 2 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,POST — Transition Ready,POST; 2 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,GET — Transition History,GET; 2 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,POST — Forbidden Transition,POST; 1 pm.test calls
+postman request,postman/qualitymind-requirements.postman_collection.json,,GET — Requirement Not Found,GET; 2 pm.test calls
+declared API route,backend/app/main.py,50,GET /health,application entry point
+github workflow,.github/workflows/backend-ci.yml,1,Backend CI,configured workflow
+github workflow,.github/workflows/frontend-ci.yml,1,Frontend CI,configured workflow
+github workflow,.github/workflows/postman-ci.yml,1,Postman API CI,configured workflow
+github workflow,.github/workflows/qa84-e2e-ci.yml,1,QA-84 Isolated UI E2E,configured workflow
+github workflow,.github/workflows/qa85-e2e-ci.yml,1,QA-85 Global Search E2E,configured workflow
