@@ -28,3 +28,7 @@ Within an authorized mission, ordinary technical work, isolated tests, documenta
 
 ## Supervisor–Codex boundary (RP-111)
 The Engineering Supervisor handles requirements, architecture/design, project governance, documentation and evidence review only. Codex performs software implementation, migrations, debugging and software tests. For technical work, the Supervisor prepares a complete Codex mission prompt; no automatic handoff is assumed. See [RP-111](docs/qa/project-operating-rules.md#8-supervisorcodex-responsibility-boundary-qa-125). This narrows the earlier delegation paragraph for the Supervisor, not Codex. All authorization, safety and evidence gates remain binding.
+
+
+## Operational handoff (RP-112)
+For every technical execution or delivered candidate, provide concrete Git synchronization and working-tree protection commands, exact candidate SHA verification, applicable isolated database/backend/frontend startup and health-check commands, and detailed validation steps. State NOT_APPLICABLE with reason for services not required; avoid restarting an unchanged, verified environment. Stop on unexpected local changes, port or database identity conflicts. After applicable CI, review and accepted P0 UAT, explicitly request owner authorization before any required merge. Never merge automatically. See the binding rule register. RP-092 and RP-111 remain unchanged.
